@@ -1,0 +1,30 @@
+﻿@model UserLogin
+
+<div class="container">
+    <div class="my-3">
+        <h2>Login</h2>
+    </div>
+
+    <form method="post" asp-controller="Account" asp-action="Login">
+
+        <div class="col-md-4 mb-3 form-floating">
+            <input asp-for="UserID" class="form-control"
+                   placeholder="userid" />
+            <label asp-for="UserID">User ID</label>
+        </div>
+
+        <div class="col-md-4 mb-3 form-floating">
+            <input asp-for="Password" class="form-control"
+                   placeholder="password" />
+            <label asp-for="Password">Password</label>
+        </div>
+
+        <div class="mb-3 text-danger">
+            @ViewData["Message"]
+        </div>
+
+        <div class="col-auto mb-3">
+            <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+    </form>
+</div>
