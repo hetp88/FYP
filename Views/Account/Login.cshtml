@@ -1,30 +1,71 @@
-﻿@model UserLogin
+﻿<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
 
-<div class="container">
-    <div class="my-3">
-        <h2>Login</h2>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 390px;
+            height: 520px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="card left">
+            <div class="card-header">
+                <img src="\Images\Logo.png" style="width: 225.5px; height: 62px;">
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3 offset-md-4">
+                        <h4>Welcome!</h4>
+                    </div>
+                    <div class="col-md-4 mb-3 offset-md-4">
+                        <input type="text" class="form-control" id="userid" placeholder="User ID">
+                    </div>
+                    <div class="col-md-4 mb-3 offset-md-4">
+                        <input type="password" class="form-control" id="password" placeholder="Password">
+                    </div>
+                    <div class="col-md-4 mb-3 offset-md-4">
+                        <div class="form-control" style="background-color: transparent; border: none;">
+                            <input type="checkbox" class="form-check-input" id="RememberMe" name="Remember Me" value="Remember Me" style="margin-right: 5px;" />
+                            <label class="form-check-label" for="RememberMe" style="color: white;">Remember Me</label>
+                        </div>
+                    </div>
+                    <div class="offset-md-4">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="/Account/ForgetPassword">Forgot Password?</a>
+                    <a href="/Account/UserRegister">Register</a>
+                    <a href="/Account/Policy">Privacy Policy</a>
+                    <a href="/Account/Policy">Terms & Conditions</a>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <form method="post" asp-controller="Account" asp-action="Login">
-
-        <div class="col-md-4 mb-3 form-floating">
-            <input asp-for="UserID" class="form-control"
-                   placeholder="userid" />
-            <label asp-for="UserID">User ID</label>
-        </div>
-
-        <div class="col-md-4 mb-3 form-floating">
-            <input asp-for="Password" class="form-control"
-                   placeholder="password" />
-            <label asp-for="Password">Password</label>
-        </div>
-
-        <div class="mb-3 text-danger">
-            @ViewData["Message"]
-        </div>
-
-        <div class="col-auto mb-3">
-            <button class="btn btn-primary" type="submit">Login</button>
-        </div>
-    </form>
-</div>
+</body>
+</html>
