@@ -10,6 +10,8 @@ namespace FYP.Models
         [Required(ErrorMessage = "Please enter Password")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
+
+        public bool RememberMe { get; set; }
     }
 
 }
