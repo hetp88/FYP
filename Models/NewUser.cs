@@ -25,7 +25,7 @@ namespace FYP.Models
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter Fitness Score")]
-        [RegularExpression("\\d[8]", ErrorMessage = "8 numbers only")]
+        [RegularExpression("\\d{8}", ErrorMessage = "8 numbers only")]
         public int PhoneNo { get; set; }
     }
 }
