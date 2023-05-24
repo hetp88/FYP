@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "destination": "wwwroot/lib/bootstrap/",
+      "library": "popper.js@2.11.6",
+      "files": [ "umd/popper.js" ]
+    },
+    {
+      "destination": "wwwroot/lib/bootstrap/",
+      "files": [
+        "css/bootstrap.min.css",
+        "js/bootstrap.min.js"
+      ],
+      "library": "bootstrap@5.2.3"
+    },
+    {
+      "destination": "wwwroot/lib/bootstrap/",
+      "files": [
+        "bootstrap-icons.svg",
+        "font/bootstrap-icons.css",
+        "font/bootstrap-icons.min.css",
+        "font/fonts/bootstrap-icons.woff"
+      ],
+      "library": "bootstrap-icons@1.10.3"
+    },
+    {
+      "destination": "wwwroot/lib/jquery",
+      "files": [
+        "jquery.min.js"
+      ],
+      "library": "jquery@3.6.3"
+    },
+    {
+      "destination": "wwwroot/lib/datatables/",
+      "files": [
+        "css/jquery.dataTables.min.css",
+        "js/jquery.dataTables.min.js",
+        "js/dataTables.bootstrap.min.js"
+      ],
+      "library": "datatables@1.10.21"
+    },
+    {
+      "destination": "wwwroot/lib/jquery/",
+      "library": "jquery-validate@1.19.5",
+      "files": [
+        "jquery.validate.min.js"
+      ]
+    },
+    {
+      "destination": "wwwroot/lib/jquery/",
+      "library": "jquery-validation-unobtrusive@4.0.0",
+      "files": [
+        "jquery.validate.unobtrusive.min.js"
+      ]
+    },
+    {
+      "library": "Chart.js@2.9.3",
+      "destination": "wwwroot/lib/chartjs/",
+      "files": [
+        "Chart.min.js"
+      ]
+    }
+  ]
+}
+
+// Updated 28 Jan 2023
