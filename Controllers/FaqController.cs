@@ -4,9 +4,17 @@ namespace FYP.Controllers
 {
     public class FaqController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Details()
         {
             return View();
+        }
+        public IActionResult CreateFAQ()
+        {
+            return View();
+        }
+        public IActionResult DeleteFAQ()
+        {
+           return View();
         }
     }
 }

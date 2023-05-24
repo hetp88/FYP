@@ -25,6 +25,10 @@ public class AccountController : Controller
     {
         return View();
     }
+    public IActionResult Forbidden()
+    {
+        return View();
+    }
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
