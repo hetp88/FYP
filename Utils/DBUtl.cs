@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Reflection;
 
-namespace FYP.Utils;
 
 public static class DBUtl
 {
@@ -123,11 +123,6 @@ public static class DBUtl
 
         // Following restriction removed for Lesson 12 to enable QR code generation 2023 PK
         /* Prohibit modification non-development databases 2022 PK*/
-        //if (env is not null && env.ToUpper() != "DEVELOPMENT")
-        //{
-        //    DB_Message = "C236: Data modification only permitted in development database";
-        //    return 0;
-        //}
 
         int rowsAffected = 0;
         using (SqlConnection dbConn = new(DB_CONNECTION))
