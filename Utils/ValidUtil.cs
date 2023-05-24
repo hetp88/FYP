@@ -34,4 +34,3 @@ public class DateGreaterThan : ValidationAttribute
             return new ValidationResult(ErrorMessage);
     }
 }
-}
