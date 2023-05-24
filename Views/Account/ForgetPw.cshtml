@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #2A2A43;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1f2a4e;
+            border-radius: 5px;
+            margin-top: 100px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .form-group input[type="email"],
+            .form-group button {
+                width: 100%;
+                padding: 8px;
+                font-size: 16px;
+                border-radius: 5px;
+                border: none;
+            }
+
+            .form-group button {
+                background-color: #4285f4;
+                color: #fff;
+            }
+
+                .form-group button:hover {
+                    background-color: #3367d6;
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mb-3">
+            <h2 align="left">Forget Password</h2>
+        </div>
+        <form>
+            <div class="col-md-8 mb-3 offset-md-2">
+                <input type="text" class="form-control" id="userid" placeholder="User ID">
+            </div>
+
+            <div class="offset-md-3">
+                <button type="submit" class="btn btn-primary">Reset Password</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
