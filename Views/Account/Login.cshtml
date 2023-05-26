@@ -1,7 +1,4 @@
-﻿@model FYP.Models.UserLogin
-
-<!DOCTYPE html>
-<html>
+﻿<html>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
@@ -39,54 +36,41 @@
             </div>
 
             <div class="card-body">
-                @using (Html.BeginForm("Login", "Account", FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
-
+                <form>
                     <div class="mb-3 offset-md-4">
                         <h4>Welcome!</h4>
                     </div>
                     <div class="col-md-4 mb-3 offset-md-4">
-                        @Html.TextBoxFor(m => m.UserID, new { @class = "form-control", placeholder = "User ID" })
-                        @Html.ValidationMessageFor(m => m.UserID, "", new { @class = "text-danger" })
+                        <input type="text" class="form-control" id="userid" placeholder="User ID">
                     </div>
                     <div class="col-md-4 mb-3 offset-md-4">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        <input type="password" class="form-control" id="password" placeholder="Password">
                     </div>
                     <div class="col-md-4 mb-3 offset-md-4">
                         <div class="form-control" style="background-color: transparent; border: none;">
-                            @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input", id = "RememberMe" })
+                            <input type="checkbox" class="form-check-input" id="RememberMe" name="Remember Me" value="Remember Me" style="margin-right: 5px;" />
                             <label class="form-check-label" for="RememberMe" style="color: white;">Remember Me</label>
                         </div>
                     </div>
                     <div class="offset-md-4">
                         <button type="submit" class="btn btn-primary">Login</button>
                     </div>
-                }
+                </form>
                 <div class="offset-md-4">
-                    <a href="/Account/ForgetPw">Forgot Password?</a>
-                    <a href="/Account/Register" style="margin-left: 205px">Register</a>
+                    <div class="offset-md-4">
+                        <a href="/Account/ForgetPassword" style="margin-left: 30px;">Forgot Password?</a>
+                        <a href="/Account/UserRegister" style="margin-left: 30px">Register</a>
+                    </div>
                 </div>
             </div>
 
             <div class="card-footer">
-                <div>
+                <div class="d-flex justify-content-between">
                     <a href="/Account/Policy">Privacy Policy</a>
-                    <a href="/Account/TermsConditions" style="margin-left: 40px">Terms & Conditions</a>
+                    <a href="/Account/Policy">Terms & Conditions</a>
                 </div>
             </div>
         </div>
     </div>
-
-    @if (Model != null && Model.RedirectToUsers)
-    {
-        <script>
-            window.onload = function () {
-                // Redirect to the Users page
-                window.location.href = "/Account/Users";
-            };
-        </script>
-    }
 </body>
 </html>

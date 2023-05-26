@@ -12,6 +12,8 @@ public class AccountController : Controller
 {
     private const string LOGIN_SQ =
         @"SELECT * FROM users WHERE userid = '{0}' AND user_pw = HASHBYTES('SHA1', '{1}')";
+    private const string LOGIN_SQ2 =
+        @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
         @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = @UserID";
@@ -54,17 +56,15 @@ public class AccountController : Controller
 
                 userLogin.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-                return RedirectToAction(REVW, RECN); // Redirect to the users to home
+                return RedirectToAction(REVW, RECN); // Redirect to the users to Ticket home
             }
             else
             {
-                
                 ViewData["Message"] = "Incorrect User ID or Password";
                 ViewData["MsgType"] = "warning";
                 return View(LV);
             }
         }
-
         return View(userLogin);
     }
 
@@ -109,7 +109,6 @@ public class AccountController : Controller
         }
         return false;
 
-        
     }
 }
     
