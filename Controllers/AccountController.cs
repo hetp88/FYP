@@ -6,6 +6,7 @@ using Dapper;
 using FYP.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using System.Text;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -79,12 +80,65 @@ public class AccountController : Controller
 
     public IActionResult Register()
     {
-        return View("Register");
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Users");
+        }
+        else
+        {
+            return View();
+        }
     }
-    public IActionResult Register(NewUser usr)
+
+    [HttpPost]
+    public IActionResult Register(NewUser newUser)
     {
-        return View();
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    connection.Open();
+
+                    // Check if the user ID already exists in the database
+                    SqlCommand checkUserIdCmd = new SqlCommand("SELECT COUNT(*) FROM users WHERE userid = @userid", connection);
+                    checkUserIdCmd.Parameters.AddWithValue("@userid", newUser.UserId);
+                    int existingUserCount = (int)checkUserIdCmd.ExecuteScalar();
+
+                    if (existingUserCount > 0)
+                    {
+                        ModelState.AddModelError("UserID", "User ID already exists. Please choose a different User ID.");
+                        return View(newUser);
+                    }
+
+                    // Insert the new user into the database
+                    SqlCommand insertUserCmd = new SqlCommand(
+                        "INSERT INTO users (userid, user_pw, username, roles_id, school, email, phone_no) " +
+                        "VALUES (@userid, HASHBYTES('SHA1', @userPw), @username, 1, @school, @email, @phoneNo)",
+                        connection);
+                    insertUserCmd.Parameters.AddWithValue("@userid", newUser.UserId);
+                    insertUserCmd.Parameters.AddWithValue("@username", newUser.FullName);
+                    insertUserCmd.Parameters.AddWithValue("@school", newUser.School);
+                    insertUserCmd.Parameters.AddWithValue("@email", newUser.Email);
+                    insertUserCmd.Parameters.AddWithValue("@phoneNo", newUser.PhoneNo);
+                    insertUserCmd.ExecuteNonQuery();
+
+                    connection.Close();
+                }
+
+                return RedirectToAction("Login"); // Redirect to the login page after successful registration
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while registering the user.");
+                // Log the exception or handle it appropriately
+            }
+        }
+
+        return View(newUser); // Return the view with model errors if registration fails
     }
+    
     public IActionResult Forbidden()
     {
         return View();
