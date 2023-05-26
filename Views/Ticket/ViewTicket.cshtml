@@ -1,30 +1,102 @@
-﻿
-
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <title>Ticket Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: lightblue;
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
         }
 
-        h1 {
-            color: white;
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 5px;
+            flex: 1;
+            width: 800px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+            .table th {
+                background-color: #34345E;
+                color: #FFFFFF;
+                font-weight: bold;
+            }
+
+            .table td {
+                background-color: #3A3A63;
+                color: #FFFFFF;
+                padding: 10px;
+                text-align: center;
+            }
+
+        .no-tickets-message {
             text-align: center;
-        }
-
-        p {
-            font-family: verdana;
-            font-size: 20px;
+            margin-top: 20px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <h1 class="text-center">Ticket Details</h1>
 
-    <h1>My First CSS Example</h1>
-    <p>This is a paragraph.</p>
-
+            @if (Model == null || !Model.Any())
+            {
+                <p class="no-tickets-message">No tickets found.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Description</th>
+                        <th>Category ID</th>
+                        <th>Status ID</th>
+                        <th>Date and Time</th>
+                        <th>Priority ID</th>
+                        <th>Employee ID</th>
+                        <th>Devices Involved</th>
+                        <th>Additional Details</th>
+                        <th>Resolution</th>
+                    </tr>
+                    @foreach (var ticket in Model)
+                    {
+                        <tr>
+                            <td>@ticket.UserId</td>
+                            <td>@ticket.Description</td>
+                            <td>@ticket.CategoryId</td>
+                            <td>@ticket.StatusId</td>
+                            <td>@ticket.DateTime</td>
+                            <td>@ticket.PriorityId</td>
+                            <td>@ticket.EmployeeId</td>
+                            <td>@ticket.DevicesInvolved</td>
+                            <td>@ticket.Additional_Details</td>
+                            <td>@ticket.Resolution</td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
 </body>
 </html>
-
-
