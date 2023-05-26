@@ -7,6 +7,8 @@ using FYP.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -78,6 +80,7 @@ public class AccountController : Controller
         DataTable usersData = DBUtl.GetTable(""); // Query to retrieve user data
         return View(usersData);
     }
+    [HttpGet]
     public IActionResult Register()
     {
         if (User.Identity.IsAuthenticated)
@@ -95,50 +98,26 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            try
+            // Save the user registration data to the database
+            using (var connection = new SqlConnection(GetConnectionString()))
             {
-                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-                {
-                    connection.Open();
+                connection.Open();
 
-                    // Check if the user ID already exists in the database
-                    SqlCommand checkUserIdCmd = new SqlCommand("SELECT COUNT(*) FROM users WHERE userid = @userid", connection);
-                    checkUserIdCmd.Parameters.AddWithValue("@userid", newUser.UserId);
-                    int existingUserCount = (int)checkUserIdCmd.ExecuteScalar();
+                string insertQuery = "INSERT INTO Users (UserID, UserPw, FullName, School, Email, PhoneNo) " +
+                                     "VALUES (@UserId, HASHBYTES('SHA1', @UserPw), @FullName, @School, @Email, @PhoneNo)";
 
-                    if (existingUserCount > 0)
-                    {
-                        ModelState.AddModelError("UserID", "User ID already exists. Please choose a different User ID.");
-                        return View(newUser);
-                    }
-
-                    // Insert the new user into the database
-                    SqlCommand insertUserCmd = new SqlCommand(
-                        "INSERT INTO users (userid, user_pw, username, roles_id, school, email, phone_no) " +
-                        "VALUES (@userid, HASHBYTES('SHA1', @userPw), @username, 1, @school, @email, @phoneNo)",
-                        connection);
-                    insertUserCmd.Parameters.AddWithValue("@userid", newUser.UserId);
-                    insertUserCmd.Parameters.AddWithValue("@username", newUser.FullName);
-                    insertUserCmd.Parameters.AddWithValue("@school", newUser.School);
-                    insertUserCmd.Parameters.AddWithValue("@email", newUser.Email);
-                    insertUserCmd.Parameters.AddWithValue("@phoneNo", newUser.PhoneNo);
-                    insertUserCmd.ExecuteNonQuery();
-
-                    connection.Close();
-                }
-
-                return RedirectToAction("Login"); // Redirect to the login page after successful registration
+                connection.Execute(insertQuery, newUser);
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "An error occurred while registering the user.");
-                // Log the exception or handle it appropriately
-            }
+
+            // Redirect the user to the login page after successful registration
+            return RedirectToAction("Login");
         }
 
-        return View(newUser); // Return the view with model errors if registration fails
+        // If there are validation errors, return the registration view with the model
+        return View(newUser);
     }
-    
+
+
     public IActionResult Forbidden()
     {
         return View();
