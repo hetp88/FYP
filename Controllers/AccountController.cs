@@ -90,9 +90,7 @@ public class AccountController : Controller
     }
 
 
-
-
-        [Authorize]
+    [Authorize]
     public IActionResult Users()
     {
         // Retrieve user data and pass it to the view
