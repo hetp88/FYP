@@ -6,6 +6,7 @@ using Dapper;
 using FYP.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -16,7 +17,7 @@ public class AccountController : Controller
         @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
-        @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = @UserID";
+        @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = '{0}'";
 
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = @UserID AND Email = @Email";
@@ -32,7 +33,10 @@ public class AccountController : Controller
         _configuration = configuration;
     }
 
-   
+    public IActionResult Forbidden()
+    {
+        return View();
+    }
 
     public IActionResult Login()
     {
@@ -40,37 +44,43 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(UserLogin userLogin)
+    public IActionResult Login(UserLogin user)
     {
-        if (ModelState.IsValid)
+        if (!AuthenticateUser(user.UserID, user.Password, out ClaimsPrincipal principal))
         {
-            string uid = userLogin.UserID;
-            string pw = userLogin.Password;
-
-            if (AuthenticateUser(uid, pw, out ClaimsPrincipal principal))
-            {
-                HttpContext.SignInAsync(principal); // Sign in the user
-
-                userLogin.RedirectToUsers = true; // Set the RedirectToUsers property to true
-
-                return RedirectToAction(REVW, RECN); // Redirect to the users to home
-            }
-            else
-            {
-
-                ViewData["Message"] = "Incorrect User ID or Password";
-                ViewData["MsgType"] = "warning";
-                return View(LV);
-            }
+            ViewData["Message"] = "Incorrect User ID or Password";
+            ViewData["MsgType"] = "warning";
+            return View(LV);
         }
+        else
+        {
+            // Sign in the user
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
+                principal,
+                new AuthenticationProperties 
+                {
+                    IsPersistent = user.RememberMe
+                }); 
 
-        return View(userLogin);
+            DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID); //update the last login timestamp of the user
+
+            user.RedirectToUsers = true; // Set the RedirectToUsers property to true
+
+            return RedirectToAction(REVW, RECN); // Redirect to the users to home
+        }
     }
-    
+
+    [Authorize]
+    public IActionResult Logout(string returnUrl = null!)
+    {
+        HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        if (Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+        return RedirectToAction("Login");
+    }
 
 
-
-        [Authorize]
+    [Authorize]
     public IActionResult Users()
     {
         // Retrieve user data and pass it to the view
@@ -85,10 +95,7 @@ public class AccountController : Controller
     {
         return View();
     }
-    public IActionResult Forbidden()
-    {
-        return View();
-    }
+   
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
