@@ -1,3 +1,5 @@
+@model List<FYP.Models.Ticket>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,7 +62,7 @@
         <div class="card">
             <h1 class="text-center">Ticket Details</h1>
 
-            @if (Model == null || !Model.Any())
+            @if (Model == null || Model.Count == 0)
             {
                 <p class="no-tickets-message">No tickets found.</p>
             }
