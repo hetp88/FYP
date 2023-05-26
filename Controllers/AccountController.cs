@@ -35,7 +35,10 @@ public class AccountController : Controller
         _configuration = configuration;
     }
 
-   
+    private string GetConnectionString()
+    {
+        return _configuration.GetConnectionString("DefaultConnection");
+    }
 
     public IActionResult Login()
     {
