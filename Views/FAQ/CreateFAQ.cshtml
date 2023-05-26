@@ -42,6 +42,16 @@
                     <label for="answer" class="form-label">Answer:</label>
                     <textarea id="answer" name="answer" class="form-control" required></textarea>
                 </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category:</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">Select a category</option>
+                        <option value="General">General</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Billing">Billing</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
