@@ -69,32 +69,7 @@ public class AccountController : Controller
 
         return View(userLogin);
     }
-    [HttpPost]
-    public IActionResult Login(EmployeeLogin employeeLogin)
-    {
-        if (ModelState.IsValid)
-        {
-            string eid = employeeLogin.UserID;
-            string paw = employeeLogin.Password;
-
-            if (AuthenticateUser(eid, paw, out ClaimsPrincipal principal))
-            {
-                HttpContext.SignInAsync(principal); // Sign in the user
-
-                employeeLogin.RedirectToUsers = true; // Set the RedirectToUsers property to true
-
-                return RedirectToAction(REVW, RECN); // Redirect to the users to home
-            }
-            else
-            {
-
-                ViewData["Message"] = "Incorrect User ID or Password";
-                ViewData["MsgType"] = "warning";
-                return View(LV);
-            }
-        }
-        return View(employeeLogin);
-    }
+    
 
 
 
