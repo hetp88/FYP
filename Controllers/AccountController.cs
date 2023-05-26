@@ -44,6 +44,14 @@ public class AccountController : Controller
     {
         return View();
     }
+    public IActionResult Policy()
+    {
+        return View();
+    }
+    public IActionResult TermsConditions()
+    {
+        return View();
+    }
 
     [HttpPost]
     public IActionResult Login(UserLogin user)
