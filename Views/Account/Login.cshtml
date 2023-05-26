@@ -23,7 +23,7 @@ body {
     margin: 5px;
     flex: 1;
     width: 1200px;
-    height: 530px;
+    height: 550px;
 }
 
 .form-group {
@@ -77,11 +77,11 @@ border-color: #1E73C0;
 
                 <div class="card-body">
                     <form>
-                        <div class="mb-2 offset-md-4">
+                        <div class="mb-3 offset-md-4">
                             <h4>Welcome!</h4>
                         </div>
 
-                        <div class="form-group col-md-4 mb-2 offset-md-4">
+                        <div class="form-group col-md-4 mb-3 offset-md-4">
                             <input asp-for="UserID" class="form-control" placeholder="UserID" />
                             <span asp-validation-for="UserID" class="text-danger"></span>
                         </div>
@@ -102,9 +102,9 @@ border-color: #1E73C0;
                             <button type="submit" class="btn btn-primary">Login</button>
                         </div>
                     </form>
-                    <div class="offset-md-4">
+                    <div class="mb-2 offset-md-4">
                         <a href="/Account/ForgetPassword">Forgot Password?</a>
-                        <a href="/Account/UserRegister" style="margin-left: 130px">Register</a>
+                        <a href="/Account/UserRegister" style="margin-left: 175px">Register</a>
                     </div>
                 </div>
 
@@ -118,9 +118,9 @@ border-color: #1E73C0;
                 }
 
                 <div class="card-footer">
-                    <div class="d-flex justify-content-between">
-                        <a href="/Account/Policy">Privacy Policy</a>
-                        <a href="/Account/Policy">Terms & Conditions</a>
+                    <div class="offset-md-4">
+                        <a href="/Account/Policy" style="margin-left: 40px">Privacy Policy</a>
+                        <a href="/Account/Policy" style="margin-left: 35px">Terms & Conditions</a>
                     </div>
                 </div>
             </div>
