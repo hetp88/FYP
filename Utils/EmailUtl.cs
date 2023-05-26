@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 
-namespace RP.SOI.DotNet.Utils
+namespace FYP
 {
 
 public static class EmailUtl

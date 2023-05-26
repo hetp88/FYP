@@ -1,74 +1,51 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <title>FAQ Page</title>
+    <style>
+        /* CSS for FAQ section */
+        .faq-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .faq-question {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .faq-answer {
+            display: none;
+            margin-top: 10px;
+        }
+
+            .faq-answer.show {
+                display: block;
+            }
+    </style>
 </head>
 <body>
+    <div class="faq-container">
+        <?php
+        // Assuming you have fetched the FAQ data from the database and stored it in an array called $faqs
+        foreach ($faqs as $faq) {
+        echo '<div class="faq-item">
+            ';
+            echo '<div class="faq-question">' . $faq['question'] . '</div>';
+            echo '<div class="faq-answer">' . $faq['answer'] . '</div>';
+            echo '
+        </div>';
+        }
+        ?>
+    </div>
 
-    <div class="container">
-        <h1 class="mt-4 mb-4">Frequently Asked Questions</h1>
-
-        <div id="accordion">
-
-            <!-- Question 1 -->
-            <div class="card">
-                <div class="card-header" id="headingOne">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Question 1: What is Lorem Ipsum?
-                        </button>
-                    </h5>
-                </div>
-
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Question 2 -->
-            <div class="card">
-                <div class="card-header" id="headingTwo">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Question 2: What are the benefits of using Bootstrap?
-                        </button>
-                    </h5>
-                </div>
-
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                    <div class="card-body">
-                        Bootstrap provides a wide range of pre-built CSS and JavaScript components that help in creating responsive and visually appealing web pages.
-                    </div>
-                </div>
-            </div>
-
-            <!-- Question 3 -->
-            <div class="card">
-                <div class="card-header" id="headingThree">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Question 3: How can I get started with Bootstrap?
-                        </button>
-                    </h5>
-                </div>
-
-                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                    <div class="card-body">
-                        You can get started with Bootstrap by including the Bootstrap CSS and JavaScript files in your HTML page and using the provided classes and components to build your layout.
-                    </div>
-                </div>
-            </div>
-
-        </div> <!-- end of accordion -->
-    </div> <!-- end of container -->
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        // JavaScript to toggle FAQ answer visibility
+        var faqQuestions = document.getElementsByClassName('faq-question');
+        Array.from(faqQuestions).forEach(function (question) {
+            question.addEventListener('click', function () {
+                this.nextElementSibling.classList.toggle('show');
+            });
+        });
+    </script>
 </body>
 </html>
