@@ -13,6 +13,8 @@ public class AccountController : Controller
 {
     private const string LOGIN_SQ =
         @"SELECT * FROM users WHERE userid = '{0}' AND user_pw = HASHBYTES('SHA1', '{1}')";
+    private const string LOGIN_EMP =
+        @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
         @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = @UserID";
@@ -68,16 +70,17 @@ public class AccountController : Controller
 
         return View(userLogin);
     }
+    
 
-    [Authorize]
+
+
+        [Authorize]
     public IActionResult Users()
     {
         // Retrieve user data and pass it to the view
         DataTable usersData = DBUtl.GetTable(""); // Query to retrieve user data
         return View(usersData);
     }
-
-
     public IActionResult Register()
     {
         if (User.Identity.IsAuthenticated)
@@ -143,7 +146,6 @@ public class AccountController : Controller
     {
         return View();
     }
-
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
@@ -162,9 +164,8 @@ public class AccountController : Controller
             return true;
         }
         return false;
-
-        
     }
+    
 }
     
 
