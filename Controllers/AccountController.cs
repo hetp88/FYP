@@ -40,11 +40,6 @@ public class AccountController : Controller
         return _configuration.GetConnectionString("DefaultConnection");
     }
 
-    public IActionResult Forbidden()
-    {
-        return View();
-    }
-
     public IActionResult Login()
     {
         return View();
@@ -87,7 +82,9 @@ public class AccountController : Controller
     }
 
 
-    [Authorize]
+
+
+        [Authorize]
     public IActionResult Users()
     {
         // Retrieve user data and pass it to the view
