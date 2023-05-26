@@ -110,6 +110,7 @@ border-color: #1E73C0;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <div>
                         <div>
                             <a href="/Account/ForgetPassword">Forgot Password?</a>
@@ -127,6 +128,16 @@ border-color: #1E73C0;
                     }
 
                 </div>
+=======
+                @if (!string.IsNullOrEmpty(ViewData["Message"] as string))
+                {
+                    <div class="form-group ">
+                        <div class="alert alert-warning" role="alert">
+                            @ViewData["Message"]
+                        </div>
+                    </div>
+                }
+>>>>>>> 925a0828b989cb14a6ee17387357e2d7073cdd59
 =======
                 @if (!string.IsNullOrEmpty(ViewData["Message"] as string))
                 {
