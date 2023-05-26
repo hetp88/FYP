@@ -6,7 +6,9 @@ using Dapper;
 using FYP.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -33,9 +35,9 @@ public class AccountController : Controller
         _configuration = configuration;
     }
 
-    public IActionResult Forbidden()
+    private string GetConnectionString()
     {
-        return View();
+        return _configuration.GetConnectionString("DefaultConnection");
     }
 
     public IActionResult Login()
@@ -87,15 +89,48 @@ public class AccountController : Controller
         DataTable usersData = DBUtl.GetTable(""); // Query to retrieve user data
         return View(usersData);
     }
+    [HttpGet]
     public IActionResult Register()
     {
-        return View("Register");
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Users");
+        }
+        else
+        {
+            return View();
+        }
     }
-    public IActionResult Register(NewUser usr)
+
+    [HttpPost]
+    public IActionResult Register(NewUser newUser)
+    {
+        if (ModelState.IsValid)
+        {
+            // Save the user registration data to the database
+            using (var connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string insertQuery = "INSERT INTO Users (UserID, UserPw, FullName, School, Email, PhoneNo) " +
+                                     "VALUES (@UserId, HASHBYTES('SHA1', @UserPw), @FullName, @School, @Email, @PhoneNo)";
+
+                connection.Execute(insertQuery, newUser);
+            }
+
+            // Redirect the user to the login page after successful registration
+            return RedirectToAction("Login");
+        }
+
+        // If there are validation errors, return the registration view with the model
+        return View(newUser);
+    }
+
+
+    public IActionResult Forbidden()
     {
         return View();
     }
-   
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;

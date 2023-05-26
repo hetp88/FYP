@@ -1,21 +1,32 @@
-﻿@model UserLogin; 
+﻿@model UserLogin;
 
 <head>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-<style>
-body {
-    background-color: #000000;
-    color: #FFFFFF;
-}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-.card {
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 530px;
+        }
+
+      .card {
     background-color: #2A2A43;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -26,46 +37,47 @@ body {
     height: 550px;
 }
 
-.form-group {
-    margin-bottom: 0.5rem;
-}
 
-.form-label {
-    color: #FFFFFF;
-}
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
 
-.form-control {
-    background-color: #33335F;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    height: 38px;
-}
+        .form-label {
+            color: #FFFFFF;
+        }
 
-.checkbox-label {
-    color: #FFFFFF;
-    margin-left: 5px;
-}
+        .form-control {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
 
-.btn-primary {
-    background-color: #3C91E6;
-    border-color: #3C91E6;
-}
+        .checkbox-label {
+            color: #FFFFFF;
+            margin-left: 5px;
+        }
 
-.btn-primary:hover {
-background-color: #1E73C0;
-border-color: #1E73C0;
-}
+        .btn-primary {
+            background-color: #3C91E6;
+            border-color: #3C91E6;
+        }
 
-.card-footer a {
-    color: #FFFFFF;
-}
+            .btn-primary:hover {
+                background-color: #1E73C0;
+                border-color: #1E73C0;
+            }
 
-    .card-footer a:hover {
-        color: #9BB1DA;
-    }
-</style>
+        .card-footer a {
+            color: #FFFFFF;
+        }
+
+            .card-footer a:hover {
+                color: #9BB1DA;
+            }
+    </style>
 </head>
 <body>
     <div class="container">
