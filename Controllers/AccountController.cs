@@ -39,7 +39,14 @@ public class AccountController : Controller
     {
         return _configuration.GetConnectionString("DefaultConnection");
     }
-
+    public IActionResult Policy()
+    {
+        return View();
+    }
+    public IActionResult TermsConditions()
+    {
+        return View();
+    }
     public IActionResult Login()
     {
         return View();
@@ -76,7 +83,7 @@ public class AccountController : Controller
 
 
 
-        [Authorize]
+    [Authorize]
     public IActionResult Users()
     {
         // Retrieve user data and pass it to the view
