@@ -68,6 +68,14 @@
                     <a href="/Account/ForgetPw">Forgot Password?</a>
                     <a href="/Account/Register" style="margin-left: 205px">Register</a>
                 </div>
+                @if (!string.IsNullOrEmpty(ViewData["Message"] as string))
+                {
+                    <div class="col-md-4 mb-3 offset-md-4">
+                        <div class="alert alert-warning" role="alert">
+                            @ViewData["Message"]
+                        </div>
+                    </div>
+                }
             </div>
 
             <div class="card-footer">
