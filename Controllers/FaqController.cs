@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FYP.Controllers
 {
@@ -8,6 +9,7 @@ namespace FYP.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "admin, employee")]
         public IActionResult CreateFAQ()
         {
             return View();
