@@ -6,6 +6,9 @@ namespace FYP.Controllers
 {
     public class HomeController : Controller
     {
-        public String Index() => "HomePage";
+        public IActionResult Index()
+        {
+            return View();
+        }
     }
 }
