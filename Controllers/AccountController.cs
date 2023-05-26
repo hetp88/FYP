@@ -11,7 +11,7 @@ namespace FYP.Controllers;
 public class AccountController : Controller
 {
     private const string LOGIN_SQ =
-        @"SELECT * FROM users WHERE UserID = @userid AND Password = @user_pw";
+        @"SELECT * FROM users WHERE userid = '{0}' AND user_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
         @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = @UserID";
@@ -19,10 +19,9 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = @UserID AND Email = @Email";
 
+    private const string RECN = "Ticket";
+    private const string REVW = "ViewTicket";
     private const string LV = "Login";
-    private const string RE_CN = "";
-    private const string RE_Index = "";
-
 
     private readonly IConfiguration _configuration;
 
@@ -41,7 +40,6 @@ public class AccountController : Controller
         return View();
     }
 
-    [AllowAnonymous]
     [HttpPost]
     public IActionResult Login(UserLogin userLogin)
     {
@@ -50,19 +48,20 @@ public class AccountController : Controller
             string uid = userLogin.UserID;
             string pw = userLogin.Password;
 
-            if (!AuthenticateUser(uid, pw, out ClaimsPrincipal principal))
-            {
-                ViewData["Message"] = "Incorrect User ID or Password";
-                ViewData["MsgType"] = "warning";
-                return View(LV);
-            }
-            else
+            if (AuthenticateUser(uid, pw, out ClaimsPrincipal principal))
             {
                 HttpContext.SignInAsync(principal); // Sign in the user
 
                 userLogin.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-                return RedirectToAction(RE_Index, RE_CN); // Redirect to the users to hommepage
+                return RedirectToAction(REVW, RECN); // Redirect to the users to home
+            }
+            else
+            {
+                
+                ViewData["Message"] = "Incorrect User ID or Password";
+                ViewData["MsgType"] = "warning";
+                return View(LV);
             }
         }
 

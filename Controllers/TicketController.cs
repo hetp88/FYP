@@ -4,7 +4,7 @@ namespace FYP.Controllers
 {
     public class TicketController : Controller
     {
-        public IActionResult Index()
+        public IActionResult ViewTicket()
         {
             return View();
         }
