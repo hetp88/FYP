@@ -29,6 +29,7 @@ public class AccountController : Controller
     {
         return View();
     }
+
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;

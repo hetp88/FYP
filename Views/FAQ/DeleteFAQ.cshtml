@@ -1,10 +1,47 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <meta charset="utf-8">
+    <title>Delete FAQ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 390px;
+            height: 520px;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <h1>Delete FAQ</h1>
+            <form method="post" action="/FAQ/Delete">
+                <div class="mb-3">
+                    <label for="faqId" class="form-label">FAQ ID:</label>
+                    <input type="text" id="faqId" name="faqId" class="form-control" required>
+                </div>
 
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
