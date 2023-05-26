@@ -19,6 +19,9 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = @UserID AND Email = @Email";
 
+    private const string LV = "Login";
+    private const string RE_CN = "";
+    private const string RE_Index = "";
 
 
     private readonly IConfiguration _configuration;
@@ -38,6 +41,7 @@ public class AccountController : Controller
         return View();
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult Login(UserLogin userLogin)
     {
@@ -46,17 +50,19 @@ public class AccountController : Controller
             string uid = userLogin.UserID;
             string pw = userLogin.Password;
 
-            if (AuthenticateUser(uid, pw, out ClaimsPrincipal principal))
+            if (!AuthenticateUser(uid, pw, out ClaimsPrincipal principal))
+            {
+                ViewData["Message"] = "Incorrect User ID or Password";
+                ViewData["MsgType"] = "warning";
+                return View(LV);
+            }
+            else
             {
                 HttpContext.SignInAsync(principal); // Sign in the user
 
                 userLogin.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-                return RedirectToAction("/Account/Users"); // Redirect to the "Users" action in the "Account" controller
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Invalid credentials");
+                return RedirectToAction(RE_Index, RE_CN); // Redirect to the users to hommepage
             }
         }
 
