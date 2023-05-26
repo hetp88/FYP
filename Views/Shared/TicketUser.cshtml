@@ -1,78 +1,49 @@
-﻿<!DOCTYPE html>
-<html>
+﻿
 <head>
     <title>Vertical Navbar</title>
     <style>
         body {
-            padding-top: 60px; /* Adjust the top padding to match your navbar height */
+            padding-top: 60px; 
         }
-
         .navbar {
-            background-color: #000066; /* Dark blue background color */
+            background-color: #000066; 
             position: fixed;
             left: 0;
             top: 0;
             bottom: 0;
-            width: 200px; /* Adjust the width as needed */
+            width: 200px; 
             display: flex;
             flex-direction: column;
         }
-
         .navbar-brand {
             padding: 1rem;
-            color: #fff; /* White text color */
+            color: #fff; 
             text-decoration: none;
             font-weight: bold;
         }
-
         .navbar-nav {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
-
         .nav-item {
             margin-bottom: 1rem;
             position: relative;
         }
-
         .nav-link {
             display: block;
             padding: 0.5rem 1rem;
-            color: #fff; /* White text color */
+            color: #fff; 
             text-decoration: none;
         }
-
             .nav-link.active {
-                font-weight: bold; /* Bold font for active link */
+                font-weight: bold; 
             }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 100%;
-            min-width: 200px; /* Adjust the width as needed */
-            background-color: #000066; /* Dark blue background color */
-            padding: 0.5rem 0;
-        }
-
         .nav-item:hover .dropdown-menu {
             display: block;
         }
-
-        .dropdown-item {
-            padding: 0.5rem 1rem;
-            color: #fff; /* White text color */
-            text-decoration: none;
-        }
-
-            .dropdown-item:hover {
-                background-color: rgba(255, 255, 255, 0.1); /* Lighten the background color on hover */
-            }
-
         .content {
-            margin-left: 200px; /* Adjust the margin to match the navbar width */
+            margin-left: 200px;
             padding: 1rem;
         }
     </style>
@@ -83,11 +54,6 @@
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="#">FAQs</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Question 1</a></li>
-                    <li><a class="dropdown-item" href="#">Question 2</a></li>
-                    <li><a class="dropdown-item" href="#">Question 3</a></li>
-                </ul>
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="#">Your Tickets</a>
@@ -100,10 +66,5 @@
             </li>
         </ul>
     </nav>
-
-    <div class="content">
-        <!-- Your page content here -->
-    </div>
-
 </body>
-</html>
+

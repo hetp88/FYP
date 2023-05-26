@@ -1,7 +1,5 @@
-﻿@model FYP.Models.UserLogin
+﻿@model UserLogin; 
 
-<!DOCTYPE html>
-<html>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
@@ -25,76 +23,110 @@
             margin: 5px;
             flex: 1;
             width: 390px;
-            height: 520px;
+            height: 600px;
         }
 
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label {
+            color: #FFFFFF;
+        }
+
+        .form-control {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+
+        .checkbox-label {
+            color: #FFFFFF;
+            margin-left: 5px;
+        }
+
+        .btn-primary {
+            background-color: #3C91E6;
+            border-color: #3C91E6;
+        }
+
+            .btn-primary:hover {
+                background-color: #1E73C0;
+                border-color: #1E73C0;
+            }
+
+        .card-footer a {
+            color: #FFFFFF;
+        }
+
+            .card-footer a:hover {
+                color: #9BB1DA;
+            }
     </style>
 </head>
 <body>
     <div class="container">
+        <form method="post" asp-controller="Account" asp-action="Login">
+            <div class="card">
+                <div class="card-header">
+                    <img src="\Images\Logo.png" style="width: 225.5px; height: 62px;">
+                </div>
 
-        <div class="card left">
-            <div class="card-header">
-                <img src="\Images\Logo.png" style="width: 225.5px; height: 62px;">
-            </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <h4>Welcome!</h4>
+                        </div>
 
-            <div class="card-body">
-                @using (Html.BeginForm("Login", "Account", FormMethod.Post))
-                {
-                    @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label asp-for="UserID" class="form-label">User ID</label>
+                            <input asp-for="UserID" class="form-control" placeholder="UserID" />
+                        </div>
 
-                    <div class="mb-3 offset-md-4">
-                        <h4>Welcome!</h4>
-                    </div>
-                    <div class="col-md-4 mb-3 offset-md-4">
-                        @Html.TextBoxFor(m => m.UserID, new { @class = "form-control", placeholder = "User ID" })
-                        @Html.ValidationMessageFor(m => m.UserID, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="col-md-4 mb-3 offset-md-4">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="col-md-4 mb-3 offset-md-4">
-                        <div class="form-control" style="background-color: transparent; border: none;">
-                            @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input", id = "RememberMe" })
-                            <label class="form-check-label" for="RememberMe" style="color: white;">Remember Me</label>
+                        <div class="form-group">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <input asp-for="Password" class="form-control" placeholder="Password" />
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-control" style="background-color: transparent; border: none;">
+                                <input type="checkbox" class="form-check-input" id="RememberMe" name="Remember Me" value="Remember Me" />
+                                <label class="checkbox-label" for="RememberMe">Remember Me</label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+
+                    <div>
+                        <div>
+                            <a href="/Account/ForgetPassword">Forgot Password?</a>
+                            <a href="/Account/UserRegister">Register</a>
                         </div>
                     </div>
-                    <div class="offset-md-4">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </div>
-                }
-                <div class="offset-md-4">
-                    <a href="/Account/ForgetPw">Forgot Password?</a>
-                    <a href="/Account/Register" style="margin-left: 205px">Register</a>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewData["Message"] as string))
-                {
-                    <div class="col-md-4 mb-3 offset-md-4">
-                        <div class="alert alert-warning" role="alert">
-                            @ViewData["Message"]
-                        </div>
-                    </div>
-                }
-            </div>
 
-            <div class="card-footer">
-                <div>
-                    <a href="/Account/Policy">Privacy Policy</a>
-                    <a href="/Account/TermsConditions" style="margin-left: 40px">Terms & Conditions</a>
+                    @if (!string.IsNullOrEmpty(ViewData["Message"] as string))
+                    {
+                        <div class="form-group">
+                            <div class="alert alert-warning" role="alert">
+                                @ViewData["Message"]
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="/Account/Policy">Privacy Policy</a>
+                        <a href="/Account/Policy">Terms & Conditions</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-
-    @if (Model != null && Model.RedirectToUsers)
-    {
-        <script>
-            window.onload = function () {
-                // Redirect to the Users page
-                window.location.href = "/Account/Users";
-            };
-        </script>
-    }
 </body>
-</html>
