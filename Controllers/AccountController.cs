@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -22,7 +23,7 @@ public class AccountController : Controller
         @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = '{0}'";
 
     private const string ForgetPW_SQ =
-        @"SELECT Password FROM Users WHERE UserID = @UserID AND Email = @Email";
+        @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
 
     private const string RECN = "Ticket";
     private const string REVW = "ViewTicket";
@@ -34,10 +35,14 @@ public class AccountController : Controller
     {
         _configuration = configuration;
     }
-
     private string GetConnectionString()
     {
         return _configuration.GetConnectionString("DefaultConnection");
+    }
+
+    public IActionResult Forbidden()
+    {
+        return View();
     }
 
     public IActionResult Login()
@@ -57,14 +62,14 @@ public class AccountController : Controller
         else
         {
             // Sign in the user
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
-                new AuthenticationProperties 
+                new AuthenticationProperties
                 {
                     IsPersistent = user.RememberMe
-                }); 
+                });
 
-            DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID); //update the last login timestamp of the user
+            DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID, user.Password); //update the last login timestamp of the user
 
             user.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
@@ -126,11 +131,6 @@ public class AccountController : Controller
         return View(newUser);
     }
 
-
-    public IActionResult Forbidden()
-    {
-        return View();
-    }
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
