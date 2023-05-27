@@ -55,7 +55,26 @@
                 <input type="tel" class="form-control" id="phoneNo" name="PhoneNo" required>
                 <span asp-validation-for="PhoneNo" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <div>
+                <button type="submit" class="btn btn-primary">Register</button>     
+            </div>
+
+            @if (ViewData["Message"] != null)
+            {
+                <div class="form-group row">
+                    <div class="col-6">
+                        <div class="alert alert-@ViewData["MsgType"]">
+                            <b>Message: </b>@ViewData["Message"]<br />
+                            @if (!String.IsNullOrEmpty(ViewData["ExecSQL"]?.ToString()))
+                            {
+                                <b>SQL: </b>
+
+                                @ViewData["ExecSQL"]?.ToString()
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
         </form>
     </div>
 </body>

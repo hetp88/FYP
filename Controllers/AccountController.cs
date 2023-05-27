@@ -100,14 +100,8 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Register()
     {
-        if (User.Identity.IsAuthenticated)
-        {
-            return RedirectToAction("Users");
-        }
-        else
-        {
-            return View();
-        }
+        return View("Register");
+        
     }
 
     [HttpPost]
@@ -120,7 +114,7 @@ public class AccountController : Controller
             {
                 connection.Open();
 
-                string insertQuery = "INSERT INTO Users (UserID, UserPw, FullName, School, Email, PhoneNo) " +
+                string insertQuery = "INSERT INTO users(UserID, UserPw, FullName, School, Email, PhoneNo) " +
                                      "VALUES (@UserId, HASHBYTES('SHA1', @UserPw), @FullName, @School, @Email, @PhoneNo)";
 
                 connection.Execute(insertQuery, newUser);
