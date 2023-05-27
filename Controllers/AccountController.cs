@@ -114,8 +114,9 @@ public class AccountController : Controller
             {
                 connection.Open();
 
-                string insertQuery = "INSERT INTO users(UserID, UserPw, FullName, School, Email, PhoneNo) " +
-                                     "VALUES (@UserId, HASHBYTES('SHA1', @UserPw), @FullName, @School, @Email, @PhoneNo)";
+                string insertQuery = "INSERT INTO users(UserID, User_pw, Full_name, School, Email, Phone_no) " +
+                     "VALUES (@UserId, HASHBYTES('SHA1', @UserPw), @FullName, @School, @Email, @PhoneNo)";
+
 
                 connection.Execute(insertQuery, newUser);
             }
