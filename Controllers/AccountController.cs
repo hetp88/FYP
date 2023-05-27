@@ -81,25 +81,49 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    [HttpGet]
+    [AllowAnonymous]
     public IActionResult Register()
     {
         return View("Register");
 
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult Register(NewUser newUser)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
+        {
+            // If there are validation errors, return the registration view with the model
+            ViewData["MsgType"] = "danger";
+            return View("Register");
+        }
+        else
         {
             // Save the user registration data to the database
             using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                string insertQuery = "INSERT INTO users(UserID, UserPw, FullName, School, Email, PhoneNo) " +
-                                     "VALUES (@UserId, HASHBYTES('SHA1', @UserPw), @FullName, @School, @Email, @PhoneNo)";
+                newUser.UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
+
+                int totalDigits = newUser.UserID.ToString().Length;
+
+                string insertQuery = "";
+
+                if (totalDigits == 4)
+                {
+                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
+                }
+                else if(totalDigits == 8)
+                {
+                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                }
+
+                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                                    // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
 
                 connection.Execute(insertQuery, newUser);
             }
@@ -107,9 +131,20 @@ public class AccountController : Controller
             // Redirect the user to the login page after successful registration
             return RedirectToAction("Login");
         }
+        
+    }
 
-        // If there are validation errors, return the registration view with the model
-        return View(newUser);
+    private string ExtractNumbersFrom(string email)
+    {
+        string numbers = "";
+        foreach (var n in email.Split(','))
+        {
+            if (int.Parse(n).Equals(true))
+            {
+                numbers += n;
+            }
+        }
+        return numbers;
     }
 
     [Authorize(Roles = "support engineer, administrator")]

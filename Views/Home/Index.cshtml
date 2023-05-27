@@ -1,11 +1,10 @@
 ﻿@{
     Layout = "_Ticket";
 }
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Homepage</title>
+    <title>Welcome to RP IT Helpdesk</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,23 +32,46 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Homepage</h1>
-    </header>
+    <div class="container">
 
-    <main>
-        <h2>About Me</h2>
-        <p>Hello, my name is John Doe. I'm a web developer passionate about creating amazing websites.</p>
+        <h1 class="text-center">Submitted Ticket Details</h1>
 
-        <h2>My Projects</h2>
-        <ul>
-            <li>Project 1</li>
-            <li>Project 2</li>
-            <li>Project 3</li>
-        </ul>
-
-        <h2>Contact Me</h2>
-        <p>You can reach me via email at <a href="mailto:john@example.com">john@example.com</a>.</p>
-    </main>
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No tickets found.</p>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>User ID</th>
+                    <th>Description</th>
+                    <th>Category ID</th>
+                    <th>Status ID</th>
+                    <th>Date and Time</th>
+                    <th>Priority ID</th>
+                    <th>Employee ID</th>
+                    <th>Devices Involved</th>
+                    <th>Additional Details</th>
+                    <th>Resolution</th>
+                </tr>
+                @foreach (var ticket in Model)
+                {
+                    <tr>
+                        <td>@ticket.UserId</td>
+                        <td>@ticket.Description</td>
+                        <td>@ticket.CategoryId</td>
+                        <td>@ticket.StatusId</td>
+                        <td>@ticket.DateTime</td>
+                        <td>@ticket.PriorityId</td>
+                        <td>@ticket.EmployeeId</td>
+                        <td>@ticket.DevicesInvolved</td>
+                        <td>@ticket.Additional_Details</td>
+                        <td>@ticket.Resolution</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
 </body>
 </html>

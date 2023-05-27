@@ -4,77 +4,147 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>User Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 530px;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 550px;
+        }
+
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label {
+            color: #FFFFFF;
+        }
+
+        .form-control {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+
+        .form-select {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>User Registration</h1>
-        <form method="post" asp-controller="Account" asp-action="Register">
-            <div class="mb-3">
-                <label for="userId" class="form-label">User ID</label>
-                <input type="number" class="form-control" input asp-for="UserID" placeholder="User ID" required>
-                <span asp-validation-for="UserID" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label for="userPw" class="form-label">Password</label>
-                <input type="password" class="form-control" input asp-for="UserPw" placeholder="User Password" required>
-                <span asp-validation-for="UserPw" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label for="userPw2" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" input asp-for="UserPw2" placeholder="Confirm Password" required>
-                <span asp-validation-for="UserPw2" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" input asp-for="FullName" placeholder="Full Name" required>
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label for="school" class="form-label">School</label>
-                <select class="form-select" input asp-for="School" placeholder="School" required>
-                    <option value="SI">SOI</option>
-                    <option value="SE">SEG</option>
-                    <option value="SM">SMC</option>
-                    <option value="SO">SOH</option>
-                    <option value="SS">SAS</option>
-                    <option value="ST">STA</option>
-                    <option value="SH">SHL</option>
-                </select>
-                <span asp-validation-for="School" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" input asp-for="Email" placeholder="Email" required>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label for="phoneNo" class="form-label">Phone Number</label>
-                <input type="number" class="form-control" input asp-for="PhoneNo" placeholder="Phone Number" required>
-                <span asp-validation-for="PhoneNo" class="text-danger"></span>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary">Register</button>     
-            </div>
+        <div class="card-body">
+            <form method="post" asp-controller="Account" asp-action="Register">
+                <div class="mb-3 offset-md-4">
+                    <h2>User Registration</h2>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
 
-            @if (ViewData["Message"] != null)
-            {
-                <div class="form-group row">
-                    <div class="col-6">
-                        <div class="alert alert-@ViewData["MsgType"]">
-                            <b>Message: </b>@ViewData["Message"]<br />
-                            @if (!String.IsNullOrEmpty(ViewData["ExecSQL"]?.ToString()))
-                            {
-                                <b>SQL: </b>
+                    <input type="number" class="form-control" input asp-for="UserID" placeholder="User ID" hidden>
+                    <span asp-validation-for="UserID" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
 
-                                @ViewData["ExecSQL"]?.ToString()
-                            }
+                    <input type="password" class="form-control" input asp-for="UserPw" placeholder="User Password" required>
+                    <span asp-validation-for="UserPw" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+
+                    <input type="password" class="form-control" input asp-for="UserPw2" placeholder="Confirm Password" required>
+                    <span asp-validation-for="UserPw2" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+
+                    <input type="text" class="form-control" input asp-for="UserName" placeholder="Full Name" required>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+
+                    <input type="text" class="form-control" input asp-for="Role" placeholder="Role" hidden>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+
+                    <select class="form-select" input asp-for="School" placeholder="School" required>
+                        <option value="">-- SELECT SCHOOL --</option>
+                        <option value="SI">SOI</option>
+                        <option value="SE">SEG</option>
+                        <option value="SM">SMC</option>
+                        <option value="SO">SOH</option>
+                        <option value="SS">SAS</option>
+                        <option value="ST">STA</option>
+                        <option value="SH">SHL</option>
+                    </select>
+                    <span asp-validation-for="School" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+
+                    <input type="email" class="form-control" input asp-for="Email" placeholder="Email" required>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+
+                    <input type="number" class="form-control" input asp-for="PhoneNo" placeholder="Phone Number" required>
+                    <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3 offset-md-4">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+
+                @if (ViewData["Message"] != null)
+                {
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <div class="alert alert-@ViewData["MsgType"]">
+                                <b>Message: </b>@ViewData["Message"]<br />
+                                @if (!String.IsNullOrEmpty(ViewData["ExecSQL"]?.ToString()))
+                                {
+                                    <b>SQL: </b>
+
+                                    @ViewData["ExecSQL"]?.ToString()
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </form>
+                }
+            </form>
+        </div>
     </div>
 </body>
 </html>

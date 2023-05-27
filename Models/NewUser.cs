@@ -4,8 +4,8 @@ namespace FYP.Models
 {
     public class NewUser
     {
-        [Required(ErrorMessage = "Please enter User ID")]
-        [RegularExpression("(\\d{8}|\\d{4}|\\d{5}|\\d{3})", ErrorMessage = "either 2,3,5 or 8 digits only")]
+        //[Required(ErrorMessage = "Please enter User ID")]
+        //[RegularExpression("(\\d{8}|\\d{4}|\\d{5}|\\d{3})", ErrorMessage = "either 2,3,5 or 8 digits only")]
         public int UserID { get; set; }
 
         [Required(ErrorMessage = "Please enter Password")]
@@ -18,7 +18,10 @@ namespace FYP.Models
         public string UserPw2 { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter Full Name")]
-        public string FullName { get; set; } = null!;
+        public string UserName { get; set; } = null!;
+
+        //[Required(ErrorMessage = "Please enter Full Name")]
+        public int Role { get; set; }
 
         [Required(ErrorMessage = "Please choose school")]
         public string School { get; set; } = null!;
