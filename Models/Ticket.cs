@@ -5,7 +5,7 @@ namespace FYP.Models
     public class Ticket
     {
         [Required(ErrorMessage = "Enter User ID")]
-        [RegularExpression("(\\d{8}|\\d{4})}", ErrorMessage = "Either 4 digits (staff) or 8 digits (student)")]
+        [RegularExpression("(\\d{8}|\\d{4})", ErrorMessage = "Either 4 digits (staff) or 8 digits (student)")]
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Please enter description")]

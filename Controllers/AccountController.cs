@@ -44,15 +44,7 @@ public class AccountController : Controller
     {
         return View();
     }
-    public IActionResult Policy()
-    {
-        return View();
-    }
-    public IActionResult TermsConditions()
-    {
-        return View();
-    }
-
+    
     [HttpPost]
     public IActionResult Login(UserLogin user)
     {
@@ -89,19 +81,11 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-
-    [Authorize]
-    public IActionResult Users()
-    {
-        // Retrieve user data and pass it to the view
-        DataTable usersData = DBUtl.GetTable(""); // Query to retrieve user data
-        return View(usersData);
-    }
     [HttpGet]
     public IActionResult Register()
     {
         return View("Register");
-        
+
     }
 
     [HttpPost]
@@ -126,6 +110,25 @@ public class AccountController : Controller
 
         // If there are validation errors, return the registration view with the model
         return View(newUser);
+    }
+
+    [Authorize(Roles = "support engineer, administrator")]
+    public IActionResult Users()
+    {
+        // Retrieve user data and pass it to the view
+        DataTable usersData = DBUtl.GetTable("SELECT * FROM users " +
+                                                "INNER JOIN role ON role.role_id = users.role_id " +
+                                                "WHERE role_type = 'support engineer' OR role_type = 'administrator'"); // Query to retrieve user data
+        return View(usersData);
+    }
+  
+    public IActionResult Policy()
+    {
+        return View();
+    }
+    public IActionResult TermsConditions()
+    {
+        return View();
     }
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)

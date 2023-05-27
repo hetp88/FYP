@@ -10,30 +10,30 @@
 <body>
     <div class="container">
         <h1>User Registration</h1>
-        <form method="post">
+        <form method="post" asp-controller="Account" asp-action="Register">
             <div class="mb-3">
                 <label for="userId" class="form-label">User ID</label>
-                <input type="number" class="form-control" id="userId" name="UserId" required>
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                <input type="number" class="form-control" input asp-for="UserID" placeholder="User ID" required>
+                <span asp-validation-for="UserID" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="userPw" class="form-label">Password</label>
-                <input type="password" class="form-control" id="userPw" name="UserPw" required>
+                <input type="password" class="form-control" input asp-for="UserPw" placeholder="User Password" required>
                 <span asp-validation-for="UserPw" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="userPw2" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="userPw2" name="UserPw2" required>
+                <input type="password" class="form-control" input asp-for="UserPw2" placeholder="Confirm Password" required>
                 <span asp-validation-for="UserPw2" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="fullName" name="FullName" required>
+                <input type="text" class="form-control" input asp-for="FullName" placeholder="Full Name" required>
                 <span asp-validation-for="FullName" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="school" class="form-label">School</label>
-                <select class="form-control" id="school" name="School" required>
+                <select class="form-select" input asp-for="School" placeholder="School" required>
                     <option value="SI">SOI</option>
                     <option value="SE">SEG</option>
                     <option value="SM">SMC</option>
@@ -41,18 +41,17 @@
                     <option value="SS">SAS</option>
                     <option value="ST">STA</option>
                     <option value="SH">SHL</option>
-                   
                 </select>
                 <span asp-validation-for="School" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="Email" required>
+                <input type="email" class="form-control" input asp-for="Email" placeholder="Email" required>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="phoneNo" class="form-label">Phone Number</label>
-                <input type="tel" class="form-control" id="phoneNo" name="PhoneNo" required>
+                <input type="number" class="form-control" input asp-for="PhoneNo" placeholder="Phone Number" required>
                 <span asp-validation-for="PhoneNo" class="text-danger"></span>
             </div>
             <div>
