@@ -18,9 +18,17 @@
     {
         if (User.IsInRole("student"))
         {
-            
+            <partial name="TicketUser"/>
         }
-       
+        if (User.IsInRole("staff"))
+        {
+            <partial name="TicketUser" />
+        }
+
+    }
+    else
+    {
+        <partial name="TicketUser" />
     }
 
 

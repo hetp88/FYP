@@ -25,8 +25,8 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
 
-    private const string RECN = "Ticket";
-    private const string REVW = "ViewTicket";
+    private const string RECN = "Home";
+    private const string REVW = "Index";
     private const string LV = "Login";
 
     private readonly IConfiguration _configuration;
