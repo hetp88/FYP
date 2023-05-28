@@ -1,24 +1,17 @@
 ﻿@{
     Layout = "_Ticket";
 }
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to RP IT Helpdesk</title>
+
     <style>
         body {
+            background-color: #E8E3DF;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #333;
         }
 
         main {
@@ -29,12 +22,31 @@
         p {
             line-height: 1.5;
         }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+            .table th {
+                font-weight: bold;
+            }
+
+            .table td {
+                text-align: center;
+            }
+
+        .no-tickets-message {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-
-        <h1 class="text-center">Submitted Ticket Details</h1>
+        <h1>Submitted Tickets</h1>
 
         @if (Model == null || Model.Count == 0)
         {

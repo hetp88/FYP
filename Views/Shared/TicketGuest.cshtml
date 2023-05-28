@@ -10,7 +10,7 @@
         }
 
         .navbar {
-            background-color: #000000;
+            background-color: #95A1AF;
             width: 200px;
             display: flex;
             flex-direction: column;
@@ -72,15 +72,14 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
                 </li>
-            </ul>
-            <ul class="navbar-nav2">
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Logoff">
+                    <a class="nav-link offset-md-1" asp-controller="Account" asp-action="Logout">
                         Logout <span class="bi bi-box-arrow-in-right text-muted" data-toggle="tooltip"
                                      title="Log out"></span>
                     </a>
                 </li>
             </ul>
+            
         </nav>
     </div>
 </body>
