@@ -27,6 +27,10 @@ public class AccountController : Controller
 
     private const string RECN = "Home";
     private const string REVW = "Index";
+
+    private const string RECN1 = "Account";
+    private const string REVW1 = "Login";
+
     private const string LV = "Login";
 
     private readonly IConfiguration _configuration;
@@ -78,7 +82,7 @@ public class AccountController : Controller
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         if (Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
-        return RedirectToAction("Login");
+        return RedirectToAction(REVW1, RECN1);
     }
 
     [AllowAnonymous]

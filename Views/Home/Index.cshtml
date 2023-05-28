@@ -1,11 +1,12 @@
-﻿@{
+﻿@model List<FYP.Models.Ticket>
+@{
     Layout = "_Ticket";
 }
+
 
 <!DOCTYPE html>
 <html>
 <head>
-
     <style>
         body {
             background-color: #E8E3DF;
@@ -13,27 +14,21 @@
             margin: 0;
             padding: 20px;
         }
-
         main {
             max-width: 800px;
             margin: 0 auto;
         }
-
         p {
             line-height: 1.5;
         }
-
         .table {
             width: 100%;
             margin-top: 20px;
+            border-collapse: collapse;
         }
-
-            .table th {
-                font-weight: bold;
-            }
-
-            .table td {
-                text-align: center;
+            .table th, .table td {
+                border-bottom: 1px solid black;
+                padding: 8px;
             }
 
         .no-tickets-message {
@@ -41,12 +36,10 @@
             margin-top: 20px;
             font-style: italic;
         }
-
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Submitted Tickets</h1>
 
         @if (Model == null || Model.Count == 0)
         {
