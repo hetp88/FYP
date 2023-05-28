@@ -1,65 +1,86 @@
-﻿
-<head>
+﻿<head>
     <style>
         body {
             padding-top: 60px;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
         }
 
         .navbar {
-            background-color: #000066; /* Change to dark blue color */
+            background-color: #000000;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+            left: 0;
+            top: 0;
+            bottom: 0;
         }
 
-        .navbar-expand-md {
-            flex-direction: column; /* Make the navbar vertical */
-        }
+            .navbar img {
+                margin: 10px;
+            }
 
         .navbar-nav {
-            width: 100%; /* Occupy full width of the container */
-            margin: auto; /* Center-align the navbar items */
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            top: 0;
         }
 
         .nav-link {
-            text-align: center; /* Center-align the navbar links */
+            text-align: center;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+        }
+
+            .nav-link:hover {
+                background-color: #333333;
+            }
+
+        .content {
+            margin-left: 200px;
+            padding: 1rem;
+        }
+
+        .navbar-nav2 {
+            position: absolute;
+            bottom: 0;
         }
     </style>
 </head>
 
-<div class="container border-bottom">
-    <nav class="navbar navbar-expand-md flex-column">
-        <div class="container-fluid">
+<body>
+    <div class="container">
+        <nav class="navbar">
             <img src="\Images\Logo.png" height="50">
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <div class="d-flex justify-content-between w-100">
-                    <div>
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Ticket" asp-action="CustomerTicket">Your Tickets</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item">
-                                <div class="nav-link">
-                                    Logout
-                                    <a class="text-end bi-box-arrow-in-right text-decoration-none text-muted"
-                                       asp-controller="Account" asp-action="Logoff" data-toggle="tooltip"
-                                       title="Log out"></a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-</div>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Ticket" asp-action="CustomerTicket">Your Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav2">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Account" asp-action="Logoff">
+                        Logout <span class="bi bi-box-arrow-in-right text-muted" data-toggle="tooltip"
+                                     title="Log out"></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>

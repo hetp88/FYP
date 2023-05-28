@@ -165,6 +165,10 @@ public class AccountController : Controller
     {
         return View();
     }
+    public IActionResult ForgetPw()
+    {
+        return View();
+    }
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
