@@ -1,4 +1,4 @@
-﻿@model FYP.Models.DeleteModel
+﻿@model NewUser;
 
 <!DOCTYPE html>
 <html>
@@ -14,10 +14,10 @@
             <div class="mb-3">
                 <label for="faqId" class="form-label">FAQ ID</label>
                 <input type="number" class="form-control" id="faqId" name="FaqId" required>
-                <span asp-validation-for="FaqId" class="text-danger"></span>
+                <span asp-validation-for="UserID" class="text-danger"></span>
             </div>
             <div>
-                <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="submit" class="btn btn-danger">Remove User</button>
             </div>
 
             @if (ViewData["Message"] != null)

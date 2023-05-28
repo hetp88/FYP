@@ -1,65 +1,76 @@
-﻿<!DOCTYPE html>
-<html>
+﻿
 <head>
-    <title>Vertical Navbar</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
         body {
-            padding-top: 60px; 
+            padding-top: 60px;
         }
 
-        .navbar-dark {
-            background-color: #000066; 
+        .navbar {
+            background-color: #000066;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .navbar-nav .nav-link {
-            color: #fff; 
+        .navbar-brand {
+            padding: 1rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
         }
 
-        .nav-link.active {
-            font-weight: bold; 
+        .navbar-nav {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #fff;
+            text-decoration: none;
+        }
+
+            .nav-link.active {
+                font-weight: bold;
+            }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        .content {
+            margin-left: 200px;
+            padding: 1rem;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-left">
-        <a class="navbar-brand" href="#">TicketHelper</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">All Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Pending Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Open Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Employees Schedule</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Account/ApplyLeave">Apply Leave</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Edit FAQs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Edit Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <div>
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Ticket" asp-action="CustomerTicket">Your Tickets</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
+            </li>
+        </ul>
+    </div>
 </body>
-</html>
+

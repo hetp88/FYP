@@ -1,12 +1,33 @@
-﻿<div class="container border-bottom">
-    <nav class="navbar navbar-expand-md">
+﻿
+<head>
+    <style>
+        body {
+            padding-top: 60px;
+        }
+
+        .navbar {
+            background-color: #000066; /* Change to dark blue color */
+        }
+
+        .navbar-expand-md {
+            flex-direction: column; /* Make the navbar vertical */
+        }
+
+        .navbar-nav {
+            width: 100%; /* Occupy full width of the container */
+            margin: auto; /* Center-align the navbar items */
+        }
+
+        .nav-link {
+            text-align: center; /* Center-align the navbar links */
+        }
+    </style>
+</head>
+
+<div class="container border-bottom">
+    <nav class="navbar navbar-expand-md flex-column">
         <div class="container-fluid">
-
-            <img src="~/images/lcmlogo.jpg" height="50">
-
-
-
-
+            <img src="\Images\Logo.png" height="50">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <div class="d-flex justify-content-between w-100">
                     <div>
@@ -27,9 +48,9 @@
                     </div>
                     <div>
                         <ul class="nav navbar-nav">
-                            <li span class="nav-item">
+                            <li class="nav-item">
                                 <div class="nav-link">
-                                    Welcome @User.Identity!.Name
+                                    Logout
                                     <a class="text-end bi-box-arrow-in-right text-decoration-none text-muted"
                                        asp-controller="Account" asp-action="Logoff" data-toggle="tooltip"
                                        title="Log out"></a>

@@ -16,22 +16,26 @@
 <body>
     @if (User.Identity!.IsAuthenticated)
     {
-        if (User.IsInRole("student"))
+        if (User.IsInRole("SupportEngineer"))
+        {
+            <partial name="TicketEmployee"/>
+        }
+        else if (User.IsInRole("HelpdeskAgent"))
+        {
+            <partial name="TicketEmployee"/>
+        }
+        else if (User.IsInRole("admin")){
+            <partial name="TicketAdmin"/>
+        }
+        else
         {
             <partial name="TicketUser"/>
         }
-        if (User.IsInRole("staff"))
-        {
-            <partial name="TicketUser" />
-        }
-
     }
     else
     {
-        <partial name="TicketUser" />
+        <partial name="TicketGuest"/>
     }
-
-
     <div class="container mt-10">
         @RenderBody()
     </div>
