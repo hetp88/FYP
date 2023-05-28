@@ -113,17 +113,17 @@ public class AccountController : Controller
                 
                 if (totalDigits == 4)
                 {
-                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
+                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no)" +
+                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}')";
                 }
                 else if(totalDigits == 8)
                 {
-                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no)" +
+                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}')";
                 }
 
-                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
+                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no)" +
+                                    // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}')";
 
                 connection.Execute(insertQuery, newUser);
             }
