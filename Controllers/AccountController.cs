@@ -110,7 +110,7 @@ public class AccountController : Controller
                 int totalDigits = newUser.UserID.ToString().Length;
 
                 string insertQuery = "";
-
+                
                 if (totalDigits == 4)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
