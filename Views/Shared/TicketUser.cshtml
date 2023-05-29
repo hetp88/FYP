@@ -1,11 +1,14 @@
-﻿<div class="container border-bottom">
+﻿@model List<FAQ>
+
+@{
+    ViewData["Title"] = "FAQs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container border-bottom">
     <nav class="navbar navbar-expand-md">
         <div class="container-fluid">
-
             <img src="~/images/lcmlogo.jpg" height="50">
-
-
-
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <div class="d-flex justify-content-between w-100">
@@ -41,4 +44,34 @@
             </div>
         </div>
     </nav>
+</div>
+
+<div class="container mt-4">
+    <h1>FAQs</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Question</th>
+                <th>Solution</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var faq in Model)
+            {
+                <tr>
+                    <td>@faq.CategoryId</td>
+                    <td>@faq.Question</td>
+                    <td>@faq.Solution</td>
+                    <td>
+                        <form method="post" asp-controller="FAQ" asp-action="Delete">
+                            <input type="hidden" name="faqId" value="@faq.FaqId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
