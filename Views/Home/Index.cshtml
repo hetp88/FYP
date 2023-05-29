@@ -1,82 +1,24 @@
-﻿@model List<FYP.Models.Ticket>
-@{
+﻿@{
     Layout = "_Ticket";
 }
-
 
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Helpdesk Support</title>
     <style>
         body {
-            background-color: #E8E3DF;
-            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
-        }
-        main {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        p {
-            line-height: 1.5;
-        }
-        .table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-            .table th, .table td {
-                border-bottom: 1px solid black;
-                padding: 8px;
-            }
-
-        .no-tickets-message {
-            text-align: center;
-            margin-top: 20px;
-            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-
-        @if (Model == null || Model.Count == 0)
-        {
-            <p class="no-tickets-message">No tickets found.</p>
-        }
-        else
-        {
-            <table class="table">
-                <tr>
-                    <th>User ID</th>
-                    <th>Description</th>
-                    <th>Category ID</th>
-                    <th>Status ID</th>
-                    <th>Date and Time</th>
-                    <th>Priority ID</th>
-                    <th>Employee ID</th>
-                    <th>Devices Involved</th>
-                    <th>Additional Details</th>
-                    <th>Resolution</th>
-                </tr>
-                @foreach (var ticket in Model)
-                {
-                    <tr>
-                        <td>@ticket.UserId</td>
-                        <td>@ticket.Description</td>
-                        <td>@ticket.CategoryId</td>
-                        <td>@ticket.StatusId</td>
-                        <td>@ticket.DateTime</td>
-                        <td>@ticket.PriorityId</td>
-                        <td>@ticket.EmployeeId</td>
-                        <td>@ticket.DevicesInvolved</td>
-                        <td>@ticket.Additional_Details</td>
-                        <td>@ticket.Resolution</td>
-                    </tr>
-                }
-            </table>
-        }
-    </div>
+    <h1>Helpdesk Support</h1>
+    <p>This is a short description of what you can find on this page.</p>
 </body>
 </html>

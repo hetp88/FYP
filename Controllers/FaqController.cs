@@ -83,6 +83,7 @@ namespace FYP.Controllers
                 string query = "INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@FaqId", faq.FaqId);
+                command.Parameters.AddWithValue("@CategoryId", faq.CategoryId);
                 command.Parameters.AddWithValue("@Question", faq.Question);
                 command.Parameters.AddWithValue("@Solution", faq.Solution);
                 connection.Open();

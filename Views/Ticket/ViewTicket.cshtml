@@ -1,53 +1,37 @@
 @model List<FYP.Models.Ticket>
+@{
+    Layout = "_Ticket";
+}
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Ticket Details</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #000000;
-            color: #FFFFFF;
+            background-color: #E8E3DF;
             font-family: Arial, sans-serif;
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0;
             padding: 20px;
-            margin: 5px;
-            flex: 1;
-            width: 800px;
-            max-height: 500px;
-            overflow-y: auto;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        p {
+            line-height: 1.5;
         }
 
         .table {
             width: 100%;
             margin-top: 20px;
+            border-collapse: collapse;
         }
 
-            .table th {
-                background-color: #34345E;
-                color: #FFFFFF;
-                font-weight: bold;
-            }
-
-            .table td {
-                background-color: #3A3A63;
-                color: #FFFFFF;
-                padding: 10px;
-                text-align: center;
+            .table th, .table td {
+                border-bottom: 1px solid black;
+                padding: 8px;
             }
 
         .no-tickets-message {
@@ -59,46 +43,43 @@
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <h1 class="text-center">Ticket Details</h1>
 
-            @if (Model == null || Model.Count == 0)
-            {
-                <p class="no-tickets-message">No tickets found.</p>
-            }
-            else
-            {
-                <table class="table">
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No tickets found.</p>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>User ID</th>
+                    <th>Description</th>
+                    <th>Category ID</th>
+                    <th>Status ID</th>
+                    <th>Date and Time</th>
+                    <th>Priority ID</th>
+                    <th>Employee ID</th>
+                    <th>Devices Involved</th>
+                    <th>Additional Details</th>
+                    <th>Resolution</th>
+                </tr>
+                @foreach (var ticket in Model)
+                {
                     <tr>
-                        <th>User ID</th>
-                        <th>Description</th>
-                        <th>Category ID</th>
-                        <th>Status ID</th>
-                        <th>Date and Time</th>
-                        <th>Priority ID</th>
-                        <th>Employee ID</th>
-                        <th>Devices Involved</th>
-                        <th>Additional Details</th>
-                        <th>Resolution</th>
+                        <td>@ticket.UserId</td>
+                        <td>@ticket.Description</td>
+                        <td>@ticket.CategoryId</td>
+                        <td>@ticket.StatusId</td>
+                        <td>@ticket.DateTime</td>
+                        <td>@ticket.PriorityId</td>
+                        <td>@ticket.EmployeeId</td>
+                        <td>@ticket.DevicesInvolved</td>
+                        <td>@ticket.Additional_Details</td>
+                        <td>@ticket.Resolution</td>
                     </tr>
-                    @foreach (var ticket in Model)
-                    {
-                        <tr>
-                            <td>@ticket.UserId</td>
-                            <td>@ticket.Description</td>
-                            <td>@ticket.CategoryId</td>
-                            <td>@ticket.StatusId</td>
-                            <td>@ticket.DateTime</td>
-                            <td>@ticket.PriorityId</td>
-                            <td>@ticket.EmployeeId</td>
-                            <td>@ticket.DevicesInvolved</td>
-                            <td>@ticket.Additional_Details</td>
-                            <td>@ticket.Resolution</td>
-                        </tr>
-                    }
-                </table>
-            }
-        </div>
+                }
+            </table>
+        }
     </div>
 </body>
 </html>
