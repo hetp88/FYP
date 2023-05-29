@@ -1,44 +1,87 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+﻿@model List<FYP.Models.FAQ>
+=======
 ﻿@{
     Layout = "_Ticket";
 }
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
+=======
+﻿@{
+    Layout = "_Ticket";
+}
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
+=======
+﻿@{
+    Layout = "_Ticket";
+}
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <title>FAQs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
-        .faq-container {
-            max-width: 600px;
-            margin: 0 auto;
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
         }
 
-        .faq-question {
-            font-weight: bold;
-            cursor: pointer;
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        .faq-answer {
-            display: none;
-            margin-top: 10px;
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 800px;
+            height: 520px;
         }
 
-            .faq-answer.show {
-                display: block;
+        .btn-create {
+            margin-bottom: 20px;
+        }
+
+        .table th {
+            color: #FFFFFF;
+            background-color: #2A2A43;
+            border-color: #2A2A43;
+        }
+
+        .table td {
+            color: #FFFFFF;
+            background-color: #32324B;
+            border-color: #32324B;
+        }
+
+            .table td button {
+                margin-top: 5px;
             }
     </style>
 </head>
 <body>
     <div class="faq-container">
-        
+        <?php
+        // Assuming you have fetched the FAQ data from the database and stored it in an array called $faqs
+        foreach ($faqs as $faq) {
+        echo '<div class="faq-item">
+            ';
+            echo '<div class="faq-question">' . $faq['question'] . '</div>';
+            echo '<div class="faq-answer">' . $faq['answer'] . '</div>';
+            echo '
+        </div>';
+        }
+        ?>
     </div>
-
-    <script>
-        // JavaScript to toggle FAQ answer visibility
-        var faqQuestions = document.getElementsByClassName('faq-question');
-        Array.from(faqQuestions).forEach(function (question) {
-            question.addEventListener('click', function () {
-                this.nextElementSibling.classList.toggle('show');
-            });
-        });
-    </script>
 </body>
 </html>
