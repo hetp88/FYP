@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+﻿@model List<FAQ>
+
 @model List<FAQ>
 
 @{
@@ -5,8 +10,78 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-﻿
-<head>
+<div class="container border-bottom">
+    <nav class="navbar navbar-expand-md">
+        <div class="container-fluid">
+            <img src="~/images/lcmlogo.jpg" height="50">
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Ticket" asp-action="CustomerTicket">Your Tickets</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul class="nav navbar-nav">
+                            <li span class="nav-item">
+                                <div class="nav-link">
+                                    Welcome @User.Identity!.Name
+                                    <a class="text-end bi-box-arrow-in-right text-decoration-none text-muted"
+                                       asp-controller="Account" asp-action="Logoff" data-toggle="tooltip"
+                                       title="Log out"></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="container mt-4">
+    <h1>FAQs</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Question</th>
+                <th>Solution</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var faq in Model)
+            {
+                <tr>
+                    <td>@faq.CategoryId</td>
+                    <td>@faq.Question</td>
+                    <td>@faq.Solution</td>
+                    <td>
+                        <form method="post" asp-controller="FAQ" asp-action="Delete">
+                            <input type="hidden" name="faqId" value="@faq.FaqId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+=======
+﻿<head>
     <style>
         body {
             padding-top: 60px;
@@ -17,6 +92,32 @@
             display: flex;
         }
 
+=======
+﻿<head>
+    <style>
+        body {
+            padding-top: 60px;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+        }
+
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
+=======
+﻿<head>
+    <style>
+        body {
+            padding-top: 60px;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+        }
+
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
         .navbar {
             background-color: #EE4E34;
             width: 240px;
@@ -117,3 +218,10 @@
         </nav>
     </div>
 </body>
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
+=======
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
+=======
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
