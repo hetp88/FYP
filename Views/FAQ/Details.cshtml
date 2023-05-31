@@ -1,75 +1,73 @@
-@model FAQ;
-
-﻿@{
+@model List<FYP.Models.FAQ>
+@{
     Layout = "_Ticket";
 }
-
-
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>FAQs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #000000;
-            color: #FFFFFF;
+            background-color: #E8E3DF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        main {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 800px;
-            height: 520px;
+        p {
+            line-height: 1.5;
         }
 
-        .btn-create {
-            margin-bottom: 20px;
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
         }
 
-        .table th {
-            color: #FFFFFF;
-            background-color: #2A2A43;
-            border-color: #2A2A43;
-        }
-
-        .table td {
-            color: #FFFFFF;
-            background-color: #32324B;
-            border-color: #32324B;
-        }
-
-            .table td button {
-                margin-top: 5px;
+            .table th, .table td {
+                border-bottom: 1px solid black;
+                padding: 8px;
             }
+
+        .no-tickets-message {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <div class="faq-container">
-        <?php
-        // Assuming you have fetched the FAQ data from the database and stored it in an array called $faqs
-        foreach ($faqs as $faq) {
-        echo '<div class="faq-item">
-            ';
-            echo '<div class="faq-question">' . $faq['question'] . '</div>';
-            echo '<div class="faq-answer">' . $faq['answer'] . '</div>';
-            echo '
-        </div>';
+    <div class="container">
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No FAQ available.</p>
         }
-        ?>
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>FAQ ID</th>
+                    <th>Question</th>
+                    <th>Solution</th>
+                    <th>Category</th>
+                </tr>
+                @foreach (var fAQ in Model)
+                {
+                    <tr>
+                        <td>@fAQ.FaqId</td>
+                        <td>@fAQ.Question</td>
+                        <td>@fAQ.Solution</td>
+                        <td>@fAQ.CategoryId</td>
+                    </tr>
+                }
+            </table>
+        }
     </div>
 </body>
 </html>
