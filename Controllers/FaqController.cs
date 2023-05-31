@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using FYP.Models;
+using System.Reflection.Metadata;
 
 namespace FYP.Controllers
 {
@@ -16,7 +17,8 @@ namespace FYP.Controllers
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
+        private const string RECN = "Home";
+        private const string REVW = "Index";
         public IActionResult Index()
         {
             return RedirectToAction("Details");
@@ -34,23 +36,12 @@ namespace FYP.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateFAQ(FAQ faq)
-        {
-            if (ModelState.IsValid)
-            {
-                InsertFAQToDatabase(faq);
-                return RedirectToAction("Details");
-            }
-            return View(faq);
-        }
-
-        [HttpPost]
         public IActionResult Delete(int faqId)
         {
             DeleteFAQFromDatabase(faqId);
             return RedirectToAction("Details");
         }
-        [HttpPost]
+
         private List<FAQ> GetFAQsFromDatabase()
         {
             List<FAQ> faqs = new List<FAQ>();
@@ -76,33 +67,74 @@ namespace FYP.Controllers
             return faqs;
         }
 
-        private ViewResult InsertFAQToDatabase(FAQ faq)
+        private bool InsertFAQToDatabase(FAQ faq)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "SELECT FAQ.faq_id, FAQ.question, FAQ.solution, Category.category_id " +
-                       "FROM FAQ INNER JOIN Category ON FAQ.category_id = Category.category_id";
+                string query = "INSERT INTO FAQ (category_id, question, solution) VALUES (@CategoryId, @Question, @Solution)";
                 SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@FaqId", faq.FaqId);
-                command.Parameters.AddWithValue("@CategoryId", faq.CategoryId);
+
+                // Retrieve category ID based on the category name
+                int categoryId = GetCategoryIdByName(faq.Category);
+                if (categoryId == -1)
+                {
+                    // Category not found, handle accordingly (e.g., display an error message)
+                    return false;
+                }
+
+                command.Parameters.AddWithValue("@CategoryId", categoryId);
                 command.Parameters.AddWithValue("@Question", faq.Question);
                 command.Parameters.AddWithValue("@Solution", faq.Solution);
 
                 connection.Open();
-                if (command.ExecuteNonQuery() > 0)
+                int rowsAffected = command.ExecuteNonQuery();
+
+                return rowsAffected > 0;
+            }
+        }
+
+        private int GetCategoryIdByName(string categoryName)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT category_id FROM ticket_categories WHERE category = @Category";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@category", categoryName);
+
+                connection.Open();
+                object result = command.ExecuteScalar();
+                int categoryId = result != null ? Convert.ToInt32(result) : -1;
+
+                return categoryId;
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult CreateFAQ(FAQ faq)
+        {
+            if (ModelState.IsValid)
+            {
+                bool isInserted = InsertFAQToDatabase(faq);
+                if (isInserted)
                 {
-                    ViewData["Message"] = "FAQ Successfully Added";
-                    ViewData["MsgType"] = "success";
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    ViewData["Message"] = "Something went wrong.";
-                    ViewData["MsgType"] = "warning";
-                }
 
-                return View("Details");
+                    
+                }
             }
+            return View(faq);
         }
+
+
+
+
+
+
+
 
 
 

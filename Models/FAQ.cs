@@ -6,6 +6,7 @@ namespace FYP.Models
     {
         [Required(ErrorMessage = "Please select category")]
         public int FaqId { get; set; }
+        public String Category { get; set; }
         public int CategoryId { get; set; }
 
         [Required(ErrorMessage = "Please enter question")]
