@@ -1,98 +1,88 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 ﻿@model List<FYP.Models.FAQ>
 =======
 ﻿@{
     Layout = "_Ticket";
 }
 >>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
-
-@{
+=======
+﻿@{
     Layout = "_Ticket";
 }
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
+=======
+﻿@{
+    Layout = "_Ticket";
+}
+>>>>>>> 4ff2cf5c261e8efad83bbfb0c784313d2631a33f
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>FAQs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #000000;
-            color: #FFFFFF;
+            background-color: #E8E3DF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        main {
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 800px;
-            height: 520px;
+        p {
+            line-height: 1.5;
         }
 
-        .btn-create {
-            margin-bottom: 20px;
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
         }
 
-        .table th {
-            color: #FFFFFF;
-            background-color: #2A2A43;
-            border-color: #2A2A43;
-        }
-
-        .table td {
-            color: #FFFFFF;
-            background-color: #32324B;
-            border-color: #32324B;
-        }
-
-            .table td button {
-                margin-top: 5px;
+            .table th, .table td {
+                border-bottom: 1px solid black;
+                padding: 8px;
             }
+
+        .no-tickets-message {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <h1>FAQs</h1>
-            <a asp-controller="FAQ" asp-action="CreateFAQ" class="btn btn-primary btn-create">Create FAQ</a>
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No FAQ available.</p>
+        }
+        else
+        {
             <table class="table">
-                <thead>
+                <tr>
+                    <th>FAQ ID</th>
+                    <th>Question</th>
+                    <th>Solution</th>
+                    <th>Category</th>
+                </tr>
+                @foreach (var fAQ in Model)
+                {
                     <tr>
-                        <th>Category</th>
-                        <th>Question</th>
-                        <th>Solution</th>
-                        <th></th>
+                        <td>@fAQ.FaqId</td>
+                        <td>@fAQ.Question</td>
+                        <td>@fAQ.Solution</td>
+                        <td>@fAQ.CategoryId</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var faq in Model)
-                    {
-                        <tr>
-                            <td>@faq.CategoryId</td>
-                            <td>@faq.Question</td>
-                            <td>@faq.Solution</td>
-                            <td>
-                                <form method="post" asp-controller="FAQ" asp-action="Delete">
-                                    <input type="hidden" name="faqId" value="@faq.FaqId" />
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+                }
             </table>
-        </div>
+        }
     </div>
 </body>
 </html>

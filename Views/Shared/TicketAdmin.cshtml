@@ -37,7 +37,7 @@
         }
             .nav-link:hover {
                 background-color: #333333;
-                transform: scale(0.9);
+                transform: scale(0.85);
             }
         .content {
             margin-left: 200px;
@@ -56,10 +56,16 @@
             margin: 0;
             border: none;
             border-top: 1px solid black;
-            width: 100%;
+            width: 70%;
+            margin-right: 15%;
+            margin-left: 15%;
         }
-
-
+        .icon-large {
+            font-size: 24px;
+        }
+        .bigger-icon {
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
@@ -79,18 +85,23 @@
                     <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
+                    <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
-                </li>
+                    <a class="nav-link" asp-controller="FAQ" asp-action="DeleteFAQ">Remove FAQ</a>
+                </li>               
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">My Tickets</a>
+                    <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
                 </li>
             </ul>
-            <ul class="navbar-line">
+            <ul class="navbar-line offset-md-2">
                 <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
-                    <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout<span class="bi bi-box-arrow-in-right text-muted" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span></a>
+                    <a class="nav-link" asp-controller="Account" asp-action="Profile">
+                        <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
+                    </a>
+                    <a class="nav-link" asp-controller="Account" asp-action="Logout">
+                        <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
+                    </a>
                 </li>
             </ul>
         </nav>

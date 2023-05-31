@@ -50,7 +50,7 @@ namespace FYP.Controllers
             DeleteFAQFromDatabase(faqId);
             return RedirectToAction("Details");
         }
-
+        [HttpPost]
         private List<FAQ> GetFAQsFromDatabase()
         {
             List<FAQ> faqs = new List<FAQ>();
@@ -76,20 +76,34 @@ namespace FYP.Controllers
             return faqs;
         }
 
-        private void InsertFAQToDatabase(FAQ faq)
+        private ViewResult InsertFAQToDatabase(FAQ faq)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
+                string query = "SELECT FAQ.faq_id, FAQ.question, FAQ.solution, Category.category_id " +
+                       "FROM FAQ INNER JOIN Category ON FAQ.category_id = Category.category_id";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@FaqId", faq.FaqId);
                 command.Parameters.AddWithValue("@CategoryId", faq.CategoryId);
                 command.Parameters.AddWithValue("@Question", faq.Question);
                 command.Parameters.AddWithValue("@Solution", faq.Solution);
+
                 connection.Open();
-                command.ExecuteNonQuery();
+                if (command.ExecuteNonQuery() > 0)
+                {
+                    ViewData["Message"] = "FAQ Successfully Added";
+                    ViewData["MsgType"] = "success";
+                }
+                else
+                {
+                    ViewData["Message"] = "Something went wrong.";
+                    ViewData["MsgType"] = "warning";
+                }
+
+                return View("Details");
             }
         }
+
 
 
         private void DeleteFAQFromDatabase(int faqId)

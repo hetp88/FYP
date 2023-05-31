@@ -98,7 +98,7 @@ public class AccountController : Controller
     {
         if (!ModelState.IsValid)
         {
-            // If there are validation errors, return the registration view with the model
+            //Validation Check
             ViewData["MsgType"] = "danger";
             return View("Register");
         }
