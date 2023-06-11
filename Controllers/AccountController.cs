@@ -50,7 +50,7 @@ public class AccountController : Controller
     {
         return View();
     }
-      
+
 
 
     [HttpPost]
@@ -120,25 +120,25 @@ public class AccountController : Controller
             {
                 connection.Open();
 
-                newUser.UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
+                int UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
 
-                int totalDigits = newUser.UserID.ToString().Length;
+                int totalDigits = UserID.ToString().Length;
 
                 string insertQuery = "";
 
                 if (totalDigits == 4)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
+                                     "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
                 }
-                else if(totalDigits == 8)
+                else if (totalDigits == 8)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                                    "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
                 }
 
                 //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
+                // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
 
                 connection.Execute(insertQuery, newUser);
             }
@@ -146,7 +146,7 @@ public class AccountController : Controller
             // Redirect the user to the login page after successful registration
             return View("Login");
         }
-        
+
     }
 
     private string ExtractNumbersFrom(string email)
@@ -171,7 +171,7 @@ public class AccountController : Controller
                                                 "WHERE role_type = 'support engineer' OR role_type = 'administrator'"); // Query to retrieve user data
         return View(usersData);
     }
-  
+
     public IActionResult Policy()
     {
         return View();
@@ -205,10 +205,4 @@ public class AccountController : Controller
         }
         return false;
     }
-    
 }
-    
-
-
-
-
