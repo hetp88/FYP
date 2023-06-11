@@ -11,8 +11,6 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ZXing;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -134,29 +132,23 @@ WHERE users.userid = '{0}' AND users.user_pw = HASHBYTES('SHA1', '{1}')
 
 if (totalDigits == 4)
                 {
-                    insertQuery += @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '1', '{3}', '{4}', '{5}', 'null')";
+                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                                     "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
                 }
                 else if (totalDigits == 8)
                 {
-                    insertQuery += @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '2', '{3}', '{4}', '{5}', 'null')";
+                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                                    "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
                 }
 
-                if (connection.Execute(insertQuery, X) == 1)
-                {
-                    ViewData["Message"] = "User registered successfully";
-                    ViewData["MsgType"] = "success";
-                }
-                else
-                {
-                    ViewData["Message"] = "User register failed";
-                    ViewData["MsgType"] = "warning";
-                }
+                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
+
+                connection.Execute(insertQuery, newUser);
             }
 
             // Redirect the user to the login page after successful registration
-            return View("Login");
+            return RedirectToAction("Login", "Account");
         }
 
     }

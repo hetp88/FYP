@@ -6,10 +6,10 @@ namespace FYP.Models
     {
         //[Required(ErrorMessage = "Please enter User ID")]
         //[RegularExpression("(\\d{8}|\\d{4}|\\d{5}|\\d{3})", ErrorMessage = "either 2,3,5 or 8 digits only")]
-        public int UserID { get; set; }
+        //public int UserID { get; set; }
 
         [Required(ErrorMessage = "Please enter Password")]
-        [StringLength(20, MinimumLength = 8, ErrorMessage = "Password must be 8-20 characters")]
+        [StringLength(20, MinimumLength = 7, ErrorMessage = "Password must be 7-20 characters")]
         [DataType(DataType.Password)]
         public string UserPw { get; set; } = null!;
 
@@ -21,7 +21,7 @@ namespace FYP.Models
         public string UserName { get; set; } = null!;
 
         //[Required(ErrorMessage = "Please enter Full Name")]
-        public int Role { get; set; }
+        //public int Role { get; set; }
 
         [Required(ErrorMessage = "Please choose school")]
         public string School { get; set; } = null!;
