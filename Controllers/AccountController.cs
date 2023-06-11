@@ -10,6 +10,9 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ZXing;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -25,15 +28,15 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
 
-    private const string UROLE = "roles_id";
+    //private const string UROLE = "roles_id";
 
-    private const string RECN = "Home";
-    private const string REVW = "Index";
+    //private const string RECN = "Home";
+    //private const string REVW = "Index";
 
-    private const string RECN1 = "Account";
-    private const string REVW1 = "Login";
+    //private const string RECN1 = "Account";
+    //private const string REVW1 = "Login";
 
-    private const string LV = "Login";
+    //private const string LV = "Login";
 
     private readonly IConfiguration _configuration;
 
@@ -60,7 +63,7 @@ public class AccountController : Controller
         {
             ViewData["Message"] = "Incorrect User ID or Password";
             ViewData["MsgType"] = "warning";
-            return View(LV);
+            return View("Login");
         }
         else
         {
@@ -76,11 +79,10 @@ public class AccountController : Controller
 
             user.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-            return RedirectToAction(REVW, RECN); // Redirect to the users to home
+            return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
     }
 
-    [Authorize]
     public IActionResult Logout(string returnUrl = null!)
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -129,36 +131,46 @@ public class AccountController : Controller
                 if (totalDigits == 4)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
+                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '1', '{3}', '{4}', '{5}', 'null')";
                 }
                 else if (totalDigits == 8)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '2', '{3}', '{4}', '{5}', 'null')";
                 }
+               
+                SqlCommand command = new SqlCommand(insertQuery, connection);
+                command.Parameters.AddWithValue("{0}", UserID);
+                command.Parameters.AddWithValue("{1}", newUser.UserPw2);
+                command.Parameters.AddWithValue("{2}", newUser.UserName);
+                command.Parameters.AddWithValue("{3}", newUser.School);
+                command.Parameters.AddWithValue("{4}", newUser.Email);
+                command.Parameters.AddWithValue("{5}", newUser.PhoneNo);
 
-                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
+                int rowsAffected = command.ExecuteNonQuery();
 
-                connection.Execute(insertQuery, newUser);
+                if (rowsAffected > 0)
+                {
+                    ViewData["Message"] = "User registered successfully";
+                    ViewData["MsgType"] = "success";
+                }
+                else
+                {
+                    ViewData["Message"] = "User register failed";
+                    ViewData["MsgType"] = "warning";
+                }
             }
 
             // Redirect the user to the login page after successful registration
-            return View("Login");
+            return RedirectToAction("Login", "Account");
         }
 
     }
 
     private string ExtractNumbersFrom(string email)
     {
-        string numbers = "";
-        foreach (var n in email.Split(','))
-        {
-            if (int.Parse(n).Equals(true))
-            {
-                numbers += n;
-            }
-        }
+        string[] NumArray = email.Split("@");
+        string numbers = NumArray[0];
         return numbers;
     }
 
@@ -197,7 +209,7 @@ public class AccountController : Controller
                   new ClaimsIdentity(
                      new Claim[] {
                      new Claim(ClaimTypes.NameIdentifier, uid),
-                     new Claim(ClaimTypes.Role, ds.Rows[0][UROLE].ToString()!)
+                     new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
                      }, "Basic"
                   )
                );
