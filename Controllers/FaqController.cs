@@ -71,7 +71,7 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "INSERT INTO FAQ (category_id, question, solution) VALUES (@CategoryId, @Question, @Solution)";
+                string query = "INSERT INTO FAQ (faq_id,category_id, question, solution) VALUES ('{0}','{1}', '{2}', '{3}')";
                 SqlCommand command = new SqlCommand(query, connection);
 
                 // Retrieve category ID based on the category name
@@ -81,10 +81,10 @@ namespace FYP.Controllers
                     // Category not found, handle accordingly (e.g., display an error message)
                     return false;
                 }
-
-                command.Parameters.AddWithValue("@CategoryId", categoryId);
-                command.Parameters.AddWithValue("@Question", faq.Question);
-                command.Parameters.AddWithValue("@Solution", faq.Solution);
+                command.Parameters.AddWithValue("{0}",faq.FaqId);
+                command.Parameters.AddWithValue("{1}", categoryId);
+                command.Parameters.AddWithValue("{2}", faq.Question);
+                command.Parameters.AddWithValue("{3}", faq.Solution);
 
                 connection.Open();
                 int rowsAffected = command.ExecuteNonQuery();
@@ -109,7 +109,6 @@ namespace FYP.Controllers
             }
         }
 
-
         [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
@@ -128,14 +127,6 @@ namespace FYP.Controllers
             }
             return View(faq);
         }
-
-
-
-
-
-
-
-
 
 
         private void DeleteFAQFromDatabase(int faqId)

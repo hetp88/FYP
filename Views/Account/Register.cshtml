@@ -5,6 +5,13 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
+    <script>
+        function showMessage() {
+            alert("Your unsaved edits will be discarded");
+            window.location.href = "/Account/Login";
+        }
+    </script>
     <style>
         body {
             background-color: #000000;
@@ -72,6 +79,7 @@
         <div class="card-body">
             <form method="post" asp-controller="Account" asp-action="Register">
                 <div class="mb-3 offset-md-4">
+                    <button onclick="showMessage()">Back</button>
                     <h2>User Registration</h2>
                 </div>
                 <!--<div class="form-group col-md-4 mb-3 offset-md-4">
