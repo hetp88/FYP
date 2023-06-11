@@ -25,6 +25,8 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
 
+    private const string UROLE = "roles_id";
+
     private const string RECN = "Home";
     private const string REVW = "Index";
 
@@ -48,7 +50,7 @@ public class AccountController : Controller
     {
         return View();
     }
-      
+
 
 
     [HttpPost]
@@ -82,9 +84,16 @@ public class AccountController : Controller
     public IActionResult Logout(string returnUrl = null!)
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        if (Url.IsLocalUrl(returnUrl))
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
-        return RedirectToAction(REVW1, RECN1);
+
+        return RedirectToAction("Login", "Account");
+    }
+    [AllowAnonymous]
+    public IActionResult Forbidden()
+    {
+        return View();
     }
 
     [AllowAnonymous]
@@ -111,33 +120,33 @@ public class AccountController : Controller
             {
                 connection.Open();
 
-                newUser.UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
+                int UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
 
-                int totalDigits = newUser.UserID.ToString().Length;
+                int totalDigits = UserID.ToString().Length;
 
                 string insertQuery = "";
 
                 if (totalDigits == 4)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
+                                     "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
                 }
-                else if(totalDigits == 8)
+                else if (totalDigits == 8)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                                    "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
                 }
 
                 //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
+                // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
 
                 connection.Execute(insertQuery, newUser);
             }
 
             // Redirect the user to the login page after successful registration
-            return RedirectToAction("Login");
+            return View("Login");
         }
-        
+
     }
 
     private string ExtractNumbersFrom(string email)
@@ -162,7 +171,7 @@ public class AccountController : Controller
                                                 "WHERE role_type = 'support engineer' OR role_type = 'administrator'"); // Query to retrieve user data
         return View(usersData);
     }
-  
+
     public IActionResult Policy()
     {
         return View();
@@ -188,6 +197,7 @@ public class AccountController : Controller
                   new ClaimsIdentity(
                      new Claim[] {
                      new Claim(ClaimTypes.NameIdentifier, uid),
+                     new Claim(ClaimTypes.Role, ds.Rows[0][UROLE].ToString()!)
                      }, "Basic"
                   )
                );
@@ -195,10 +205,4 @@ public class AccountController : Controller
         }
         return false;
     }
-    
 }
-    
-
-
-
-
