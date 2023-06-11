@@ -16,15 +16,15 @@
 <body>
     @if (User.Identity!.IsAuthenticated)
     {
-        if (User.IsInRole("SupportEngineer"))
+        if (User.IsInRole("4"))
         {
             <partial name="TicketEmployee"/>
         }
-        else if (User.IsInRole("HelpdeskAgent"))
+        else if (User.IsInRole("3"))
         {
             <partial name="TicketEmployee"/>
         }
-        else if (User.IsInRole("admin")){
+        else if (User.IsInRole("5")){
             <partial name="TicketAdmin"/>
         }
         else

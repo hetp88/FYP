@@ -5,28 +5,89 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Home</title>
     <style>
         body {
-            background-color: #E8E3DF;
-            color: #ffffff;
+            color: #000000;
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
         }
-
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #e3e5de
         }
-   
+        .card {
+            background-color: #FFFFFF;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        
+        .card-button {
+            background-color: #c4a27f;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .card-long {
+            background-color: #FFFFFF;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin-bottom: 100px;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Ticket Helper</h1>
-        <p>This is a short description of what you can find on this page.</p>
+        <div class="card-long">
+            <h1>Hello, how can we help you?</h1>
+            <div class="card">
+                <h2 class="card-title">View your tickets here</h2>
+                <button class="card-button" type="button">View</button>
+            </div>
+            <div class="card">
+                <h2 class="card-title">New Ticket Here</h2>
+                <button class="card-button" type="button">New Ticket</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

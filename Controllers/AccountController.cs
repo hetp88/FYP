@@ -25,6 +25,8 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
 
+    private const string UROLE = "roles_id";
+
     private const string RECN = "Home";
     private const string REVW = "Index";
 
@@ -82,9 +84,16 @@ public class AccountController : Controller
     public IActionResult Logout(string returnUrl = null!)
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        if (Url.IsLocalUrl(returnUrl))
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
-        return RedirectToAction(REVW1, RECN1);
+
+        return RedirectToAction("Login", "Account");
+    }
+    [AllowAnonymous]
+    public IActionResult Forbidden()
+    {
+        return View();
     }
 
     [AllowAnonymous]
@@ -135,7 +144,7 @@ public class AccountController : Controller
             }
 
             // Redirect the user to the login page after successful registration
-            return RedirectToAction("Login");
+            return View("Login");
         }
         
     }
@@ -188,6 +197,7 @@ public class AccountController : Controller
                   new ClaimsIdentity(
                      new Claim[] {
                      new Claim(ClaimTypes.NameIdentifier, uid),
+                     new Claim(ClaimTypes.Role, ds.Rows[0][UROLE].ToString()!)
                      }, "Basic"
                   )
                );
