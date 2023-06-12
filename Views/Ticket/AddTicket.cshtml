@@ -1,16 +1,147 @@
-﻿<!DOCTYPE html>
+﻿@model Ticket;
+
+<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>New Ticket</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
     <script>
         function showMessage() {
             alert("Your unsaved edits will be discarded");
             window.location.href = "/Home/Index";
         }
     </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 530px;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 550px;
+        }
+
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label {
+            color: #FFFFFF;
+        }
+
+        .form-control {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+
+        .form-select {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card-body">
+            <button onclick="showMessage()">Back</button>
+            <h2>New Ticket</h2>
 
+            <form method="post" asp-controller="Account" asp-action="Register">
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <input type="text" class="form-control" input asp-for="UserId" placeholder="User ID" required>
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <input type="text" class="form-control" input asp-for="Description" placeholder="Issue Description" required>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <select class="form-select" input asp-for="Priority" placeholder="School" required>
+                        <option value="">Type</option>
+                        <option value="SI">SOI</option>
+                        <option value="SE">SEG</option>
+                        <option value="SM">Incident</option>
+                    </select>
+                    <span asp-validation-for="Priority" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <select class="form-select" input asp-for="Status" placeholder="School" required>
+                        <option value="">Priority</option>
+                        <option value="SI">SOI</option>
+                        <option value="SE">SEG</option>
+                        <option value="SM">Incident</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">Select a category</option>
+                        <option value="software">software</option>
+                        <option value="hardware">hardware</option>
+                        <option value="network connectivity">network connectivity</option>
+                        <option value="access portal">access portal</option>
+                        <!-- Add more Options When needed to -->
+                    </select>
+                </div>
+
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <input type="text" class="form-control" input asp-for="DevicesInvolved" placeholder="Devices Involved" required>
+                    <span asp-validation-for="DevicesInvolved" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4 mb-3 offset-md-4">
+                    <input type="text" class="form-control" input asp-for="Additional_Details" placeholder="Additional Details" required>
+                    <span asp-validation-for="Additional_Details" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group mb-3 offset-md-4">
+                    <button type="submit" class="btn btn-primary">Add Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
+
+
+
+
+

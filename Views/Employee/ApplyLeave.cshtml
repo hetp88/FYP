@@ -1,63 +1,131 @@
-﻿<!DOCTYPE html>
+﻿
+
+@model FYP.Models.NewUser
+
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Leave Application</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
     <script>
         function showMessage() {
             alert("Your unsaved edits will be discarded");
-            window.location.href = "/Home/Index";
+            window.location.href = "/Account/Login";
         }
     </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 530px;
+        }
+
+        .card {
+            background-color: #2A2A43;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 1200px;
+            height: 550px;
+        }
+
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label {
+            color: #FFFFFF;
+        }
+
+        .form-control {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+
+        .form-select {
+            background-color: #33335F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <button onclick="showMessage()">Back</button>
-        <h2>Leave Application Form</h2>
+        <div class="card-body">
+            <button onclick="showMessage()">Back</button>
+            <h2>Leave Application Form</h2>
 
-        <form action="submit_leave.php" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
+            <form action="submit_leave.php" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
 
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
 
-            <div class="form-group">
-                <label for="leave_type">Leave Type:</label>
-                <select class="form-control" id="leave_type" name="leave_type" required>
-                    <option value="">Select leave type</option>
-                    <option value="sick">Sick Leave</option>
-                    <option value="vacation">Vacation Leave</option>
-                    <option value="personal">Personal Leave</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="leave_type">Leave Type:</label>
+                    <select class="form-control" id="leave_type" name="leave_type" required>
+                        <option value="">Select leave type</option>
+                        <option value="sick">Sick Leave</option>
+                        <option value="vacation">Vacation Leave</option>
+                        <option value="personal">Personal Leave</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="start_date">Start Date:</label>
-                <input type="date" class="form-control" id="start_date" name="start_date" required>
-            </div>
+                <div class="form-group">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                </div>
 
-            <div class="form-group">
-                <label for="end_date">End Date:</label>
-                <input type="date" class="form-control" id="end_date" name="end_date" required>
-            </div>
+                <div class="form-group">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" required>
+                </div>
 
-            <div class="form-group">
-                <label for="reason">Reason:</label>
-                <textarea class="form-control" id="reason" name="reason" rows="4" required></textarea>
-            </div>
+                <div class="form-group">
+                    <label for="reason">Reason:</label>
+                    <textarea class="form-control" id="reason" name="reason" rows="4" required></textarea>
+                </div>
 
-            <div class="form-group">
-                <label for="attachment">PDF Attachment:</label>
-                <input type="file" class="form-control-file" id="attachment" name="attachment" accept="application/pdf">
-            </div>
+                <div class="form-group">
+                    <label for="attachment">PDF Attachment:</label>
+                    <input type="file" class="form-control-file" id="attachment" name="attachment" accept="application/pdf">
+                </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
