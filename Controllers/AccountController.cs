@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Security.Claims;
 using Microsoft.Data.SqlClient;
@@ -10,15 +11,17 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ZXing;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
 {
     private const string LOGIN_SQ =
-        @"SELECT * FROM users WHERE userid = '{0}' AND user_pw = HASHBYTES('SHA1', '{1}')";
+        @"SELECT *
+FROM users
+INNER JOIN employee ON users.userid = employee.userid
+WHERE users.userid = '{0}' AND users.user_pw = HASHBYTES('SHA1', '{1}')
+  AND employee.employee_pw = HASHBYTES('SHA1', '{1}')";
+
     private const string LOGIN_EMP =
         @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
@@ -53,6 +56,7 @@ public class AccountController : Controller
     {
         return View();
     }
+
 
 
     [HttpPost]
@@ -126,38 +130,23 @@ public class AccountController : Controller
                 int totalDigits = UserID.ToString().Length;
 
                 string insertQuery = "";
+                string X = "UserID, newUser.UserPw2, newUser.UserName, newUser.School, newUser.Email, newUser.PhoneNo";
 
-                if (totalDigits == 4)
+if (totalDigits == 4)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '1', '{3}', '{4}', '{5}', 'null')";
+                                     "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
                 }
                 else if (totalDigits == 8)
                 {
                     insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '2', '{3}', '{4}', '{5}', 'null')";
+                                    "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
                 }
-               
-                SqlCommand command = new SqlCommand(insertQuery, connection);
-                command.Parameters.AddWithValue("{0}", UserID);
-                command.Parameters.AddWithValue("{1}", newUser.UserPw2);
-                command.Parameters.AddWithValue("{2}", newUser.UserName);
-                command.Parameters.AddWithValue("{3}", newUser.School);
-                command.Parameters.AddWithValue("{4}", newUser.Email);
-                command.Parameters.AddWithValue("{5}", newUser.PhoneNo);
 
-                int rowsAffected = command.ExecuteNonQuery();
+                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
+                // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
 
-                if (rowsAffected > 0)
-                {
-                    ViewData["Message"] = "User registered successfully";
-                    ViewData["MsgType"] = "success";
-                }
-                else
-                {
-                    ViewData["Message"] = "User register failed";
-                    ViewData["MsgType"] = "warning";
-                }
+                connection.Execute(insertQuery, newUser);
             }
 
             // Redirect the user to the login page after successful registration

@@ -4,11 +4,9 @@
             padding-top: 60px;
             margin: 0;
         }
-
         .container {
             display: flex;
         }
-
         .navbar {
             background-color: #c4a27f;
             width: 240px;
@@ -20,11 +18,9 @@
             top: 0;
             bottom: 0;
         }
-
             .navbar img {
                 margin: 10px;
             }
-
         .navbar-nav {
             list-style-type: none;
             padding: 0;
@@ -32,7 +28,6 @@
             position: absolute;
             top: 0;
         }
-
         .nav-link {
             text-align: left;
             color: white;
@@ -40,12 +35,10 @@
             text-decoration: none;
             text-indent: 10px;
         }
-
             .nav-link:hover {
-                background-color: #e3e5de;
+                color: #000;
                 transform: scale(0.85);
             }
-
         .content {
             margin-left: 200px;
             padding: 1rem;
@@ -68,7 +61,6 @@
             margin-right: 15%;
             margin-left: 15%;
         }
-
         .icon-large {
             font-size: 24px;
         }
@@ -98,7 +90,7 @@
                     <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
+                    <a class="nav-link" asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">My Tickets</a>
