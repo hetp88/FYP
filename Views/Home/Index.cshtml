@@ -4,7 +4,46 @@
 
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Flexible Container Homepage</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex-grow: 1;
+            height: 100%;
+            width:100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .container > div {
+                flex-basis: 100%;
+                padding: 20px;
+                border: 1px solid #ccc;
+            }
+    </style>
+</head>
 <body>
-    
+    <div class="container">
+        <div>
+            <h1>TESTING</h1>
+        </div>
+    </div>
 </body>
 </html>
+
+

@@ -6,6 +6,10 @@ using System.Data;
 using System.Data.SqlClient;
 using FYP.Models;
 using System.Reflection.Metadata;
+using Dapper;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+
 
 namespace FYP.Controllers
 {
@@ -17,6 +21,7 @@ namespace FYP.Controllers
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
+
         private const string RECN = "Home";
         private const string REVW = "Index";
         public IActionResult Index()
@@ -30,9 +35,12 @@ namespace FYP.Controllers
             return View(faqs);
         }
 
-        public IActionResult CreateFAQ()
+        public IActionResult CreateFAQ(FAQ faq)
         {
-            return View("CreateFAQ");
+            InsertFAQToDatabase(faq);
+
+            // Redirect to the index homepage
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -67,31 +75,33 @@ namespace FYP.Controllers
             return faqs;
         }
 
+
         private bool InsertFAQToDatabase(FAQ faq)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "INSERT INTO FAQ (faq_id,category_id, question, solution) VALUES ('{0}','{1}', '{2}', '{3}')";
-                SqlCommand command = new SqlCommand(query, connection);
+                //string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-                // Retrieve category ID based on the category name
-                int categoryId = GetCategoryIdByName(faq.Category);
-                if (categoryId == -1)
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    // Category not found, handle accordingly (e.g., display an error message)
-                    return false;
+                    string query = @"INSERT INTO FAQ (faq_id,category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
+
+                    connection.Open();
+                    connection.ExecuteAsync(query, faq);
                 }
-                command.Parameters.AddWithValue("{0}",faq.FaqId);
-                command.Parameters.AddWithValue("{1}", categoryId);
-                command.Parameters.AddWithValue("{2}", faq.Question);
-                command.Parameters.AddWithValue("{3}", faq.Solution);
+                FAQ newFaq = new FAQ
+                {
+                    FaqId = new Random().Next(1, 1000001),
+                    CategoryId = faq.CategoryId,
+                    Question = faq.Question,
+                    Solution = faq.Solution,
+                };
 
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
+                InsertFAQToDatabase(newFaq);
 
-                return rowsAffected > 0;
+                return true;
             }
         }
+
 
         private int GetCategoryIdByName(string categoryName)
         {
@@ -108,27 +118,6 @@ namespace FYP.Controllers
                 return categoryId;
             }
         }
-
-        [HttpPost]
-        public IActionResult CreateFAQ(FAQ faq)
-        {
-            if (ModelState.IsValid)
-            {
-                bool isInserted = InsertFAQToDatabase(faq);
-                if (isInserted)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-
-                    
-                }
-            }
-            return View(faq);
-        }
-
-
         private void DeleteFAQFromDatabase(int faqId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
