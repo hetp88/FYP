@@ -15,7 +15,7 @@ public static class DBUtl
     static readonly string? env =
     Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-    private static readonly IConfiguration config =
+    private static readonly IConfiguration config = 
        new ConfigurationBuilder()
           .SetBasePath(Directory.GetCurrentDirectory())
           .AddJsonFile("appsettings.json")
@@ -148,4 +148,5 @@ public static class DBUtl
     {
         return line?.Replace("'", "''")!;
     }
+
 }
