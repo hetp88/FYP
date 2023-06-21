@@ -363,3 +363,11 @@ MigrationBackup/
 FodyWeavers.xsd
 /Controllers/AccountController.cs
 /Views/Account/Login.cshtml
+/Controllers/EmployeeController.cs
+/Models/EmployeeSchedule.cs
+/Models/NewUser.cs
+/Views/Employee/Schedule.cshtml
+/Views/Home/Index.cshtml
+/Views/Shared/TicketAdmin.cshtml
+/Views/Shared/TicketGuest.cshtml
+/.gitignore
