@@ -14,5 +14,9 @@ namespace FYP.Controllers
         {
             return View();
         }
+        public IActionResult Schedule()
+        {
+            return View();
+        }
     }
 }
