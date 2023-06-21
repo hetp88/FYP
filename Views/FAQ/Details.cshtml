@@ -42,6 +42,7 @@
             font-style: italic;
         }
     </style>
+    <title>FAQs</title>
 </head>
 <body>
     <div class="container">
@@ -52,20 +53,29 @@
         }
         else
         {
-            <table class="table">
+            <table class='table table-striped table-hover'>
                 <tr>
-                    <th>ID</th>
-                    <th>Question</th>
-                    <th>Solution</th>
-                    <th>Category</th>
+                    <th style="text-align:center">ID</th>
+                    <th style="text-align:center">Question</th>
+                    <th style="text-align:center">Solution</th>
+                    <th style="text-align:center">Category</th>
+                    <th style="text-align:center">Action</th>
                 </tr>
+           
                 @foreach (var fAQ in Model)
                 {
                     <tr>
-                        <td>@fAQ.FaqId</td>
-                        <td>@fAQ.Question</td>
-                        <td>@fAQ.Solution</td>
-                        <td>@fAQ.Category</td>
+                        <td style="text-align:center">@fAQ.FaqId</td>
+                        <td style="text-align:center">@fAQ.Question</td>
+                        <td style="text-align:center">@fAQ.Solution</td>
+                        <td style="text-align:center">@fAQ.Category</td>
+                        <td style="text-align:center">
+                            <a href="/FAQ/Delete/@fAQ.FaqId"
+                               style="text-decoration:none; color:indianred"
+                               onclick="return confirm('Delete product "@fAQ.Question?"')">
+                                <i class="bi bi-trash3"></i>
+                            </a>
+                        </td>
                     </tr>
                 }
             </table>
