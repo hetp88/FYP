@@ -9,8 +9,6 @@ using System.Reflection.Metadata;
 using Dapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-
-
 namespace FYP.Controllers
 {
     public class FaqController : Controller
@@ -24,11 +22,7 @@ namespace FYP.Controllers
 
         public IActionResult Details()
         {
-            List<FAQ> faqs = GetFAQsFromDatabase();
-            return View(faqs);
-        }
-        private List<FAQ> GetFAQsFromDatabase()
-        {
+            List<FAQ> faqs = new List<FAQ>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"SELECT f.faq_id, tc.category, f.question, f.solution 
@@ -36,10 +30,13 @@ namespace FYP.Controllers
                                  INNER JOIN ticket_categories tc ON tc.category_id = f.category_id;";
 
                 connection.Open();
-                List<FAQ> faqs = connection.Query<FAQ>(query).AsList();
-                return faqs;
+                faqs = connection.Query<FAQ>(query).AsList();
+                //Console.WriteLine("999xxx_"+faqs[0]);
+                //return faqs;
             }
+            return View(faqs);
         }
+        
         public IActionResult CreateFAQ()
         {
             return View();
@@ -48,20 +45,12 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
-            int categoryid = 0;
+            //int categoryid = 0;
             int faqid = 0;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string idQuery = $"SELECT faq_id FROM FAQ";
-                string catQuery = $"SELECT tc.category_id FROM ticket_categories tc INNER JOIN FAQ f ON f.category_id = tc.category_id WHERE tc.category = '{faq.Category}';";
-                
+                string idQuery = $"SELECT MAX(faq_id) FROM FAQ";
                 connection.Open();
-
-                List<int> cat = connection.Query<int>(catQuery).AsList();
-                foreach (int cid in cat)
-                {
-                    categoryid = cid;
-                }
 
                 List<int> faqs = connection.Query<int>(idQuery).AsList();
                 foreach (int fid in faqs)
@@ -72,12 +61,12 @@ namespace FYP.Controllers
                 FAQ newFaq = new FAQ
                 {
                     FaqId = faqid + 1,
-                    CategoryId = categoryid,
+                    Category = faq.Category,
                     Question = faq.Question,
                     Solution = faq.Solution,
                 };
 
-                string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
+                string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @Category, @Question, @Solution)";
  
                 if (connection.Execute(query, newFaq) == 1)
                 {
@@ -93,22 +82,7 @@ namespace FYP.Controllers
             // Redirect to the index homepage
             return RedirectToAction("Details", "FAQ");
         }
-        private bool InsertFAQToDatabase(FAQ faq)
-        {
-            {
-                //string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
-
-                    connection.Open();
-                    connection.Execute(query, faq);
-                }
-                return true;
-            }
-        }
-
+       
         [HttpPost]
         public IActionResult Delete(int faqId)
         {
@@ -125,23 +99,6 @@ namespace FYP.Controllers
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-        }
-        
-        private int GetCategoryIdByName(string categoryName)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                string query = "SELECT category_id FROM ticket_categories WHERE category = @Category";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@category", categoryName);
-
-                connection.Open();
-                object result = command.ExecuteScalar();
-                int categoryId = result != null ? Convert.ToInt32(result) : -1;
-
-                return categoryId;
-            }
-        }
-        
+        }        
     }
 }
