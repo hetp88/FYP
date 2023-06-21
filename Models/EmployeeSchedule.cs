@@ -6,6 +6,9 @@ namespace FYP.Models
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string reason { get; set; } = null!;
+        public int employee_id { get; set; }
+        public bool is_approved { get; set; }
     }
 
 }

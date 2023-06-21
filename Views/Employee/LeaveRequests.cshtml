@@ -1,5 +1,80 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<FYP.Models.EmployeeSchedule>
+
 @{
+    Layout = "_Ticket";
 }
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: #E8E3DF;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        p {
+            line-height: 1.5;
+        }
+
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+            .table th, .table td {
+                border-bottom: 1px solid black;
+                padding: 8px;
+            }
+
+        .no-tickets-message {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No pending leave requested</p>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Documents Attached</th>
+                    <th>Status</th>
+                </tr>
+                @foreach (var employeeSchedule in Model)
+                {
+                    <tr>
+                        <td>@employeeSchedule.employee_id</td>
+                        <td>@employeeSchedule.StartDate</td>
+                        <td>@employeeSchedule.EndDate</td>
+                        <td>@employeeSchedule.reason</td>
+                        <td>@employeeSchedule</td>
+                        <td>@employeeSchedule.is_approved</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</body>
+</html>

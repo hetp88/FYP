@@ -18,5 +18,9 @@ namespace FYP.Controllers
         {
             return View();
         }
+        public IActionResult LeaveReqest()
+        {
+            return View();
+        }
     }
 }
