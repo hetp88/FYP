@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "_Ticket";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flexible Container Homepage</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 40vh;
+        }
+
+        .container {
+            flex-grow: 2;
+            height: 100%;
+            width: 70%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: left;
+            align-items: flex-end;
+        }
+
+            .container > div {
+                flex-basis: 100%;
+                padding: 20px;
+                border: 1px solid #ccc;
+                background-color: #f5f1e6;
+            }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            background-color: #C5B17F; /* Green button color */
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+            .button:hover {
+                background-color: #C5B10F; /* Darker green on hover */
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <h1>Welcome to Ticket Helper</h1>
+            <p>Ticket Master will be your one-stop solution for the technical problems you face, software and hardware. Our application will help you to conveniently report your problems or even provide you with solutions you might need under the FAQ section. We will ensure that your problems will be settled as soon as possible and provide you with the best troubleshooting experience.</p>
+            <button class="button" onclick="location.href='/Ticket/AddTicket'">Report a problem!</button>
+            <button class="button" onclick="location.href='/FAQ/Details'">Possible Solutions You May Be Looking For</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -37,6 +37,10 @@
             <h1>Create FAQ</h1>
             <form method="post" action="/FAQ/CreateFAQ">
                 <div class="mb-3">
+                    <label for="faq_id" class="form-label"></label>
+                    <input type="text" id="id" name="id" class="form-control" hidden>
+                </div>
+                <div class="mb-3">
                     <label for="question" class="form-label">Question:</label>
                     <input type="text" id="question" name="question" class="form-control" required>
                 </div>
@@ -48,15 +52,15 @@
                     <label for="category" class="form-label">Category:</label>
                     <select id="category" name="category" class="form-control" required>
                         <option value="">Select a category</option>
-                        <option value="software">software</option>
-                        <option value="hardware">hardware</option>
-                        <option value="network connectivity">network connectivity</option>
-                        <option value="access portal">access portal</option>
-                        <!-- Add more options as needed -->
+                        <option value="software">Software</option>
+                        <option value="hardware">Hardware</option>
+                        <option value="network connectivity">Network Connectivity</option>
+                        <option value="access portal">Access Portal</option>
+                        <!-- Add more Options When needed to -->
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Publish</button>
             </form>
         </div>
     </div>

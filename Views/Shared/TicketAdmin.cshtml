@@ -8,7 +8,7 @@
             display: flex;
         }
         .navbar {
-            background-color: #c4a27f;
+            background-color: #95A1AF;
             width: 240px;
             display: flex;
             flex-direction: column;
@@ -36,14 +36,13 @@
             text-indent: 10px;
         }
             .nav-link:hover {
-                color: #000;
+                background-color:#e3e5de;
                 transform: scale(0.85);
             }
         .content {
             margin-left: 200px;
             padding: 1rem;
         }
-
         .navbar-line {
             list-style-type: none;
             position: absolute;
@@ -64,7 +63,6 @@
         .icon-large {
             font-size: 24px;
         }
-
         .bigger-icon {
             font-size: 24px;
         }
@@ -78,13 +76,10 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="ToDoTicket">To-Do</a>
+                    <a class="nav-link" asp-controller="Ticket" asp-action="CustomerTicket">Your Tickets</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="ViewTicket">All Tickets</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
@@ -93,10 +88,22 @@
                     <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
+                    <a class="nav-link" asp-controller="FAQ" asp-action="DeleteFAQ">Remove FAQ</a>
+                </li>               
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="Schedule">Schedule</a>
+                    <a class="nav-link" asp-controller="Employee" asp-action="EmployeeList">Employee List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Employee" asp-action="Schedule">Employee Schedule</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Employee" asp-action="NewEmployee">Register Employee</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Employee" asp-action="LeaveRequests">Leave Requests</a>
                 </li>
             </ul>
             <ul class="navbar-line offset-md-2">

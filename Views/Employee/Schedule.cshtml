@@ -1,0 +1,44 @@
+﻿@model List<FYP.Models.EmployeeSchedule>
+@{
+    Layout = "_Ticket";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Calendar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #header {
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        #calendar {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#calendar').fullCalendar({
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="header">
+        <h2>Schedule</h2>
+    </div>
+    <div id="calendar"></div>
+</body>
+</html>

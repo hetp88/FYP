@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Security.Claims;
+﻿
 using Microsoft.Data.SqlClient;
 using Dapper;
 using FYP.Models;
@@ -10,6 +8,13 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ZXing;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System;
+using System.Data;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -20,18 +25,20 @@ public class AccountController : Controller
         @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
-        @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = '{0}'";
+        @"UPDATE users SET LastLogin=GETDATE() WHERE userid = '{0}'";
 
     private const string ForgetPW_SQ =
-        @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
+        @"SELECT password FROM Users WHERE userid = '{0}' AND email = '{1}'";
 
-    private const string RECN = "Home";
-    private const string REVW = "Index";
+    //private const string UROLE = "roles_id";
 
-    private const string RECN1 = "Account";
-    private const string REVW1 = "Login";
+    //private const string RECN = "Home";
+    //private const string REVW = "Index";
 
-    private const string LV = "Login";
+    //private const string RECN1 = "Account";
+    //private const string REVW1 = "Login";
+
+    //private const string LV = "Login";
 
     private readonly IConfiguration _configuration;
 
@@ -48,8 +55,6 @@ public class AccountController : Controller
     {
         return View();
     }
-      
-
 
     [HttpPost]
     public IActionResult Login(UserLogin user)
@@ -58,7 +63,7 @@ public class AccountController : Controller
         {
             ViewData["Message"] = "Incorrect User ID or Password";
             ViewData["MsgType"] = "warning";
-            return View(LV);
+            return View("Login");
         }
         else
         {
@@ -74,17 +79,24 @@ public class AccountController : Controller
 
             user.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-            return RedirectToAction(REVW, RECN); // Redirect to the users to home
+            return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
     }
 
-    [Authorize]
     public IActionResult Logout(string returnUrl = null!)
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
         if (Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
-        return RedirectToAction(REVW1, RECN1);
+
+        return RedirectToAction("Login", "Account");
+    }
+
+    [AllowAnonymous]
+    public IActionResult Forbidden()
+    {
+        return View();
     }
 
     [AllowAnonymous]
@@ -107,50 +119,77 @@ public class AccountController : Controller
         else
         {
             // Save the user registration data to the database
+            string[] NumArray = newUser.Email.Split("@");
+            string numbers = NumArray[0];
+            int UserID = int.Parse(numbers);
+            int totalDigits = UserID.ToString().Length;
+
             using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                newUser.UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
-
-                int totalDigits = newUser.UserID.ToString().Length;
-
-                string insertQuery = "";
-
-                if (totalDigits == 4)
+                NewUser staff = new NewUser
                 {
-                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
-                }
-                else if(totalDigits == 8)
+                    UserID = UserID,
+                    UserPw2 = newUser.UserPw2,
+                    UserName = newUser.UserName,
+                    Role = 2,
+                    School = newUser.School,
+                    Email = newUser.Email,
+                    PhoneNo = newUser.PhoneNo,
+                    Last_login = null,
+                };
+
+                NewUser student = new NewUser
                 {
-                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                    UserID = UserID,
+                    UserPw2 = newUser.UserPw2,
+                    UserName = newUser.UserName,
+                    Role = 1,
+                    School = newUser.School,
+                    Email = newUser.Email,
+                    PhoneNo = newUser.PhoneNo,
+                    Last_login = null,
+                };
+            
+
+                if (totalDigits == 8)
+                {
+
+                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
+
+                    if (connection.Execute(insertQuery1, student) == 1)
+                    {
+                        TempData["Message"] = "Account registered successfully";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Account registered failed";
+                        TempData["MsgType"] = "danger";
+                    }
                 }
+                else if (totalDigits == 4)
+                {
+                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
 
-                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
-
-                connection.Execute(insertQuery, newUser);
-            }
-
-            // Redirect the user to the login page after successful registration
-            return RedirectToAction("Login");
-        }
-        
-    }
-
-    private string ExtractNumbersFrom(string email)
-    {
-        string numbers = "";
-        foreach (var n in email.Split(','))
-        {
-            if (int.Parse(n).Equals(true))
-            {
-                numbers += n;
+                    if (connection.Execute(insertQuery2, staff) == 1)
+                    {
+                        TempData["Message"] = "Account registered successfully";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Account registered failed";
+                        TempData["MsgType"] = "danger";
+                    }
+                }
             }
         }
-        return numbers;
+        // Redirect the user to the login page after successful registration
+        return RedirectToAction("Login", "Account");
     }
 
     [Authorize(Roles = "support engineer, administrator")]
@@ -162,7 +201,7 @@ public class AccountController : Controller
                                                 "WHERE role_type = 'support engineer' OR role_type = 'administrator'"); // Query to retrieve user data
         return View(usersData);
     }
-  
+
     public IActionResult Policy()
     {
         return View();
@@ -188,6 +227,7 @@ public class AccountController : Controller
                   new ClaimsIdentity(
                      new Claim[] {
                      new Claim(ClaimTypes.NameIdentifier, uid),
+                     new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
                      }, "Basic"
                   )
                );
@@ -195,10 +235,4 @@ public class AccountController : Controller
         }
         return false;
     }
-    
 }
-    
-
-
-
-
