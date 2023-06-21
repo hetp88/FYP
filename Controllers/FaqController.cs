@@ -49,36 +49,47 @@ namespace FYP.Controllers
         public IActionResult CreateFAQ(FAQ faq)
         {
             int categoryid = 0;
+            int faqid = 0;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = $"SELECT tc.category_id FROM ticket_categories tc INNER JOIN FAQ f ON f.category_id = tc.category_id WHERE tc.category = '{faq.Category}';";
-
+                string idQuery = $"SELECT faq_id FROM FAQ";
+                string catQuery = $"SELECT tc.category_id FROM ticket_categories tc INNER JOIN FAQ f ON f.category_id = tc.category_id WHERE tc.category = '{faq.Category}';";
+                
                 connection.Open();
-                List<int> cat = connection.Query<int>(query).AsList();
-                foreach (int id in cat)
+
+                List<int> cat = connection.Query<int>(catQuery).AsList();
+                foreach (int cid in cat)
                 {
-                    categoryid = id;
+                    categoryid = cid;
+                }
+
+                List<int> faqs = connection.Query<int>(idQuery).AsList();
+                foreach (int fid in faqs)
+                {
+                    faqid = fid;
+                }
+
+                FAQ newFaq = new FAQ
+                {
+                    FaqId = faqid + 1,
+                    CategoryId = categoryid,
+                    Question = faq.Question,
+                    Solution = faq.Solution,
+                };
+
+                string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
+ 
+                if (connection.Execute(query, newFaq) == 1)
+                {
+                    TempData["Message"] = "FAQ published successfully";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "FAQ published failed";
+                    TempData["MsgType"] = "danger";
                 }
             }
-            FAQ newFaq = new FAQ
-            {
-                FaqId = new Random().Next(1, 1000001),
-                CategoryId = categoryid,
-                Question = faq.Question,
-                Solution = faq.Solution,
-            };
-
-            if (InsertFAQToDatabase(newFaq).Equals(true))
-            {
-                TempData["Message"] = "FAQ published successfully";
-                TempData["MsgType"] = "success";
-            }
-            else
-            {
-                TempData["Message"] = "FAQ published failed";
-                TempData["MsgType"] = "danger";
-            }
-
             // Redirect to the index homepage
             return RedirectToAction("Details", "FAQ");
         }
