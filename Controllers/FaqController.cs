@@ -60,7 +60,7 @@ namespace FYP.Controllers
                 List<int> cat = connection.Query<int>(catQuery).AsList();
                 foreach (int cid in cat)
                 {
-                    faq.CategoryId = cid;
+                    categoryid = id;
                 }
 
                 List<int> faqs = connection.Query<int>(idQuery).AsList();
