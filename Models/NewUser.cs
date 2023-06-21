@@ -26,7 +26,7 @@ namespace FYP.Models
         public string School { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter Email")]
-        [EmailAddress(ErrorMessage = "Invalid Email")]
+        [RegularExpression("(\\d{8}@myrp.sg|\\d{4}@rp.sg)", ErrorMessage = "Invalid Email")]
         public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter Phone Number")]
