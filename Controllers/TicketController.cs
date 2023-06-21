@@ -41,7 +41,7 @@ namespace FYP.Controllers
                     FROM ticket t
                     INNER JOIN users u ON u.userid = t.userid
                     INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                    JOIN employee e ON t.employee_id = e.employee_id;";
+                    INNER JOIN employee e ON t.employee_id = e.employee_id;";
 
                 connection.Open();
                 List<Ticket> tickets = connection.Query<Ticket>(query).AsList();
