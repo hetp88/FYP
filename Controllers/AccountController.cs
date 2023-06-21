@@ -214,6 +214,10 @@ public class AccountController : Controller
     {
         return View();
     }
+    public IActionResult Profile()
+    {
+        return View();
+    }
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {

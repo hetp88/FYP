@@ -1,1 +1,60 @@
-﻿
+﻿@{
+    Layout = "_Ticket";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+</head>
+<body>
+    <div class="profile-container">
+        <h2>User Profile</h2>
+        <div class="form-group">
+            <label>User ID:</label>
+            <input type="text" class="form-control" value="123456" readonly>
+        </div>
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" class="form-control" value="JohnDoe" readonly>
+        </div>
+        <div class="form-group">
+            <label>Phone Number:</label>
+            <input type="text" class="form-control" value="123-456-7890" readonly>
+        </div>
+        <div class="form-group">
+            <label>School:</label>
+            <input type="text" class="form-control" value="Example School" readonly>
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" class="form-control" value="johndoe@example.com" readonly>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" onclick="changePassword()">Change Password</button>
+        <button type="button" class="btn btn-primary btn-block" onclick="updateEmail()">Update Email</button>
+        <button type="button" class="btn btn-primary btn-block" onclick="updatePhoneNumber()">Update Phone Number</button>
+    </div>
+
+    @*THE VALUES TO BE CHANGED AND EXTRACTED WHERE IT WILL SHOW THE details of the fella who logged in*@
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function changePassword() {
+            alert("Password changed successfully!");
+        }
+        function updateEmail() {
+            var newEmail = prompt("Enter new email:");
+            alert("Email updated successfully!");
+        }
+        function updatePhoneNumber() {
+            var newPhoneNumber = prompt("Enter new phone number:");
+            alert("Phone number updated successfully!");
+        }
+    </script>
+</body>
+</html>

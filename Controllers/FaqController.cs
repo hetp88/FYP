@@ -31,8 +31,7 @@ namespace FYP.Controllers
 
                 connection.Open();
                 faqs = connection.Query<FAQ>(query).AsList();
-                //Console.WriteLine("999xxx_"+faqs[0]);
-                //return faqs;
+                
             }
             return View(faqs);
         }

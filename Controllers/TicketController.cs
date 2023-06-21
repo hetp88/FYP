@@ -58,13 +58,14 @@ namespace FYP.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string query = @"SELECT t.ticket_id, t.userid, t.type, t.description, tc.category, t.status, 
-       t.datetime, t.priority, e.name, t.devices_involved, t.additional_details, t.resolution
-FROM ticket t
-INNER JOIN users u ON u.userid = t.userid
-INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-INNER JOIN employee e ON t.employee_id = e.employee_id
-WHERE t.employee_id = {'0'};";
-                    
+                                           t.datetime, t.priority, e.name, t.devices_involved, t.additional_details, t.resolution
+                               FROM ticket t
+                               INNER JOIN users u ON u.userid = t.userid
+                               INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                               INNER JOIN employee e ON t.employee_id = e.employee_id
+                               WHERE t.employee_id = {'0'};";
+                //{'0'} = will be the userid LOGGED IN
+
 
                 connection.Open();
                 List<Ticket> ticketed = connection.Query<Ticket>(query).AsList();
