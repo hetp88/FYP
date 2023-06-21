@@ -1,7 +1,4 @@
 ﻿
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Security.Claims;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using FYP.Models;
@@ -11,25 +8,27 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ZXing;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System;
+using System.Data;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
 {
     private const string LOGIN_SQ =
-        @"SELECT *
-FROM users
-INNER JOIN employee ON users.userid = employee.userid
-WHERE users.userid = '{0}' AND users.user_pw = HASHBYTES('SHA1', '{1}')
-  AND employee.employee_pw = HASHBYTES('SHA1', '{1}')";
-
+        @"SELECT * FROM users WHERE userid = '{0}' AND user_pw = HASHBYTES('SHA1', '{1}')";
     private const string LOGIN_EMP =
         @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
-        @"UPDATE Users SET LastLogin = GETDATE() WHERE UserID = '{0}'";
+        @"UPDATE users SET LastLogin=GETDATE() WHERE userid = '{0}'";
 
     private const string ForgetPW_SQ =
-        @"SELECT Password FROM Users WHERE UserID = '{0}' AND Email = '{1}'";
+        @"SELECT password FROM Users WHERE userid = '{0}' AND email = '{1}'";
 
     //private const string UROLE = "roles_id";
 
@@ -56,8 +55,6 @@ WHERE users.userid = '{0}' AND users.user_pw = HASHBYTES('SHA1', '{1}')
     {
         return View();
     }
-
-
 
     [HttpPost]
     public IActionResult Login(UserLogin user)
@@ -90,11 +87,12 @@ WHERE users.userid = '{0}' AND users.user_pw = HASHBYTES('SHA1', '{1}')
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        if (Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
 
         return RedirectToAction("Login", "Account");
     }
+
     [AllowAnonymous]
     public IActionResult Forbidden()
     {
@@ -121,45 +119,77 @@ WHERE users.userid = '{0}' AND users.user_pw = HASHBYTES('SHA1', '{1}')
         else
         {
             // Save the user registration data to the database
+            string[] NumArray = newUser.Email.Split("@");
+            string numbers = NumArray[0];
+            int UserID = int.Parse(numbers);
+            int totalDigits = UserID.ToString().Length;
+
             using (var connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                int UserID = int.Parse(ExtractNumbersFrom(newUser.Email));
-
-                int totalDigits = UserID.ToString().Length;
-
-                string insertQuery = "";
-                string X = "UserID, newUser.UserPw2, newUser.UserName, newUser.School, newUser.Email, newUser.PhoneNo";
-
-if (totalDigits == 4)
+                NewUser staff = new NewUser
                 {
-                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                     "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'student', '{4}', '{5}', '{6}', '{7}')";
-                }
-                else if (totalDigits == 8)
+                    UserID = UserID,
+                    UserPw2 = newUser.UserPw2,
+                    UserName = newUser.UserName,
+                    Role = 2,
+                    School = newUser.School,
+                    Email = newUser.Email,
+                    PhoneNo = newUser.PhoneNo,
+                    Last_login = null,
+                };
+
+                NewUser student = new NewUser
                 {
-                    insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                                    "VALUES ('UserID', HASHBYTES('SHA1', '{1}'), '{2}', 'staff', '{4}', '{5}', '{6}', '{7}')";
+                    UserID = UserID,
+                    UserPw2 = newUser.UserPw2,
+                    UserName = newUser.UserName,
+                    Role = 1,
+                    School = newUser.School,
+                    Email = newUser.Email,
+                    PhoneNo = newUser.PhoneNo,
+                    Last_login = null,
+                };
+            
+
+                if (totalDigits == 8)
+                {
+
+                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
+
+                    if (connection.Execute(insertQuery1, student) == 1)
+                    {
+                        TempData["Message"] = "Account registered successfully";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Account registered failed";
+                        TempData["MsgType"] = "danger";
+                    }
                 }
+                else if (totalDigits == 4)
+                {
+                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
 
-                //string insertQuery = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)" +
-                // "VALUES ('{0}', HASHBYTES('SHA1', '{1}'), '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')";
-
-                connection.Execute(insertQuery, newUser);
+                    if (connection.Execute(insertQuery2, staff) == 1)
+                    {
+                        TempData["Message"] = "Account registered successfully";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Account registered failed";
+                        TempData["MsgType"] = "danger";
+                    }
+                }
             }
-
-            // Redirect the user to the login page after successful registration
-            return RedirectToAction("Login", "Account");
         }
-
-    }
-
-    private string ExtractNumbersFrom(string email)
-    {
-        string[] NumArray = email.Split("@");
-        string numbers = NumArray[0];
-        return numbers;
+        // Redirect the user to the login page after successful registration
+        return RedirectToAction("Login", "Account");
     }
 
     [Authorize(Roles = "support engineer, administrator")]

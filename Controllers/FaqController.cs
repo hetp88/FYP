@@ -22,25 +22,80 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        private const string RECN = "Home";
-        private const string REVW = "Index";
-        public IActionResult Index()
-        {
-            return RedirectToAction("Details");
-        }
-
         public IActionResult Details()
         {
             List<FAQ> faqs = GetFAQsFromDatabase();
             return View(faqs);
         }
+        private List<FAQ> GetFAQsFromDatabase()
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = @"SELECT f.faq_id, tc.category, f.question, f.solution 
+                                 FROM FAQ f
+                                 INNER JOIN ticket_categories tc ON tc.category_id = f.category_id;";
 
+                connection.Open();
+                List<FAQ> faqs = connection.Query<FAQ>(query).AsList();
+                return faqs;
+            }
+        }
+        public IActionResult CreateFAQ()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
-            InsertFAQToDatabase(faq);
+            int categoryid = 0;
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = $"SELECT tc.category_id FROM ticket_categories tc INNER JOIN FAQ f ON f.category_id = tc.category_id WHERE tc.category = '{faq.Category}';";
+
+                connection.Open();
+                List<int> cat = connection.Query<int>(query).AsList();
+                foreach (int id in cat)
+                {
+                    categoryid = id;
+                }
+            }
+            FAQ newFaq = new FAQ
+            {
+                FaqId = new Random().Next(1, 1000001),
+                CategoryId = categoryid,
+                Question = faq.Question,
+                Solution = faq.Solution,
+            };
+
+            if (InsertFAQToDatabase(newFaq).Equals(true))
+            {
+                TempData["Message"] = "FAQ published successfully";
+                TempData["MsgType"] = "success";
+            }
+            else
+            {
+                TempData["Message"] = "FAQ published failed";
+                TempData["MsgType"] = "danger";
+            }
 
             // Redirect to the index homepage
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Details", "FAQ");
+        }
+        private bool InsertFAQToDatabase(FAQ faq)
+        {
+            {
+                //string connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
+
+                    connection.Open();
+                    connection.Execute(query, faq);
+                }
+                return true;
+            }
         }
 
         [HttpPost]
@@ -49,60 +104,18 @@ namespace FYP.Controllers
             DeleteFAQFromDatabase(faqId);
             return RedirectToAction("Details");
         }
-
-        private List<FAQ> GetFAQsFromDatabase()
+        private void DeleteFAQFromDatabase(int faqId)
         {
-            List<FAQ> faqs = new List<FAQ>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "SELECT faq_id, category_id, question, solution FROM FAQ";
+                string query = "DELETE FROM FAQ WHERE faq_id = @FaqId";
                 SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@FaqId", faqId);
                 connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    FAQ faq = new FAQ
-                    {
-                        FaqId = Convert.ToInt32(reader["faq_id"]),
-                        CategoryId = Convert.ToInt32(reader["category_id"]),
-                        Question = reader["question"].ToString(),
-                        Solution = reader["solution"].ToString()
-                    };
-                    faqs.Add(faq);
-                }
-                reader.Close();
-            }
-            return faqs;
-        }
-
-
-        private bool InsertFAQToDatabase(FAQ faq)
-        {
-            {
-                //string connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    string query = @"INSERT INTO FAQ (faq_id,category_id, question, solution) VALUES (@FaqId, @CategoryId, @Question, @Solution)";
-
-                    connection.Open();
-                    connection.ExecuteAsync(query, faq);
-                }
-                FAQ newFaq = new FAQ
-                {
-                    FaqId = new Random().Next(1, 1000001),
-                    CategoryId = faq.CategoryId,
-                    Question = faq.Question,
-                    Solution = faq.Solution,
-                };
-
-                InsertFAQToDatabase(newFaq);
-
-                return true;
+                command.ExecuteNonQuery();
             }
         }
-
-
+        
         private int GetCategoryIdByName(string categoryName)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -118,16 +131,6 @@ namespace FYP.Controllers
                 return categoryId;
             }
         }
-        private void DeleteFAQFromDatabase(int faqId)
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                string query = "DELETE FROM FAQ WHERE faq_id = @FaqId";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@FaqId", faqId);
-                connection.Open();
-                command.ExecuteNonQuery();
-            }
-        }
+        
     }
 }
