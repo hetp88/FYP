@@ -71,7 +71,7 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "INSERT INTO FAQ (category_id, question, solution) VALUES (@CategoryId, @Question, @Solution)";
+                string query = "INSERT INTO * (category_id, question, solution) VALUES (@CategoryId, @Question, @Solution)";
                 SqlCommand command = new SqlCommand(query, connection);
 
                 // Retrieve category ID based on the category name
@@ -128,13 +128,6 @@ namespace FYP.Controllers
             }
             return View(faq);
         }
-
-
-
-
-
-
-
 
 
 
