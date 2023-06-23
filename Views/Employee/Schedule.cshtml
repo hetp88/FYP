@@ -27,13 +27,33 @@
             max-width: 900px;
             margin: 40px auto;
         }
+
+        .leave-event {
+            background-color: #FFCCCC; /* Set the background color for leave cells */
+            border-color: #FF6666; /* Set the border color for leave cells */
+        }
     </style>
     <script>
         $(document).ready(function () {
             $('#calendar').fullCalendar({
+                // Add your other calendar options here
+
+                eventRender: function (event, element) {
+                    // Customize the rendering of each event
+                    var startDate = moment(event.start).format('YYYY-MM-DD');
+                    var endDate = moment(event.end).format('YYYY-MM-DD');
+
+                    // Add a CSS class to the event element based on the date range
+                    var currentDate = moment(startDate);
+                    while (currentDate.isSameOrBefore(endDate)) {
+                        $('td[data-date="' + currentDate.format('YYYY-MM-DD') + '"]').addClass('leave-event');
+                        currentDate.add(1, 'days');
+                    }
+                }
             });
         });
     </script>
+
 </head>
 <body>
     <div id="header">
