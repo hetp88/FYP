@@ -1,4 +1,5 @@
-﻿using FYP.Models;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Dapper;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Data;
 using System.Data.SqlTypes;
 using Microsoft.Extensions.Configuration;
+using FYP.Models;
 
 namespace FYP.Controllers
 {
@@ -29,12 +31,39 @@ namespace FYP.Controllers
             return View();
         }
 
+        public IActionResult Schedule()
+        {
+            List<EmployeeSchedule> schedule = new List<EmployeeSchedule>();
+
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string query = @"SELECT * FROM leave";
+
+                schedule = connection.Query<EmployeeSchedule>(query).ToList();
+            }
+
+            return View(schedule);
+        }
+        private int GetNextLeaveId()
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string query = "SELECT ISNULL(MAX(leave_id), 1) FROM leave";
+
+                int nextLeaveId = connection.ExecuteScalar<int>(query) + 1;
+
+                return nextLeaveId;
+            }
+        }
+
         public IActionResult ApplyLeave()
         {
-            // Retrieve the next available leave_id
             int nextLeaveId = GetNextLeaveId();
 
-            // Pass the nextLeaveId to the view
             ViewBag.NextLeaveId = nextLeaveId;
 
             return View();
@@ -43,25 +72,26 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult ApplyLeave(EmployeeSchedule leave)
         {
-            // Retrieve the next available leave_id
             int nextLeaveId = GetNextLeaveId();
 
-            if (leave.StartDate < SqlDateTime.MinValue.Value || leave.StartDate > SqlDateTime.MaxValue.Value ||
-                leave.EndDate < SqlDateTime.MinValue.Value || leave.EndDate > SqlDateTime.MaxValue.Value)
-            {
-                TempData["Message"] = "Invalid date range. Please select dates within the allowed range.";
-                TempData["MsgType"] = "danger";
-                return RedirectToAction("ApplyLeave");
-            }
-
-            string insertLeaveQuery = @"INSERT INTO [leave] (leave_id, employee_id, startDate, end_date, reason, proof_provided, is_approved)
-                                VALUES (@LeaveId, @EmployeeId, @StartDate, @EndDate, @Reason, @ProofProvided, 'pending')";
-
-            using (var connection = new SqlConnection(GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                if (connection.Execute(insertLeaveQuery, new { LeaveId = nextLeaveId, leave }) == 1)
+                EmployeeSchedule newLeave = new EmployeeSchedule
+                {
+                    LeaveId = nextLeaveId,
+                    EmployeeId = leave.EmployeeId,
+                    StartDate = leave.StartDate,
+                    EndDate = leave.EndDate,
+                    Reason = leave.Reason,
+                    ProofProvided = leave.ProofProvided,
+                    IsApproved = "pending"
+                };
+
+                string insertQuery = @"INSERT INTO leave (employee_id, leave_id, startDate, end_date, reason, proof_provided, is_approved) VALUES (@EmployeeId, @LeaveId, @StartDate, @EndDate, @Reason, @ProofProvided, @IsApproved)";
+
+                if (connection.Execute(insertQuery, newLeave) == 1)
                 {
                     TempData["Message"] = "Leave applied successfully";
                     TempData["MsgType"] = "success";
@@ -73,40 +103,77 @@ namespace FYP.Controllers
                 }
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Schedule", "Employee");
         }
 
 
-        public IActionResult Schedule()
-        {
-            string selectLeaveQuery = "SELECT leave_id, startDate, end_date FROM [leave]";
 
-            using (var connection = new SqlConnection(GetConnectionString()))
+        public IActionResult LeaveRequests()
+        {
+            List<EmployeeSchedule> LeaveRequests = new List<EmployeeSchedule>();
+
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                var leaveData = connection.Query<EmployeeSchedule>(selectLeaveQuery).ToList();
+                string query = @"SELECT * FROM leave";
 
-                return View(leaveData);
+                LeaveRequests = connection.Query<EmployeeSchedule>(query).ToList();
             }
+
+            return View(LeaveRequests);
         }
 
-        private int GetNextLeaveId()
-        {
-            string selectMaxLeaveIdQuery = "SELECT ISNULL(MAX(leave_id), 0) FROM [leave]";
 
-            using (var connection = new SqlConnection(GetConnectionString()))
+        [HttpGet]
+        public IActionResult ReviewLeave(int leaveId)
+        {
+            EmployeeSchedule leave = null;
+
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                int maxLeaveId = connection.ExecuteScalar<int>(selectMaxLeaveIdQuery);
+                string query = "SELECT * FROM leave WHERE leave_id = @LeaveId";
 
-                return maxLeaveId + 1;
+                leave = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId });
             }
+
+            if (leave == null)
+            {
+                TempData["Message"] = "Leave not found";
+                TempData["MsgType"] = "danger";
+
+                return RedirectToAction("LeaveRequests");
+            }
+
+            return View(leave);
         }
-        public IActionResult LeaveReqest()
+
+        [HttpPost]
+        public IActionResult ReviewLeave(EmployeeSchedule leave)
         {
-            return View();
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string updateQuery = @"UPDATE leave SET is_approved = @IsApproved WHERE leave_id = @LeaveId";
+
+                if (connection.Execute(updateQuery, leave) == 1)
+                {
+                    TempData["Message"] = "Leave reviewed successfully";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "Failed to review leave";
+                    TempData["MsgType"] = "danger";
+                }
+            }
+
+            return RedirectToAction("LeaveRequests");
         }
+
+
     }
 }
