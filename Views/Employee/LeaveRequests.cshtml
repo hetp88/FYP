@@ -1,5 +1,51 @@
-﻿@model List<FYP.Models.EmployeeSchedule>
+﻿@model int
 
 @{
     Layout = "_Ticket";
 }
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
+    <script>
+        function showMessage() {
+            alert("Your unsaved edits will be discarded");
+            window.location.href = "/Home/Index";
+        }
+    </script>
+    <style>
+        /* CSS styles here */
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <form action="@Url.Action("ApplyLeave", "Employee")" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="LeaveId" class="form-label">Leave ID:</label>
+                    <select class="form-control" id="LeaveId" name="LeaveId" required>
+                        <option value="@Model">@Model</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="EmployeeId" class="form-label">Employee ID:</label>
+                    <input type="text" class="form-control" id="EmployeeId" name="EmployeeId" required>
+                </div>
+                <div class="form-group">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <!-- Other form fields -->
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
