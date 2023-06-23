@@ -6,33 +6,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flexible Container Homepage</title>
+    <title>Home</title>
     <style>
         * {
             box-sizing: border-box;
         }
 
         .container {
-            flex-grow: 2;
-            flex: 1;
-            height: 100%;
-            width: 70%; /* Updated width to 25% */
-            justify-content: flex-end; /* Updated to align content on the right side */
-            align-items: flex-end;
+            margin-left: 220px;
+            padding: 20px;
+            margin-top: 50px;
+            display:flex;
+            flex-wrap: wrap;
         }
-
-            .container > div {
-                flex-basis: 100%;
-                padding: 20px;
-                border: 1px solid #ccc;
-                background-color: #f5f1e6;
-            }
-
-        .content {
-            width: 80%; /* Added a new class to occupy 75% width */
-        }
-
-
+ 
         .button {
             display: inline-block;
             padding: 10px 20px;
@@ -61,6 +48,12 @@
             <button class="button" onclick="location.href='/Ticket/AddTicket'">Report a problem!</button>
             <button class="button" onclick="location.href='/FAQ/Details'">Possible Solutions You May Be Looking For</button>
         </div>
+    </div>
+    <div class="container">
+        <h1>Contact Us</h1>
+        <p>
+            
+        </p>
     </div>
 </body>
 </html>
