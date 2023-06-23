@@ -33,18 +33,31 @@ namespace FYP.Controllers
 
         public IActionResult Schedule()
         {
-            List<EmployeeSchedule> leaves = new List<EmployeeSchedule>();
+            List<EmployeeSchedule> schedule = new List<EmployeeSchedule>();
 
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                string query = "SELECT * FROM [leave] WHERE employee_id = @EmployeeId";
-
                 connection.Open();
 
-                leaves = connection.Query<EmployeeSchedule>(query, new { EmployeeId = 1 }).AsList();
+                string query = @"SELECT * FROM leave";
+
+                schedule = connection.Query<EmployeeSchedule>(query).ToList();
             }
 
-            return View(leaves);
+            return View(schedule);
+        }
+        private int GetNextLeaveId()
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string query = "SELECT ISNULL(MAX(leave_id), 1) FROM leave";
+
+                int nextLeaveId = connection.ExecuteScalar<int>(query) + 1;
+
+                return nextLeaveId;
+            }
         }
 
         public IActionResult ApplyLeave()
@@ -67,8 +80,8 @@ namespace FYP.Controllers
 
                 EmployeeSchedule newLeave = new EmployeeSchedule
                 {
-                    EmployeeId = leave.EmployeeId,
                     LeaveId = nextLeaveId,
+                    EmployeeId = leave.EmployeeId,
                     StartDate = leave.StartDate,
                     EndDate = leave.EndDate,
                     Reason = leave.Reason,
@@ -76,10 +89,9 @@ namespace FYP.Controllers
                     IsApproved = "pending"
                 };
 
-                string query = @"INSERT INTO [leave] (employee_id, leave_id, startDate, end_date, reason, proof_provided, is_approved)
-                                 VALUES (@EmployeeId, @LeaveId, @StartDate, @EndDate, @Reason, @ProofProvided, @IsApproved)";
+                string insertQuery = @"INSERT INTO leave (employee_id, leave_id, startDate, end_date, reason, proof_provided, is_approved) VALUES (@EmployeeId, @LeaveId, @StartDate, @EndDate, @Reason, @ProofProvided, @IsApproved)";
 
-                if (connection.Execute(query, newLeave) == 1)
+                if (connection.Execute(insertQuery, newLeave) == 1)
                 {
                     TempData["Message"] = "Leave applied successfully";
                     TempData["MsgType"] = "success";
@@ -94,25 +106,74 @@ namespace FYP.Controllers
             return RedirectToAction("Schedule", "Employee");
         }
 
-        private int GetNextLeaveId()
+
+
+        public IActionResult LeaveRequests()
+        {
+            List<EmployeeSchedule> LeaveRequests = new List<EmployeeSchedule>();
+
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string query = @"SELECT * FROM leave";
+
+                LeaveRequests = connection.Query<EmployeeSchedule>(query).ToList();
+            }
+
+            return View(LeaveRequests);
+        }
+
+
+        [HttpGet]
+        public IActionResult ReviewLeave(int leaveId)
+        {
+            EmployeeSchedule leave = null;
+
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string query = "SELECT * FROM leave WHERE leave_id = @LeaveId";
+
+                leave = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId });
+            }
+
+            if (leave == null)
+            {
+                TempData["Message"] = "Leave not found";
+                TempData["MsgType"] = "danger";
+
+                return RedirectToAction("LeaveRequests");
+            }
+
+            return View(leave);
+        }
+
+        [HttpPost]
+        public IActionResult ReviewLeave(EmployeeSchedule leave)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                string query = "SELECT ISNULL(MAX(leave_id), 0) FROM [leave]";
+                string updateQuery = @"UPDATE leave SET is_approved = @IsApproved WHERE leave_id = @LeaveId";
 
-                int nextLeaveId = connection.ExecuteScalar<int>(query) + 1;
-
-                return nextLeaveId;
+                if (connection.Execute(updateQuery, leave) == 1)
+                {
+                    TempData["Message"] = "Leave reviewed successfully";
+                    TempData["MsgType"] = "success";
+                }
+                else
+                {
+                    TempData["Message"] = "Failed to review leave";
+                    TempData["MsgType"] = "danger";
+                }
             }
+
+            return RedirectToAction("LeaveRequests");
         }
 
-        
-        
 
-        
-
-        
     }
 }
