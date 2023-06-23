@@ -10,17 +10,14 @@
         }
 
         .navbar {
+            width: 250px;
             background-color: #c4a27f;
-            width: 16%; 
-            display: flex;
-            flex-direction: column;
+            height: 100vh;
             position: fixed;
-            height: 100%;
             left: 0;
             top: 0;
-            bottom: 0;
-            flex: 0 0 auto
         }
+
             .navbar img {
                 margin: 10px;
             }
@@ -86,9 +83,6 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="ToDoTicket">Your Tickets</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
                 </li>
                 <li class="nav-item">
@@ -98,13 +92,13 @@
                     <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="FAQ" asp-action="DeleteFAQ">Remove FAQ</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Employee" asp-action="EmployeeList">Employee List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Account" asp-action="Users">Users List</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Employee" asp-action="Schedule">Employee Schedule</a>
@@ -117,6 +111,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Ticket" asp-action="DataCollected">Monthly Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
                 </li>
             </ul>
             <ul class="navbar-line offset-md-2">
