@@ -6,7 +6,6 @@ namespace FYP.Models
     {
         public int FaqId { get; set; }
         public String Category { get; set; } = null!;
-        public int CategoryId { get; set; }
 
         [Required(ErrorMessage = "Please enter question")]
         [StringLength(300, ErrorMessage = "Maximum is 300 characters")]

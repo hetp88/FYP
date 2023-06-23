@@ -151,7 +151,6 @@ public class AccountController : Controller
                     PhoneNo = newUser.PhoneNo,
                     Last_login = null,
                 };
-            
 
                 if (totalDigits == 8)
                 {
@@ -170,6 +169,7 @@ public class AccountController : Controller
                         TempData["MsgType"] = "danger";
                     }
                 }
+
                 else if (totalDigits == 4)
                 {
                     string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
@@ -211,6 +211,10 @@ public class AccountController : Controller
         return View();
     }
     public IActionResult ForgetPw()
+    {
+        return View();
+    }
+    public IActionResult Profile()
     {
         return View();
     }

@@ -4,12 +4,14 @@
             padding-top: 60px;
             margin: 0;
         }
+
         .container {
             display: flex;
         }
+
         .navbar {
-            background-color: #95A1AF;
-            width: 240px;
+            background-color: #c4a27f;
+            width: 16%; 
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -17,10 +19,12 @@
             left: 0;
             top: 0;
             bottom: 0;
+            flex: 0 0 auto
         }
             .navbar img {
                 margin: 10px;
             }
+
         .navbar-nav {
             list-style-type: none;
             padding: 0;
@@ -28,6 +32,7 @@
             position: absolute;
             top: 0;
         }
+
         .nav-link {
             text-align: left;
             color: white;
@@ -35,14 +40,17 @@
             text-decoration: none;
             text-indent: 10px;
         }
+
             .nav-link:hover {
-                background-color:#e3e5de;
+                color: #000;
                 transform: scale(0.85);
             }
+
         .content {
             margin-left: 200px;
             padding: 1rem;
         }
+
         .navbar-line {
             list-style-type: none;
             position: absolute;
@@ -60,9 +68,11 @@
             margin-right: 15%;
             margin-left: 15%;
         }
+
         .icon-large {
             font-size: 24px;
         }
+
         .bigger-icon {
             font-size: 24px;
         }
@@ -76,7 +86,7 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="CustomerTicket">Your Tickets</a>
+                    <a class="nav-link" asp-controller="Ticket" asp-action="ToDoTicket">Your Tickets</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
@@ -89,7 +99,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="FAQ" asp-action="DeleteFAQ">Remove FAQ</a>
-                </li>               
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
                 </li>
@@ -104,6 +114,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Employee" asp-action="LeaveRequests">Leave Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Ticket" asp-action="DataCollected">Monthly Reports</a>
                 </li>
             </ul>
             <ul class="navbar-line offset-md-2">

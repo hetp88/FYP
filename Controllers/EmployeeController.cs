@@ -104,5 +104,9 @@ namespace FYP.Controllers
                 return maxLeaveId + 1;
             }
         }
+        public IActionResult LeaveReqest()
+        {
+            return View();
+        }
     }
 }
