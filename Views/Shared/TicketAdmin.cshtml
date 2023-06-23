@@ -1,131 +1,127 @@
 ﻿<head>
     <style>
-        body {
-            padding-top: 60px;
+        * {
+            box-sizing:border-box;
             margin: 0;
-        }
-
-        .container {
-            display: flex;
-        }
-
-        .navbar {
-            width: 250px;
-            background-color: #c4a27f;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-        }
-
-            .navbar img {
-                margin: 10px;
-            }
-
-        .navbar-nav {
-            list-style-type: none;
             padding: 0;
-            margin: 0;
-            position: absolute;
-            top: 0;
         }
 
-        .nav-link {
-            text-align: left;
+        header{
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 30px 10%;
+            background: #c4a27f
+
+        }
+        .logo{
+            cursor: pointer;
+            margin-right: auto;
+        }
+        .nav_links{
+            list-style: none;
+        }
+        .nav_links li {
+            display: inline-block;
+            padding: 0px 20px;
+        }
+        .nav_links li a{
+            transition: all 0.3s ease 0s;
+            margin-right: 20px;
+            align-items: flex-start;
+        }
+        li, button {
             color: white;
+            text-decoration: none;
+            font-size: 24px;
+        }
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
             padding: 10px;
-            text-decoration: none;
-            text-indent: 10px;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
-            .nav-link:hover {
-                color: #000;
-                transform: scale(0.85);
+        .dropdown-content a {
+            display: block;
+            padding: 8px 12px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+                .dropdown-content a:hover {
+                    background-color: #2222; /* Change the background color on hover */
+                }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }  
+
+        .navbar_links {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar_links .nav-link {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            transition: color 0.3s ease; /* Transition for hover effect */
+        }
+            .navbar_links .nav-link:hover {
+                color: black; /* Color on hover */
             }
-
-        .content {
-            margin-left: 200px;
-            padding: 1rem;
-        }
-
-        .navbar-line {
-            list-style-type: none;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            text-align: left;
-            color: white;
-            padding: 0px;
-            text-decoration: none;
-            text-indent: 10px;
-            margin: 0;
-            border: none;
-            border-top: 1px solid #e3e5de;
-            width: 70%;
-            margin-right: 15%;
-            margin-left: 15%;
-        }
-
-        .icon-large {
-            font-size: 24px;
-        }
-
-        .bigger-icon {
-            font-size: 24px;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="50"></a>
+    <header>
+        <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="60"></a>
+        <nav>
+            <ul class="nav_links">
+                <li class="dropdown">
+                    <a>FAQ</a>
+                    <div class="dropdown-content">
+                        <a asp-controller="FAQ" asp-action="Details">View FAQ</a>
+                        <a asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
+                <li class="dropdown">
+                    <a>Tickets</a>
+                    <div class="dropdown-content">
+                        <a asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
+                        <a asp-controller="Account" asp-action="Users">Users List</a>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="EmployeeList">Employee List</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Users">Users List</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="Schedule">Employee Schedule</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="NewEmployee">Register Employee</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="LeaveRequests">Leave Requests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="DataCollected">Monthly Reports</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
+                <li class="dropdown">
+                    <a>Employee</a>
+                    <div class="dropdown-content">
+                        <a asp-controller="Employee" asp-action="EmployeeList">Employee List</a>
+                        <a asp-controller="Employee" asp-action="Schedule">Employee Schedule</a>
+                        <a asp-controller="Employee" asp-action="NewEmployee">Register Employee</a>
+                        <a asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
+                        <a asp-controller="Employee" asp-action="LeaveRequests">Leave Requests</a>
+                    </div>
                 </li>
             </ul>
-            <ul class="navbar-line offset-md-2">
-                <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
+        </nav>
+        <ul class="navbar_links">
+            <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
                     <a class="nav-link" asp-controller="Account" asp-action="Profile">
                         <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
                     </a>
                     <a class="nav-link" asp-controller="Account" asp-action="Logout">
                         <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
                     </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+            </li>
+        </ul>
+    </header>
 </body>
