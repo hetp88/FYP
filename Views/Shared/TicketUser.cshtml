@@ -1,73 +1,74 @@
-<head>
-    <style>
-    .navbar-nav ul li {
-        color: #000;
-        text-transform: uppercase;
-        position: fixed;
-        display: flex;
-       
-    }
+<div class="container border-bottom">
+    <nav class="navbar navbar-expand-md">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/Home/Index">
+                <img src="~/images/Logo.png" height="40" />
+            </a>
 
-    .navbar-nav ul li::after {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        transition: width 0.5s ease;
-    }
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-    .navbar-nav ul li:hover::after {
-        width: 100%;
-            color: #c230;
-    }
-
-    .navbar-nav .nav-item .nav-link:hover {
-        color: #c230;
-    }
-</style>
-</head>
-<body>
-    <div class="container">
-        <header class="navbar navbar-expand-md">
-            <div class="container">
-                <a class="nav-link" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="40" width="120"></a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Ticket" asp-action="ViewTicket">Your Tickets</a>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button"
+                            href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                            Tickets
+                        </a>
+                    
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item bi bi-binoculars" href="~/Ticket/ViewTicket">All Tickets</a></li>
+                            <li><a class="dropdown-item bi bi-clipboard2-plus" href="~/Ticket/AddTicket">Submit Ticket</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button"
+                            href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                            FAQ
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item bi bi-binoculars" href="~/FAQ/Details">FAQs</a></li>
+                            <li><a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/Create">New FAQ</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Profile">My Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="ViewTicket">My Tickets</a>
+                   
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button"
+                            href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                            Employee
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item bi bi-binoculars" href="~/Employee/EmployeeList">All Employee</a></li> @*For Admins only*@
+                            <li><a class="dropdown-item bi bi-clipboard2-plus" href="~/Employee/NewEmployee">New Employee</a></li> @*For Admins only*@
+                            <li><a class="dropdown-item bi bi-calendar" href="~/Employee/Schedule">Calendar</a></li>
+                            <li><a class="dropdown-item bi bi-clock" href="~/Employee/ApplyLeave">Apply Leave</a></li>
+                        </ul>
                     </li>
                 </ul>
+
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Profile">
+                        <a class="nav-link" href="~/Account/Profile">
                             <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Logout">
+                        <a class="nav-link" href="~/Account/Logout">
                             <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
                         </a>
                     </li>
                 </ul>
             </div>
-    </header>
-        
-    </div>
-</body>
+        </div>
+    </nav>
+</div>
+
 
 
 

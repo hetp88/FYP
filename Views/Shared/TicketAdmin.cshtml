@@ -1,40 +1,40 @@
 ﻿<head>
     <style>
         * {
-            box-sizing:border-box;
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        header{
+        header {
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            padding: 30px 10%;
+            padding: 5px 10%;
             background: #c4a27f
+        }
 
-        }
-        .logo{
-            cursor: pointer;
-            margin-right: auto;
-        }
-        .nav_links{
+        .navbar-nav {
             list-style: none;
         }
-        .nav_links li {
-            display: inline-block;
-            padding: 0px 20px;
-        }
-        .nav_links li a{
-            transition: all 0.3s ease 0s;
-            margin-right: 20px;
-            align-items: flex-start;
-        }
+
+            .navbar-nav li {
+                display: inline-block;
+                padding: 0px 20px;
+            }
+
+                .navbar-nav li a {
+                    transition: all 0.3s ease 0s;
+                    margin-right: 20px;
+                    align-items: flex-start;
+                }
+
         li, button {
             color: white;
             text-decoration: none;
             font-size: 24px;
         }
+
         .dropdown {
             position: relative;
         }
@@ -51,77 +51,116 @@
             font-size: 14px;
         }
 
-        .dropdown-content a {
-            display: block;
-            padding: 8px 12px;
-            color: #333;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
+            .dropdown-content a {
+                display: block;
+                padding: 8px 12px;
+                color: #333;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
+
                 .dropdown-content a:hover {
                     background-color: #2222; /* Change the background color on hover */
                 }
 
         .dropdown:hover .dropdown-content {
             display: block;
-        }  
+        }
 
-        .navbar_links {
+        .navbar-nav {
             display: flex;
             justify-content: space-between;
         }
 
-        .navbar_links .nav-link {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-            transition: color 0.3s ease; /* Transition for hover effect */
-        }
-            .navbar_links .nav-link:hover {
-                color: black; /* Color on hover */
+            .navbar-nav .nav-link {
+                display: flex;
+                align-items: center;
+                margin-right: 10px;
+                transition: color 0.3s ease; /* Transition for hover effect */
             }
+
+                .navbar-nav .nav-link:hover {
+                    color: black; /* Color on hover */
+                }
     </style>
 </head>
+
 <body>
     <header>
-        <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="60"></a>
-        <nav>
-            <ul class="nav_links">
-                <li class="dropdown">
-                    <a>FAQ</a>
-                    <div class="dropdown-content">
-                        <a asp-controller="FAQ" asp-action="Details">View FAQ</a>
-                        <a asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
-                    </div>
-                </li>
-                <li class="dropdown">
-                    <a>Tickets</a>
-                    <div class="dropdown-content">
-                        <a asp-controller="Account" asp-action="ViewTicket">All Tickets</a>
-                        <a asp-controller="Account" asp-action="Users">Users List</a>
-                    </div>
-                </li>
-                <li class="dropdown">
-                    <a>Employee</a>
-                    <div class="dropdown-content">
-                        <a asp-controller="Employee" asp-action="EmployeeList">Employee List</a>
-                        <a asp-controller="Employee" asp-action="Schedule">Employee Schedule</a>
-                        <a asp-controller="Employee" asp-action="NewEmployee">Register Employee</a>
-                        <a asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
-                        <a asp-controller="Employee" asp-action="LeaveRequests">Leave Requests</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-        <ul class="navbar_links">
-            <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
-                    <a class="nav-link" asp-controller="Account" asp-action="Profile">
-                        <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
+        <div class="container">
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid">
+                    <a class="logo" href="/Home/Index">
+                        <img src="~/images/Logo.png" height="60" />
                     </a>
-                    <a class="nav-link" asp-controller="Account" asp-action="Logout">
-                        <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
-                    </a>
-            </li>
-        </ul>
+
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav">
+
+                            <li class="dropdown">
+                                <a class="nav-link" role="button"
+                                   href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                                    Tickets
+                                </a>
+
+                                <div class="dropdown-content">
+                                    <a class="dropdown-item bi bi-binoculars" href="~/Ticket/ViewTicket"> All Tickets</a>
+                                    <a class="dropdown-item bi bi-clipboard2-plus" href="~/Ticket/AddTicket"> Submit Ticket</a>
+                                </div>
+                            </li>
+
+                            <li class="dropdown">
+                                <a class="nav-link" role="button"
+                                   href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                                    FAQ
+                                </a>
+
+                                <div class="dropdown-content">
+                                    <a class="dropdown-item bi bi-binoculars" href="~/FAQ/Details"> FAQs</a>
+                                    <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/Create"> New FAQ</a>
+                                </div>
+                            </li>
+
+                            <li class="dropdown">
+                                <a class="nav-link" role="button"
+                                   href="#" id="navbarDropdown" data-bs-toggle="dropdown">
+                                    Employee
+                                </a>
+
+                                <div class="dropdown-content">
+                                    <a class="dropdown-item bi bi-binoculars" href="~/Employee/EmployeeList"> All Employee</a> @*For Admins only*@
+                                    <a class="dropdown-item bi bi-clipboard2-plus" href="~/Employee/NewEmployee"> New Employee</a> @*For Admins only*@
+                                    <a class="dropdown-item bi bi-calendar" href="~/Employee/Schedule"> Calendar</a>
+                                    <a class="dropdown-item bi bi-clock" href="~/Employee/ApplyLeave"> Apply Leave</a>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="~/Account/Profile">
+                                    <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="~/Account/Logout">
+                                    <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out"></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
     </header>
 </body>
+
+
+
+
+
