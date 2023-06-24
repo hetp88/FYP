@@ -1,8 +1,4 @@
-﻿
-
-@model FYP.Models.NewUser
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -16,7 +12,7 @@
     </script>
     <style>
         body {
-            background-color: #000000;
+            background-color: #c4a27f;
             color: #FFFFFF;
         }
 
@@ -28,73 +24,113 @@
         }
 
         .card {
-            background-color: #2A2A43;
+            background-color: #FFFFFF;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 38px;
             margin: 5px;
             flex: 1;
-            width: 1200px;
-            height: 530px;
-        }
-
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 1200px;
-            height: 550px;
+            width: 450px; /* Adjust the width as needed */
+            height: auto; /* Remove fixed height */
         }
 
         .form-group {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem; /* Increase margin-bottom for spacing */
         }
 
         .form-label {
-            color: #FFFFFF;
+            color: #000000; /* Change label color to black */
         }
 
         .form-control {
-            background-color: #33335F;
-            color: #FFFFFF;
+            background-color: #FFFFFF;
+            color: #000000; /* Change input text color to black */
             border: none;
-            border-radius: 5px;
-            padding: 10px;
-            height: 38px;
+            border-radius: 0;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .form-select {
+            .form-control:focus {
+                background-color: #FFFFFF;
+                color: #000000; /* Change focused input text color to black */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-color: #FFFFFF;
+                outline: 0;
+            }
+
+        .btn-primary {
+            background-color: #0FA958;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 0;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+            .btn-primary:hover {
+                background-color: #0B8043;
+                color: #FFFFFF;
+            }
+
+        .btn-secondary {
             background-color: #33335F;
             color: #FFFFFF;
             border: none;
-            border-radius: 5px;
-            padding: 10px;
-            height: 38px;
+            border-radius: 0;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+
+            .btn-secondary:hover {
+                background-color: #272747;
+                color: #FFFFFF;
+            }
+
+        .invalid-feedback {
+            display: block;
+            color: #FF0000;
+            margin-top: 0.25rem;
+        }
+
+        .alert {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 9999;
+            width: 300px;
+            height: auto;
         }
     </style>
+
 </head>
 <body>
     <div class="container">
-        <div class="card-body">
-            <button onclick="showMessage()">Back</button>
-            <h2>Leave Application Form</h2>
-
-            <form action="submit_leave.php" method="POST" enctype="multipart/form-data">
+        <div class="card">
+            <form action="@Url.Action("ApplyLeave", "Employee")" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="name">Name:</label>
+                    <label for="EmployeeId" class="form-label">Employee ID:</label>
+                    <input type="text" class="form-control" id="EmployeeId" name="" required>
+                </div>
+                <div class="form-group">
+                    <label for="name" class="form-label">Name:</label>
                     <input type="text" class="form-control" id="name" name="name" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email" class="form-label">Email:</label>
                     <input type="email" class="form-control" id="email" name="email" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="leave_type">Leave Type:</label>
+                    <label for="leave_type" class="form-label">Leave Type:</label>
                     <select class="form-control" id="leave_type" name="leave_type" required>
                         <option value="">Select leave type</option>
                         <option value="sick">Sick Leave</option>
@@ -104,28 +140,29 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="start_date">Start Date:</label>
-                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                    <label for="StartDate" class="form-label">Start Date:</label>
+                    <input type="date" class="form-control" id="StartDate" name="StartDate" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="end_date">End Date:</label>
-                    <input type="date" class="form-control" id="end_date" name="end_date" required>
+                    <label for="EndDate" class="form-label">End Date:</label>
+                    <input type="date" class="form-control" id="EndDate" name="EndDate" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="reason">Reason:</label>
-                    <textarea class="form-control" id="reason" name="reason" rows="4" required></textarea>
+                    <label for="Reason" class="form-label">Reason:</label>
+                    <textarea class="form-control" id="Reason" name="Reason" rows="4" required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="attachment">PDF Attachment:</label>
-                    <input type="file" class="form-control-file" id="attachment" name="attachment" accept="application/pdf">
+                    <label for="ProofProvided" class="form-label">PDF Attachment:</label>
+                    <input type="file" class="form-control-file" id="ProofProvided" name="ProofProvided" accept="application/pdf">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
+
 </body>
 </html>

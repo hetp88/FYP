@@ -1,5 +1,54 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model List<FYP.Models.EmployeeSchedule>
+
+    
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
+    <style>
+        /* Add your custom styles here */
+        .container {
+            margin-top: 30px;
+        }
+
+        .table {
+            margin-bottom: 30px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Leave Requests</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var leave in Model)
+                {
+                    <tr>
+                        <td>@leave.EmployeeId</td>
+                        <td>@leave.StartDate.ToShortDateString()</td>
+                        <td>@leave.EndDate.ToShortDateString()</td>
+                        <td>@leave.Reason</td>
+                        <td>
+                            <a href="@Url.Action("ReviewLeave", "Employee", new { leaveId = leave.LeaveId })" class="btn btn-primary">Review</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

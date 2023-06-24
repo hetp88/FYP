@@ -1,10 +1,45 @@
-﻿<!DOCTYPE html>
+﻿@model FYP.Models.NewEmployee
+
+@{
+    Layout = "_Ticket";
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>New Employee</title>
 </head>
 <body>
+    <h2>New Employee Form</h2>
 
+    <form method="POST" action="@Url.Action("SaveEmployee", "Employee")">
+        <div>
+            <label for="employee_id">Employee ID:</label>
+            <input type="text" id="employee_id" name="employee_id" required>
+        </div>
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div>
+            <label for="EmpPw">Password:</label>
+            <input type="password" id="EmpPw" name="EmpPw" required>
+        </div>
+        <div>
+            <label for="roles_id">Role ID:</label>
+            <input type="text" id="roles_id" name="roles_id" required>
+        </div>
+        <div>
+            <label for="phone_no">Phone Number:</label>
+            <input type="text" id="phone_no" name="phone_no" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <button type="submit">Save</button>
+    </form>
 </body>
 </html>
