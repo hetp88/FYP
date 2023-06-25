@@ -1,118 +1,155 @@
 ﻿<head>
     <style>
-        body {
-            padding-top: 60px;
+        * {
+            box-sizing: border-box;
             margin: 0;
-        }
-        .container {
-            display: flex;
-        }
-        .navbar {
-            background-color: #c4a27f;
-            width: 240px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100%;
-            left: 0;
-            top: 0;
-            bottom: 0;
-        }
-            .navbar img {
-                margin: 10px;
-            }
-        .navbar-nav {
-            list-style-type: none;
             padding: 0;
-            margin: 0;
-            position: absolute;
-            top: 0;
         }
-        .nav-link {
-            text-align: left;
-            color: white;
-            padding: 10px;
-            text-decoration: none;
-            text-indent: 10px;
+
+        body {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+
         }
-            .nav-link:hover {
-                color: #000;
-                transform: scale(0.85);
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+
+        }
+
+        .logo {
+            cursor: pointer;
+            margin-right: auto;
+        }
+
+        .nav_links {
+            list-style: none;
+            margin-right: auto;
+            align-items: flex-start;
+        }
+
+            .nav_links li {
+                display: inline-block;
+                padding: 0px 20px;
+                margin-right: auto;
             }
-        .content {
-            margin-left: 200px;
-            padding: 1rem;
-        }
 
-        .navbar-line {
-            list-style-type: none;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            text-align: left;
-            color: white;
-            padding: 0px;
+                .nav_links li a {
+                    transition: all 0.3s ease 0s;
+                    margin-right: auto;
+                    align-items: flex-start;
+                }
+
+        li, button {
+            color: black;
             text-decoration: none;
-            text-indent: 10px;
-            margin: 0;
-            border: none;
-            border-top: 1px solid #e3e5de;
-            width: 70%;
-            margin-right: 15%;
-            margin-left: 15%;
-        }
-        .icon-large {
             font-size: 24px;
         }
 
-        .bigger-icon {
-            font-size: 24px;
+        .nav_links li:hover {
+            color: lightgrey;
         }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+            .dropdown-content a {
+                display: block;
+                padding: 8px 12px;
+                color: #333;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
+
+                .dropdown-content a:hover {
+                    background-color: #0000 /* Change the background color on hover */
+                    ;
+                }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .line {
+            border-top: 1px solid black;
+        }
+
+        .navbar_links {
+            display: flex;
+            justify-content: flex-end;
+            border-radius: 4px;
+        }
+
+            .navbar_links .nav-link {
+                display: flex;
+                align-items: center;
+                margin-left: 10px;
+                transition: color 0.3s ease; /* Transition for hover effect */
+            }
+
+                .navbar_links .nav-link:hover {
+                    color: black; /* Color on hover */
+                }
     </style>
 </head>
-<body>
-    <div class="container">
-        <nav class="navbar">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="50"></a>
+<body background="\Images\MainBackground.jpg">
+    <header>
+        <nav>
+            <ul class="nav_links">
+                <li><a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="60"></a></li>
+                <li class="dropdown">
+                    <a>FAQ</a>
+                    <div class="dropdown-content">
+                        <a class="dropdown-item bi bi-binoculars" href="~/FAQ/Details"> FAQs</a> @*users, employee & admins*@
+                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/Create"> New FAQ</a> @*admins only*@
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="ToDoTicket">To-Do</a>
+                <li class="dropdown">
+                    <a>Tickets</a>
+                    <div class="dropdown-content">
+                        <a class="dropdown-item bi bi-binoculars" href="~/Ticket/ViewTicket"> All Tickets</a> @*users (only the tickets they submit), employees & admins (view all) *@
+                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/Ticket/AddTicket"> Submit Ticket</a> @*users*@
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">New Ticket</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="ViewTicket">All Tickets</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="FAQ" asp-action="CreateFAQ">New FAQ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="ApplyLeave">Apply Leave</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Employee" asp-action="Schedule">Schedule</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Ticket" asp-action="DataCollected">Monthly Reports</a>
-                </li>
-
-            </ul>
-            <ul class="navbar-line offset-md-2">
-                <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
-                    <a class="nav-link" asp-controller="Account" asp-action="Profile">
-                        <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
-                    </a>
-                    <a class="nav-link" asp-controller="Account" asp-action="Logout">
-                        <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
-                    </a>
+                <li class="dropdown">
+                    <a>Employee</a>
+                    <div class="dropdown-content">
+                        <a class="dropdown-item bi bi-binoculars" href="~/Employee/EmployeeList"> All Employee</a> @*for admins only*@
+                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/Employee/NewEmployee"> New Employee</a> @*for admins only*@
+                        <a class="dropdown-item bi bi-calendar" href="~/Employee/Schedule"> Calendar</a> @*employee & admins*@
+                        <a class="dropdown-item bi bi-clock" href="~/Employee/ApplyLeave"> Apply Leave</a> @*can be for employee only OR employee & admins*@
+                    </div>
                 </li>
             </ul>
         </nav>
-    </div>
+        <ul class="navbar_links">
+            <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
+                <a class="nav-link" asp-controller="Account" asp-action="Profile">
+                    <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
+                </a>
+
+                <a class="nav-link" asp-controller="Account" asp-action="Logout">
+                    <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
+                </a>
+            </li>
+        </ul>
+    </header>
+    <div class="line"></div>
 </body>
