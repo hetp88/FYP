@@ -8,24 +8,26 @@
     <style>
         * {
             box-sizing: border-box;
-            
         }
 
         .container {
             margin-left: 20px;
             padding: 20px;
-            margin-top: 40px;
+            margin-top: 20px;
             display: flex;
             flex-wrap: wrap;
+            font-size: 25px;
+            background-color: beige;
+            border-radius: 10px;
         }
 
         .button {
             display: inline-block;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 18px;
             border-radius: 4px;
             text-decoration: none;
-            background-color: #C5B17F; /* Green button color */
+            background-color: #c4a27f; 
             color: white;
             border: none;
             cursor: pointer;
@@ -34,8 +36,19 @@
         }
 
             .button:hover {
-                background-color: #C5B10F; /* Darker green on hover */
+                background-color: #c4a27f; 
             }
+
+        .news-container {
+            flex-basis: 100%;
+        }
+
+        #editable-container {
+            margin-top: 20px;
+            background-color: beige;
+            padding: 10px;
+            border-radius: 5px;
+        }
 
     </style>
 </head>
@@ -43,16 +56,46 @@
     <div class="container">
         <div>
             <h1>Welcome to Ticket Helper</h1>
-            <p>Ticket Master will be your one-stop solution for the technical problems you face, software and hardware. Our application will help you to conveniently report your problems or even provide you with solutions you might need under the FAQ section. We will ensure that your problems will be settled as soon as possible and provide you with the best troubleshooting experience.</p>
+            <p>
+                Ticket Master will be your one-stop solution for the technical problems you face, software and hardware.
+                Our application will help you to conveniently report your problems or even provide you with solutions you might need under the FAQ section.
+                We will ensure that your problems will be settled as soon as possible and provide you with the best troubleshooting experience.
+            </p>
             <button class="button" onclick="location.href='/Ticket/AddTicket'">Report a problem!</button>
             <button class="button" onclick="location.href='/FAQ/Details'">Possible Solutions You May Be Looking For</button>
         </div>
     </div>
     <div class="container">
+        <div class="news-container">
+            <h1>News Updates</h1>
+            <div id="editable-container">
+                <p id="content-paragraph">Have a Nice Day :)</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
         <h1>Contact Us</h1>
         <p>
-
+            For any queries, contact us through our email, thetickethelper@gmail.com or contact us at +65 9339 2019.
+            <button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>
         </p>
     </div>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="container">
+        <textarea id="updated-content" rows="3" cols="50"></textarea>
+        <br>
+        <button onclick="updateContent()">Update</button>
+    </div>
+    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateContent() {
+            var updatedContent = document.getElementById('updated-content').value;
+            document.getElementById('content-paragraph').textContent = updatedContent;
+            document.getElementById('updated-content').value = '';
+        }
+    </script>
 </body>
 </html>

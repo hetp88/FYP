@@ -21,6 +21,10 @@ namespace FYP.Controllers
         public IActionResult Index()
         {
             return View();
-        }   
+        }
+        public IActionResult Editor()
+        {
+            return View();
+        }
     }
 }
