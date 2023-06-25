@@ -63,38 +63,6 @@
                 outline: 0;
             }
 
-        .btn-primary {
-            background-color: #0FA958;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 0;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            cursor: pointer;
-        }
-
-            .btn-primary:hover {
-                background-color: #0B8043;
-                color: #FFFFFF;
-            }
-
-        .btn-secondary {
-            background-color: #33335F;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 0;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            cursor: pointer;
-        }
-
-            .btn-secondary:hover {
-                background-color: #272747;
-                color: #FFFFFF;
-            }
-
         .invalid-feedback {
             display: block;
             color: #FF0000;
@@ -115,6 +83,7 @@
 <body>
     <div class="container">
         <div class="card">
+            <h3 class="mb-4">Apply Leave</h3>
             <form action="@Url.Action("ApplyLeave", "Employee")" method="POST" enctype="multipart/form-data">
                 @*<div class="form-group">
                     <label for="EmployeeId" class="form-label">Employee ID:</label>
@@ -151,7 +120,10 @@
                     <input type="file" class="form-control-file" id="ProofProvided" name="ProofProvided" accept="application/pdf">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <div class="form-group mb-3 offset-md-4">
+                    <button type="submit" class="btn btn-primary" style="margin-left: 50px">Submit</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
