@@ -6,6 +6,10 @@
             padding: 0;
         }
 
+        body {
+            background-color: #0000;
+        }
+
         header {
             display: flex;
             justify-content: space-between;
@@ -38,6 +42,10 @@
             font-size: 24px;
         }
 
+        .nav_links li:hover {
+            color: #2222;
+        }
+
         .dropdown {
             position: relative;
         }
@@ -63,7 +71,8 @@
             }
 
                 .dropdown-content a:hover {
-                    background-color: #2222; /* Change the background color on hover */
+                    background-color: #0000 /* Change the background color on hover */
+ ;
                 }
 
         .dropdown:hover .dropdown-content {
@@ -96,7 +105,7 @@
                     <a>FAQ</a>
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-binoculars" href="~/FAQ/Details"> FAQs</a> @*users, employee & admins*@
-                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/Create"> New FAQ</a> @*admins only*@
+                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/CreateFAQ"> New FAQ</a> @*admins only*@
                     </div>
                 </li>
                 <li class="dropdown">
@@ -104,6 +113,8 @@
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-binoculars" href="~/Ticket/ViewTicket"> All Tickets</a> @*users (only the tickets they submit), employees & admins (view all) *@
                         <a class="dropdown-item bi bi-clipboard2-plus" href="~/Ticket/AddTicket"> Submit Ticket</a> @*users*@
+                        <a class="dropdown-item bi bi-database-add" href="~/Ticket/DataCollected"> Monthly Data</a> @*Employee & Admin*@
+                        <a class="dropdown-item bi bi-card-checklist" href="~/Ticket/ToDoTicket"> To-DO</a> @*Employees*@
                     </div>
                 </li>
                 <li class="dropdown">
@@ -113,6 +124,7 @@
                         <a class="dropdown-item bi bi-clipboard2-plus" href="~/Employee/NewEmployee"> New Employee</a> @*for admins only*@
                         <a class="dropdown-item bi bi-calendar" href="~/Employee/Schedule"> Calendar</a> @*employee & admins*@
                         <a class="dropdown-item bi bi-clock" href="~/Employee/ApplyLeave"> Apply Leave</a> @*can be for employee only OR employee & admins*@
+                        <a class="dropdown-item bi bi-person-workspace" href="~/Employee/ReviewLeave"> Leave Requested</a> @*Admin only*@
                     </div>
                 </li>
             </ul>
