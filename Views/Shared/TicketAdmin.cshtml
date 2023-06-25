@@ -7,7 +7,9 @@
         }
 
         body {
-            background-color: #0000;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         header {
@@ -17,29 +19,34 @@
             padding: 20px 5%;
             background: #c4a27f
         }
+
         .logo {
             cursor: pointer;
             margin-right: auto;
         }
         .nav_links {
+            cursor: pointer;
             list-style: none;
             margin-right: auto;
-            align-items:flex-start;
+            @*align-items:flex-start;*@
         }
             .nav_links li {
+                cursor: pointer;
                 display: inline-block;
                 padding: 0px 20px;
                 margin-right: auto;
             }
                 .nav_links li a {
+                    cursor: pointer;
                     transition: all 0.3s ease 0s;
                     margin-right: auto;
-                    align-items: flex-start;
+                    @*align-items: flex-start;*@
                 }
+
         li, button {
             color: white;
             text-decoration: none;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .nav_links li:hover {
@@ -82,6 +89,7 @@
         .navbar_links {
             display: flex;
             justify-content: flex-end;
+            cursor: pointer;
         }
 
             .navbar_links .nav-link {
@@ -89,6 +97,7 @@
                 align-items: center;
                 margin-left: 10px;
                 transition: color 0.3s ease; /* Transition for hover effect */
+                cursor: pointer;
             }
 
                 .navbar_links .nav-link:hover {
@@ -96,7 +105,7 @@
                 }
     </style>
 </head>
-<body>
+<body background="\Images\Background.jpg">
     <header>  
         <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="60"></a>
         <nav>
