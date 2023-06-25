@@ -63,23 +63,24 @@
             <a class="btn" href="#">Update Email</a>
             <a class="btn" href="#">Update Phone Number</a>
         </div>
+        <button type="button" class="btn btn-primary btn-block" onclick="changePassword()">Change Password</button>
+        <button type="button" class="btn btn-primary btn-block" onclick="updateEmail()">Update Email</button>
+        <button type="button" class="btn btn-primary btn-block" onclick="updatePhoneNumber()">Update Phone Number</button>
     </div>
 
+    @*THE VALUES TO BE CHANGED AND EXTRACTED WHERE IT WILL SHOW THE details of the fella who logged in*@
     <script>
-        // Example data - Replace with your actual data
-        var profileData = {
-            userId: "12345",
-            email: "example@example.com",
-            phoneNumber: "123-456-7890",
-            name: "John Doe",
-            school: "Example University"
-        };
-        // Set profile data in HTML elements
-        document.getElementById("userId").innerText = profileData.userId;
-        document.getElementById("email").innerText = profileData.email;
-        document.getElementById("phoneNumber").innerText = profileData.phoneNumber;
-        document.getElementById("name").innerText = profileData.name;
-        document.getElementById("school").innerText = profileData.school;
+        function changePassword() {
+            alert("Password changed successfully!");
+        }
+        function updateEmail() {
+            var newEmail = prompt("Enter new email:");
+            alert("Email updated successfully!");
+        }
+        function updatePhoneNumber() {
+            var newPhoneNumber = prompt("Enter new phone number:");
+            alert("Phone number updated successfully!");
+        }
     </script>
 </body>
 </html>
