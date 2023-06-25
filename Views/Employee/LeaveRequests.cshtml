@@ -1,6 +1,7 @@
-﻿@model List<FYP.Models.EmployeeSchedule>
-
-    
+﻿@model FYP.Models.EmployeeSchedule
+@{
+    Layout = "_Ticket";
+}
 
 <!DOCTYPE html>
 <html>
@@ -10,44 +11,41 @@
 
     <style>
         /* Add your custom styles here */
-        .container {
-            margin-top: 30px;
-        }
 
-        .table {
-            margin-bottom: 30px;
-        }
     </style>
 
 </head>
 <body>
     <div class="container">
-        <h1>Leave Requests</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Employee ID</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var leave in Model)
-                {
-                    <tr>
-                        <td>@leave.EmployeeId</td>
-                        <td>@leave.StartDate.ToShortDateString()</td>
-                        <td>@leave.EndDate.ToShortDateString()</td>
-                        <td>@leave.Reason</td>
-                        <td>
-                            <a href="@Url.Action("ReviewLeave", "Employee", new { leaveId = leave.LeaveId })" class="btn btn-primary">Review</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <h1>Review Leave</h1>
+        <div>
+            <strong>Employee ID:</strong> @Model.EmployeeId
+        </div>
+        <div>
+            <strong>Start Date:</strong> @Model.StartDate.ToShortDateString()
+        </div>
+        <div>
+            <strong>End Date:</strong> @Model.EndDate.ToShortDateString()
+        </div>
+        <div>
+            <strong>Reason:</strong> @Model.Reason
+        </div>
+
+        <hr>
+
+        <h2>Review Leave</h2>
+        <form action="@Url.Action("ReviewLeave", "Employee")" method="POST">
+            <input type="hidden" name="LeaveId" value="@Model.LeaveId">
+            <div class="form-group">
+                <label for="IsApproved">Review:</label>
+                <select class="form-control" id="IsApproved" name="IsApproved" required>
+                    <option value="">Select review status</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
     </div>
 
 </body>

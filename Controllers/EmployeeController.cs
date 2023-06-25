@@ -198,7 +198,10 @@ namespace FYP.Controllers
 
             return RedirectToAction("LeaveRequests");
         }
-
+        public IActionResult NewEmployee()
+        {
+            return View();
+        }
 
     }
 }

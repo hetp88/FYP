@@ -13,7 +13,14 @@
 
     @RenderSection("BootstrapTableScripts", false)
 </head>
-<body>
+<style>
+    body {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+</style>
+<body  background="\Images\MainBackground.jpg">
     @if (User.Identity!.IsAuthenticated)
     {
         if (User.IsInRole("4"))
