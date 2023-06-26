@@ -4,15 +4,20 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
 
-    <script>
-        function showMessage() {
-            alert("Your unsaved edits will be discarded");
+<script>
+    function showMessage() {
+        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+        if (confirmation) {
             window.location.href = "/Home/Index";
+        } else {
+
         }
-    </script>
+    }
+</script>
     <style>
         body {
-            background-color: #c4a27f;
+            background-color: #AAD1EE;
             color: #FFFFFF;
         }
 

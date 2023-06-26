@@ -1,4 +1,16 @@
 ﻿<head>
+    
+    <script>
+        function showMessage() {
+            var confirmation = confirm("Confirm Logging out?");
+
+            if (confirmation) {
+                window.location.href = "/Account/Login";
+            } else {
+                window.location.href = "/Home/Index";
+            }
+        }
+    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -17,40 +29,39 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 5%;
-            background: #c4a27f
         }
 
         .logo {
             cursor: pointer;
             margin-right: auto;
         }
+
         .nav_links {
-            cursor: pointer;
             list-style: none;
             margin-right: auto;
-            align-items:flex-start;
+            align-items: flex-start;
         }
+
             .nav_links li {
-                cursor: pointer;
                 display: inline-block;
                 padding: 0px 20px;
                 margin-right: auto;
             }
+
                 .nav_links li a {
-                    cursor: pointer;
                     transition: all 0.3s ease 0s;
                     margin-right: auto;
                     align-items: flex-start;
                 }
 
         li, button {
-            color: white;
+            color: black;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .nav_links li:hover {
-            color: #2222;
+            color: lightgrey;
         }
 
         .dropdown {
@@ -79,17 +90,22 @@
 
                 .dropdown-content a:hover {
                     background-color: #0000 /* Change the background color on hover */
- ;
+                    ;
                 }
 
         .dropdown:hover .dropdown-content {
             display: block;
         }
 
+        .line {
+            border-top: 1px solid black;
+        }
+
         .navbar_links {
             display: flex;
             justify-content: flex-end;
-            cursor: pointer;
+
+
         }
 
             .navbar_links .nav-link {
@@ -97,24 +113,23 @@
                 align-items: center;
                 margin-left: 10px;
                 transition: color 0.3s ease; /* Transition for hover effect */
-                cursor: pointer;
             }
 
                 .navbar_links .nav-link:hover {
-                    color: black; /* Color on hover */
+                    color: #0000; /* Color on hover */
                 }
     </style>
 </head>
-<body background="\Images\Background.jpg">
+<body>
     <header>  
-        <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="60"></a>
         <nav>
             <ul class="nav_links">
+                <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo.png" height="60"></a>
                 <li class="dropdown">
                     <a>FAQ</a>
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-binoculars" href="~/FAQ/Details"> FAQs</a> @*users, employee & admins*@
-                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/Create"> New FAQ</a> @*admins only*@
+                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/CreateFAQ"> New FAQ</a> @*admins only*@
                     </div>
                 </li>
                 <li class="dropdown">
@@ -122,15 +137,19 @@
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-binoculars" href="~/Ticket/ViewTicket"> All Tickets</a> @*users (only the tickets they submit), employees & admins (view all) *@
                         <a class="dropdown-item bi bi-clipboard2-plus" href="~/Ticket/AddTicket"> Submit Ticket</a> @*users*@
+                        <a class="dropdown-item bi bi-bar-chart" href="~/Ticket/DataCollected"> Monthly Reports</a> @*Employees Admins*@
+
                     </div>
                 </li>
                 <li class="dropdown">
-                    <a>Employee</a>
+                    <a>Employee Matters</a>
                     <div class="dropdown-content">
-                        <a class="dropdown-item bi bi-binoculars" href="~/Employee/EmployeeList"> All Employee</a> @*for admins only*@
+                        <a class="dropdown-item bi bi-person-badge-fill" href="~/Employee/EmployeeList"> Employee List</a> @*for admins only*@
                         <a class="dropdown-item bi bi-clipboard2-plus" href="~/Employee/NewEmployee"> New Employee</a> @*for admins only*@
                         <a class="dropdown-item bi bi-calendar" href="~/Employee/Schedule"> Calendar</a> @*employee & admins*@
                         <a class="dropdown-item bi bi-clock" href="~/Employee/ApplyLeave"> Apply Leave</a> @*can be for employee only OR employee & admins*@
+                        <a class="dropdown-item bi bi-calendar-date" href="~/Employee/LeaveRequests"> Leave Requests</a> @*Admins Only*@
+                        <a class="dropdown-item bi bi-person" href="~/Account/Users"> Users</a>
                     </div>
                 </li>
             </ul>
@@ -142,7 +161,7 @@
                 </a>
 
                 <a class="nav-link" asp-controller="Account" asp-action="Logout">
-                    <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
+                    <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px" onclick="showMessage()"></span>
                 </a>
             </li>
         </ul>

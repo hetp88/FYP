@@ -17,7 +17,8 @@
     body {
         background-position: center;
         background-repeat: no-repeat;
-        background-size: 100% 100%;
+        background-size: contain;
+        height: 120vh;
     }
 </style>
 <body  background="\Images\MainBackground.jpg">
@@ -41,7 +42,7 @@
     }
     else
     {
-        <partial name="TicketEmployee"/>
+        <partial name="TicketAdmin"/>
     }
     <div class="container mt-10">
         @RenderBody()

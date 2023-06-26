@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
 
     <script>
-        function showMessage() {
-            alert("Your unsaved edits will be discarded");
+    function showMessage() {
+        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+        if (confirmation) {
             window.location.href = "/Account/Login";
+        } else {
+            // User chose to cancel will just get back to the form
         }
-    </script>
+    }
+</script>
     <style>
         body {
-            background-color: #000000;
+            background-color: #2E61E4;
             color: #FFFFFF;
         }
 
@@ -26,52 +31,44 @@
         }
 
         .card {
-            background-color: #2A2A43;
+            background-color: #FFFFFF;
+            color: #000000;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 38px;
             margin: 5px;
             flex: 1;
-            width: 1200px;
-            height: 530px;
-        }
-
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 1200px;
-            height: 550px;
+            width: 450px; /* Adjust the width as needed */
+            height: auto; /* Remove fixed height */
         }
 
         .form-group {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem; /* Increase margin-bottom for spacing */
         }
 
         .form-label {
-            color: #FFFFFF;
+            color: #000000; /* Change label color to black */
         }
 
         .form-control {
-            background-color: #33335F;
-            color: #FFFFFF;
+            background-color: #FFFFFF;
+            color: #000000; /* Change input text color to black */
             border: none;
-            border-radius: 5px;
-            padding: 10px;
-            height: 38px;
+            border-radius: 6px;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .form-select {
-            background-color: #33335F;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            height: 38px;
-        }
+            .form-control:focus {
+                background-color: #FFFFFF;
+                color: #000000; /* Change focused input text color to black */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-color: #FFFFFF;
+                outline: 0;
+            }
     </style>
 </head>
 <body>

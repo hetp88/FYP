@@ -43,6 +43,10 @@ namespace FYP.Controllers
         {
             return View();
         }
+        public IActionResult DataCollected()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult AddTicket(Ticket ticket)

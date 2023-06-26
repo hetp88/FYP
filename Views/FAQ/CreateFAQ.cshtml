@@ -7,14 +7,18 @@
     <title>Create FAQ</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <script>
-        function showMessage() {
-            alert("Your unsaved edits will be discarded");
+    function showMessage() {
+        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+        if (confirmation) {
             window.location.href = "/Home/Index";
+        } else {
         }
-    </script>
+    }
+</script>
     <style>
         body {
-            background-color: #c4a27f;
+            background-color: #AAD1EE;
             color: #FFFFFF;
         }
 
@@ -87,7 +91,9 @@
                     </select>
                 </div>
 
+                <button class="btn btn-primary" onclick="showMessage()">Cancel</button>
                 <button type="submit" class="btn btn-primary">Publish</button>
+                
             </form>
         </div>
     </div>
