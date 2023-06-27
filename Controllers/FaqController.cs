@@ -24,7 +24,7 @@ namespace FYP.Controllers
         {
             List<FAQ> faqs = new List<FAQ>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
+            { 
                 string query = @"SELECT f.faq_id, tc.category, f.question, f.solution 
                                  FROM FAQ f
                                  INNER JOIN ticket_categories tc ON tc.category_id = f.category_id;";

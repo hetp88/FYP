@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
 
     <script>
-        function showMessage() {
-            alert("Your unsaved edits will be discarded");
+    function showMessage() {
+        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+        if (confirmation) {
             window.location.href = "/Home/Index";
+        } else {
+            // User chose to cancel will just get back to the form
         }
-    </script>
+    }
+</script>
     <style>
         body {
-            background-color: #000000;
+            background-color: #AAD1EE;
             color: #FFFFFF;
         }
 
@@ -26,25 +31,15 @@
         }
 
         .card {
-            background-color: #2A2A43;
+            background-color: #FFFFFF;
+            color: #000000;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 38px;
             margin: 5px;
             flex: 1;
-            width: 1200px;
-            height: 530px;
-        }
-
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 1200px;
-            height: 550px;
+            width: 450px; /* Adjust the width as needed */
+            height: auto; /* Remove fixed height */
         }
 
         .form-group {
@@ -52,21 +47,32 @@
         }
 
         .form-label {
-            color: #FFFFFF;
+            color: #000000; /* Change label color to black */
         }
 
         .form-control {
-            background-color: #33335F;
-            color: #FFFFFF;
+            background-color: #FFFFFF;
+            color: #000000; /* Change input text color to black */
             border: none;
-            border-radius: 5px;
-            padding: 10px;
-            height: 38px;
+            border-radius: 0;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+            .form-control:focus {
+                background-color: #FFFFFF;
+                color: #000000; /* Change focused input text color to black */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-color: #FFFFFF;
+                outline: 0;
+            }
+
         .form-select {
-            background-color: #33335F;
-            color: #FFFFFF;
+            background-color: #FFFFFF;
+            color: #000000;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -76,64 +82,61 @@
 </head>
 <body>
     <div class="container">
-        <div class="card-body">
-            <button onclick="showMessage()">Back</button>
-            <h2>New Ticket</h2>
-
-            <form method="post" asp-controller="Account" asp-action="Register">
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <input type="text" class="form-control" input asp-for="UserId" placeholder="User ID" required>
-                    
-                </div>
-
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <input type="text" class="form-control" input asp-for="Description" placeholder="Issue Description" required>
-                    
-                </div>
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <select class="form-select" input asp-for="Priority" placeholder="School" required>
-                        <option value="">Type</option>
-                        <option value="SI">SOI</option>
-                        <option value="SE">SEG</option>
-                        <option value="SM">Incident</option>
-                    </select>
-                    
-                </div>
-
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <select class="form-select" input asp-for="Status" placeholder="School" required>
-                        <option value="">Priority</option>
-                        <option value="SI">SOI</option>
-                        <option value="SE">SEG</option>
-                        <option value="SM">Incident</option>
-                    </select>
-                    
-                </div>
-
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <select id="category" name="category" class="form-control" required>
-                        <option value="">Select a category</option>
-                        <option value="software">software</option>
-                        <option value="hardware">hardware</option>
-                        <option value="network connectivity">network connectivity</option>
-                        <option value="access portal">access portal</option>
+        <div class="card">
+            <h3 class="mb-4">New Ticket</h3>
+            <form method="post" action="/Ticket/AddTicket">
+                <div class="form-group mb-3">
+                    <label for="type" class="form-label">Ticket type:</label>
+                    <select id="type" name="type" class="form-control" required>
+                        <option value="">Select a ticket type</option>
+                        <option value="incident">Incident</option>
+                        <option value="request">Request</option>
+                        <option value="problem">Problem</option>
                         <!-- Add more Options When needed to -->
                     </select>
                 </div>
 
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <input type="text" class="form-control" input asp-for="DevicesInvolved" placeholder="Devices Involved" required>
-                    
+                <div class="form-group mb-3">
+                    <label for="category" class="form-label">Category:</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">Select a category</option>
+                        <option value="1">software</option>
+                        <option value="2">hardware</option>
+                        <option value="3">network connectivity</option>
+                        <option value="4">access portal</option>
+                        <!-- Add more Options When needed to -->
+                    </select>
                 </div>
 
-                <div class="form-group col-md-4 mb-3 offset-md-4">
-                    <input type="text" class="form-control" input asp-for="Additional_Details" placeholder="Additional Details" required>
-                    
+                <div class="form-group mb-3">
+                    <label for="description" class="form-label">Description:</label>
+                    <textarea id="description" name="description" class="form-control" required></textarea>
                 </div>
 
+                <div class="form-group mb-3">
+                    <label for="priority" class="form-label">Priority:</label>
+                    <select id="priority" name="priority" class="form-control" required>
+                        <option value="">Select priority</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="devices" class="form-label">Devices Involved:</label>
+                    <input type="text" name="devices" class="form-control" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="additional" class="form-label">Additional Details:</label>
+                    <input type="text" name="additional" class="form-control" required>
+                </div>
 
                 <div class="form-group mb-3 offset-md-4">
-                    <button type="submit" class="btn btn-primary">Add Ticket</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 50px">Add Ticket</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
                 </div>
             </form>
         </div>

@@ -9,6 +9,8 @@ using System.Data;
 using System.Data.SqlTypes;
 using Microsoft.Extensions.Configuration;
 using FYP.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Security.Claims;
 
 namespace FYP.Controllers
 {
@@ -48,23 +50,27 @@ namespace FYP.Controllers
         }
         private int GetNextLeaveId()
         {
+            int leaveid = 0;
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
+                string query = $"SELECT MAX(leave_id) FROM leave";
 
-                string query = "SELECT MAX(leave_id) FROM leave";
+                List<int> id = connection.Query<int>(query).AsList();
+                foreach (int lid in id)
+                {
+                    leaveid = lid;
+                }
 
-                int nextLeaveId = connection.ExecuteScalar<int>(query) + 1;
-
-                return nextLeaveId;
+                return leaveid;
             }
         }
 
         public IActionResult ApplyLeave()
         {
-            int nextLeaveId = GetNextLeaveId();
+            //int nextLeaveId = GetNextLeaveId();
 
-            ViewBag.NextLeaveId = nextLeaveId;
+            //ViewBag.NextLeaveId = nextLeaveId;
 
             return View();
         }
@@ -72,16 +78,35 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult ApplyLeave(EmployeeSchedule leave)
         {
-            int nextLeaveId = GetNextLeaveId();
+            //int nextLeaveId = GetNextLeaveId();
+            int leaveid = 0;
+            int eid = 0;
+
+            string currentemp = Environment.UserName;
 
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
+                string idquery = $"SELECT MAX(leave_id) FROM leave";
+                string empquery = $"SELECT employee_id FROM employee WHERE name='{currentemp}'";
+
+                List<int> id = connection.Query<int>(idquery).AsList();
+                foreach (int lid in id)
+                {
+                    leaveid = lid;
+                }
+
+                List<int> emp = connection.Query<int>(empquery).AsList();
+                foreach (int empid in emp)
+                {
+                    eid = empid;
+                }
+
                 EmployeeSchedule newLeave = new EmployeeSchedule
                 {
-                    LeaveId = nextLeaveId,
-                    EmployeeId = leave.EmployeeId,
+                    EmployeeId = eid,
+                    LeaveId = leaveid + 1,
                     StartDate = leave.StartDate,
                     EndDate = leave.EndDate,
                     Reason = leave.Reason,
@@ -173,7 +198,10 @@ namespace FYP.Controllers
 
             return RedirectToAction("LeaveRequests");
         }
-
+        public IActionResult NewEmployee()
+        {
+            return View();
+        }
 
     }
 }

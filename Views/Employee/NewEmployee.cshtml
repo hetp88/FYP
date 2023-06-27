@@ -1,45 +1,129 @@
-﻿@model FYP.Models.NewEmployee
-
-@{
-    Layout = "_Ticket";
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>New Employee</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
+    <script>
+    function showMessage() {
+        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+        if (confirmation) {
+            window.location.href = "/Home/Index";
+        } else {
+        }
+    }
+</script>
+    <style>
+        body {
+            background-color: #c4a27f;
+            color: #FFFFFF;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            color: #000000;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 450px; /* Adjust the width as needed */
+            height: auto; /* Remove fixed height */
+        }
+
+        .form-group {
+            margin-bottom: 1rem; /* Increase margin-bottom for spacing */
+        }
+
+        .form-label {
+            color: #000000; /* Change label color to black */
+        }
+
+        .form-control {
+            background-color: #FFFFFF;
+            color: #000000; /* Change input text color to black */
+            border: none;
+            border-radius: 0;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .form-control:focus {
+                background-color: #FFFFFF;
+                color: #000000; /* Change focused input text color to black */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-color: #FFFFFF;
+                outline: 0;
+            }
+
+        .invalid-feedback {
+            display: block;
+            color: #FF0000;
+            margin-top: 0.25rem;
+        }
+
+        .alert {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 9999;
+            width: 300px;
+            height: auto;
+        }
+
+    </style>
+
 </head>
 <body>
-    <h2>New Employee Form</h2>
+    <div class="container">
+        <div class="card">
+            <h3 class="mb-4">Apply Leave</h3>
+            <form action="@Url.Action("NewEmployee", "Employee")" method="POST" enctype="multipart/form-data">
+              
+                <div>
+                    <label for="employee_id" class="form-label">Employee ID:</label>
+                    <input type="text" class="form-control" id="employee_id" name="employee_id" required>
+                </div>
+                <div>
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="EmpPw" class="form-label">Password:</label>
+                    <input type="password" class="form-control" id="EmpPw" name="EmpPw" required>
+                </div>
+                <div>
+                    <label for="roles_id" class="form-label">Role ID:</label>
+                    <input type="text" class="form-control" id="roles_id" name="roles_id" required>
+                </div>
+                <div>
+                    <label for="phone_no" class="form-label">Phone Number:</label>
+                    <input type="text" class="form-control" id="phone_no" name="phone_no" required>
+                </div>
+                <div>
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
 
-    <form method="POST" action="@Url.Action("SaveEmployee", "Employee")">
-        <div>
-            <label for="employee_id">Employee ID:</label>
-            <input type="text" id="employee_id" name="employee_id" required>
+                <div class="form-group mb-3 offset-md-4">
+                    <button type="submit" class="btn btn-primary" style="margin-left: 50px">Submit</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
+                </div>
+            </form>
         </div>
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
-        </div>
-        <div>
-            <label for="EmpPw">Password:</label>
-            <input type="password" id="EmpPw" name="EmpPw" required>
-        </div>
-        <div>
-            <label for="roles_id">Role ID:</label>
-            <input type="text" id="roles_id" name="roles_id" required>
-        </div>
-        <div>
-            <label for="phone_no">Phone Number:</label>
-            <input type="text" id="phone_no" name="phone_no" required>
-        </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+    </div>
 
-        <button type="submit">Save</button>
-    </form>
 </body>
 </html>
+

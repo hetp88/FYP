@@ -5,47 +5,45 @@
     <title>Login</title>
     <style>
         body {
-            background-color: #FCEDDA;
-            color: #000000;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
 
         .container {
             display: flex;
-            justify-content: center;
+            border-color: transparent;
+            color: #FFFFFF;
+            justify-content: left;
             align-items: center;
             height: 100vh;
+            margin-left: 20px;
+        }
+
+        .card-header {
+            border-color: transparent;
         }
 
         .card {
-            background-color: #DEBA9D;
-            border-radius: 5px;
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 1200px;
-            height: 530px;
+            background-color: transparent;
+            border-color: transparent;
+            justify-content: left;
+            flex: auto;
+            width: 1050px;
+            height: auto;
         }
 
-        .card {
-            background-color: #DEBA9D;
-            border-radius: 5px; 
-            padding: 38px;
-            margin: 5px;
-            flex: 1;
-            width: 1200px;
-            height: 550px;  
-        }
         .form-group {
             margin-bottom: 0.5rem;
         }
 
         .form-label {
-            color: #000000;
+            color: #FFFFFF;
         }
 
         .form-control {
             background-color: #FFFFFF;
-            color: #000000;
+            color: #FFFFFF;
             border: none;
             border-radius: 5px;
             padding: 10px;
@@ -53,13 +51,13 @@
         }
 
         .checkbox-label {
-            color: #000000;
+            color: #FFFFFF;
             margin-left: 5px;
         }
 
         .btn-primary {
-            background-color: #3C91E6;
-            border-color: #3C91E6;
+            background-color: cornflowerblue;
+            border-color: cornflowerblue;
         }
 
             .btn-primary:hover {
@@ -68,7 +66,9 @@
             }
 
         .card-footer a {
-            color: #000000;
+            border-color: transparent;
+            color: #FFFFFF;
+            text-decoration: none;
         }
 
             .card-footer a:hover {
@@ -77,12 +77,12 @@
     </style>
 </head>
 
-<body>
+<body background="\Images\LoginBackground.jpg">
     <div class="container">
         <form method="post" asp-controller="Account" asp-action="Login">
             <div class="card">
                 <div class="card-header">
-                    <img src="\Images\Logo.png" style="width: 225.5px; height: 62px;">
+                    <img src="\Images\Logo.png" style="width: 225.5px; height: 62px; margin-left:150px;">
                 </div>
 
                 <div class="card-body">
@@ -113,8 +113,8 @@
                         </div>
                     </form>
                     <div class="mb-2 offset-md-4">
-                        <a href="/Account/ForgetPassword">Forgot Password?</a>
-                        <a href="/Account/Register" style="margin-left: 175px">Register</a>
+                        <a href="/Account/ForgetPassword" style="color:cornflowerblue;">Forgot Password?</a>
+                        <a href="/Account/Register" style="margin-left: 143px; color:cornflowerblue;">Register</a>
                     </div>
                 </div>
 
@@ -129,7 +129,7 @@
 
                 <div class="card-footer">
                     <div class="offset-md-4">
-                        <a href="/Account/Policy" style="margin-left: 40px">Privacy Policy</a>
+                        <a href="/Account/Policy" style="margin-left: 30px">Privacy Policy</a>
                         <a href="/Account/TermsConditions" style="margin-left: 35px">Terms & Conditions</a>
                     </div>
                 </div>
