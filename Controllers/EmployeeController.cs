@@ -52,7 +52,7 @@ namespace FYP.Controllers
             {
                 connection.Open();
 
-                string query = "SELECT ISNULL(MAX(leave_id), 1) FROM leave";
+                string query = "SELECT MAX(leave_id) FROM leave";
 
                 int nextLeaveId = connection.ExecuteScalar<int>(query) + 1;
 
