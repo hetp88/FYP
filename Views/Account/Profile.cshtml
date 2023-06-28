@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<FYP.Models.Users>
+@{
     Layout = "_Ticket";
 }
 
@@ -52,11 +53,14 @@
 <body>
     <div class="container">
         <h1>User Profile</h1>
-        <p><label>User ID: </label><span id="userId"></span></p>
-        <p><label>Email: </label><span id="email"></span></p>
-        <p><label>Phone Number: </label><span id="phoneNumber"></span></p>
-        <p><label>Name: </label><span id="name"></span></p>
-        <p><label>School: </label><span id="school"></span></p>
+        @foreach (var users in Model)
+        {
+            <p><label>User ID: </label><span id="userid">@users.userId</span></p>
+            <p><label>Email: </label><span id="email">@users.email</span></p>
+            <p><label>Phone Number: </label><span id="phoneNumber">@users.PhoneNo</span></p>
+            <p><label>Name: </label><span id="name">@users.username</span></p>
+            <p><label>School: </label><span id="school">@users.school</span></p>
+        }
 
         <div class="btn-container">
             <button type="button" class="btn btn-primary btn-block" onclick="changePassword()">Change Password</button>

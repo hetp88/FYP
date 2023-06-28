@@ -53,7 +53,8 @@ namespace FYP.Controllers
         {
             int ticketid = 0;
             int uid = 0;
-            string currentuser = Environment.UserName;
+            //int? currentuser = HttpContext.Session.GetInt32("userID");
+            Console.WriteLine(User.Identity!.Name);
             var generate = new Random();
             DateTime now = DateTime.Now;
 
@@ -61,7 +62,7 @@ namespace FYP.Controllers
             {
                 string idQuery = $"SELECT MAX(ticket_id) FROM ticket";
 
-                string userquery = $"SELECT userid FROM users WHERE username='{currentuser}'";
+                //string userquery = $"SELECT userid FROM users WHERE username='{currentuser}'";
 
                 string empquery = $"SELECT employee_id FROM employee";
 
@@ -73,11 +74,13 @@ namespace FYP.Controllers
                     ticketid = id;
                 }
 
-                List<int> userid = connection.Query<int>(userquery).AsList();
-                foreach (int id in userid)
-                {
-                    uid = id;
-                }
+                //List<int> userid = connection.Query<int>(userquery).AsList();
+                //foreach (int id in userid)
+                //{
+                    //uid = id;
+                    //Console.WriteLine(uid);
+                //}
+                //Console.WriteLine(uid);
 
                 List<int> empid = connection.Query<int>(empquery).AsList();
 
@@ -89,7 +92,7 @@ namespace FYP.Controllers
                     Description = ticket.Description,
                     Category = ticket.Category,
                     Status = "new",
-                    DateTime = now,
+                    DateTime = Convert.ToDateTime(now),
                     Priority = ticket.Priority,
                     Employee = generate.Next(empid.Count),
                     DevicesInvolved = ticket.DevicesInvolved,
@@ -98,7 +101,7 @@ namespace FYP.Controllers
                 };
 
                 string query = @"INSERT INTO ticket (ticket_id, userid, type, description, category_id, status, datetime, priority, employee_id, devices_involved, additional_details, resolution) 
-                                    VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, '{@DateTime:yyyy-MM-dd}', @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution)";
+                                    VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, @DateTime, @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution)";
 
                 if (connection.Execute(query, newTicket) == 1)
                 {

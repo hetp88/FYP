@@ -9,7 +9,8 @@
     <title>Tickets </title>
     <style>
         .container {
-            margin-top: 30px;
+            margin-top: 40px;
+            width: auto;
             background: #FFFFFF;
         }
     </style>
@@ -25,30 +26,30 @@
         {
             <table class="table">
                 <tr>
-                    <th>User ID</th>
-                    <th>Ticket Type</th>
-                    <th>Description</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>DateTime</th>
-                    <th>Priority</th>
-                    <th>Devices Involved</th>
-                    <th>Additional Details</th>
-                    <th>Resolution</th>
+                    <th style="text-align:center">User ID</th>
+                    <th style="text-align:center">Ticket Type</th>
+                    <th style="text-align:center">Description</th>
+                    <th style="text-align:center">Category</th>
+                    <th style="text-align:center">Status</th>
+                    <th style="text-align:center">DateTime</th>
+                    <th style="text-align:center">Priority</th>
+                    <th style="text-align:center">Devices Involved</th>
+                    <th style="text-align:center">Additional Details</th>
+                    <th style="text-align:center">Resolution</th>
                 </tr>
                 @foreach (var ticket in Model)
                 {
                     <tr>
-                        <td>@ticket.UserId</td>
-                        <td>@ticket.Type</td>
-                        <td>@ticket.Description</td>
-                        <td>@ticket.Category</td>
-                        <td>@ticket.Status</td>
-                        <td>@ticket.DateTime</td>
-                        <td>@ticket.Priority</td>
-                        <td>@ticket.DevicesInvolved</td>
-                        <td>@ticket.Additional_Details</td>
-                        <td>@ticket.Resolution</td>
+                        <td style="text-align:center">@ticket.UserId</td>
+                        <td style="text-align:center">@ticket.Type</td>
+                        <td style="text-align:center">@ticket.Description</td>
+                        <td style="text-align:center">@ticket.Category</td>
+                        <td style="text-align:center">@ticket.Status</td>
+                        <td style="text-align:center">@ticket.DateTime</td>
+                        <td style="text-align:center">@ticket.Priority</td>
+                        <td style="text-align:center">@ticket.DevicesInvolved</td>
+                        <td style="text-align:center">@ticket.Additional_Details</td>
+                        <td style="text-align:center">@ticket.Resolution</td>
                     </tr>
                 }
             </table>

@@ -2,5 +2,11 @@
 {
     public class Users
     {
+        public int userId { get; set; }
+        public string username { get; set; } = null!;
+        public string role { get; set; } = null!;
+        public string school { get; set; } = null!;
+        public string email { get; set; } = null!;
+        public string PhoneNo { get; set; } = null!;
     }
 }

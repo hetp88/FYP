@@ -15,6 +15,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System;
 using System.Data;
+using Microsoft.AspNetCore.Http;
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using System.Security.Principal;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -25,7 +28,7 @@ public class AccountController : Controller
         @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
-        @"UPDATE users SET LastLogin=GETDATE() WHERE userid = '{0}'";
+        @"UPDATE users SET last_login=GETDATE() WHERE userid = @UserID";
 
     private const string ForgetPW_SQ =
         @"SELECT password FROM Users WHERE userid = '{0}' AND email = '{1}'";
@@ -59,7 +62,7 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(UserLogin user)
     {
-        if (!AuthenticateUser(user.UserID, user.Password, out ClaimsPrincipal principal))
+        if (!AuthenticateUser(user.UserID.ToString(), user.Password, out ClaimsPrincipal principal))
         {
             ViewData["Message"] = "Incorrect User ID or Password";
             ViewData["MsgType"] = "warning";
@@ -75,9 +78,22 @@ public class AccountController : Controller
                     IsPersistent = user.RememberMe
                 });
 
-            DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID, user.Password); //update the last login timestamp of the user
+            using (var connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                UserLogin u = new UserLogin
+                {
+                    UserID = user.UserID,
+                };
+
+                connection.Execute(LASTLOGIN_SQ, u);
+            }
+                //DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID, user.Password); //update the last login timestamp of the user
 
             user.RedirectToUsers = true; // Set the RedirectToUsers property to true
+
+            //HttpContext.Session.SetInt32("userID", value: user.UserID);
 
             return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
@@ -214,9 +230,19 @@ public class AccountController : Controller
     {
         return View();
     }
-    public IActionResult Profile()
+    public IActionResult Profile(UserLogin user)
     {
-        return View();
+        string currentuser = User.Identity.Name;
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            string query = $"SELECT userid, email, phone_no, username, school FROM users WHERE userid='{currentuser}'";
+
+            connection.Open();
+
+            List<Users> u = connection.Query<Users>(query).AsList();
+            return View(u);
+        }
+        //return View();
     }
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
