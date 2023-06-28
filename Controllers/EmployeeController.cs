@@ -240,7 +240,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         roles_id = 3,
-                        EmpPw = "helpdeskagent"+EmpID,
+                        EmpPw = "helpdeskagent"+EmpID.ToString(),
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -251,7 +251,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         roles_id = 4,
-                        EmpPw = "supporteng" + EmpID,
+                        EmpPw = "supporteng" + EmpID.ToString(),
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -262,7 +262,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         roles_id = 5,
-                        EmpPw = "admin" + EmpID,
+                        EmpPw = "admin" + EmpID.ToString(),
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
