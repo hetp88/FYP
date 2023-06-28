@@ -235,13 +235,24 @@ namespace FYP.Controllers
 
                 using (var connection = new SqlConnection(GetConnectionString()))
                 {
+
+                    string idQuery = $"SELECT MAX(ticket_id) FROM ticket";
+
                     connection.Open();
+
+                    List<int> aid = connection.Query<int>(idQuery).AsList();
+                    foreach (int id in aid)
+                    {
+                        newEmp.Employee_id = id+1;
+                    }
+
+                    Console.WriteLine(newEmp.Employee_id);
 
                     NewEmployee helpdesk_agent = new NewEmployee
                     {
-                        Employee_id = EmpID,
+                        Employee_id = newEmp.Employee_id,
                         roles_id = 3,
-                        EmpPw = "helpdeskagent"+EmpID,
+                        EmpPw = "helpdeskagent" + newEmp.Employee_id,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,

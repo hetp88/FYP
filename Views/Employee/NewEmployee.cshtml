@@ -1,22 +1,25 @@
-﻿<!DOCTYPE html>
+﻿@model FYP.Models.NewEmployee
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
 
     <script>
-    function showMessage() {
-        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+        function showMessage() {
+            var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
 
-        if (confirmation) {
-            window.location.href = "/Home/Index";
-        } else {
+            if (confirmation) {
+                window.location.href = "/Home/Index";
+            } else {
+                // User chose to cancel will just get back to the form
+            }
         }
-    }
-</script>
+    </script>
     <style>
         body {
-            background-color: #c4a27f;
+            background-color: lightgray;
             color: #FFFFFF;
         }
 
@@ -51,7 +54,7 @@
             background-color: #FFFFFF;
             color: #000000; /* Change input text color to black */
             border: none;
-            border-radius: 0;
+            border-radius: 6px;
             height: calc(1.5em + 0.75rem + 2px);
             padding: 0.375rem 0.75rem;
             font-size: 1rem;
@@ -66,55 +69,28 @@
                 border-color: #FFFFFF;
                 outline: 0;
             }
-
-        .invalid-feedback {
-            display: block;
-            color: #FF0000;
-            margin-top: 0.25rem;
-        }
-
-        .alert {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 9999;
-            width: 300px;
-            height: auto;
-        }
-
     </style>
-
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h3 class="mb-4">Apply Leave</h3>
-            <form action="@Url.Action("NewEmployee", "Employee")" method="POST" enctype="multipart/form-data">
-              
-                @*<div>
-                    <label for="employee_id" class="form-label">Employee ID:</label>
-                    <input type="text" class="form-control" id="employee_id" name="employee_id" required>
-                </div>
-                <div>
+            <h3 class="mb-4">New Employee</h3>
+            <form method="post" asp-controller="Employee" asp-action="NewEmployee">
+
+                <div class="form-group mb-3">
                     <label for="name" class="form-label">Name:</label>
-                    <input type="text" class="form-control" id="name" name="Name" required>
+                    <input type="text" class="form-control" id="name" name="name" required>
                 </div>
-                <div>
-                    <label for="EmpPw" class="form-label">Password:</label>
-                    <input type="password" class="form-control" id="EmpPw" name="EmpPw" required>
-                </div>
-                <div>
-                    <label for="roles_id" class="form-label">Role ID:</label>
-                    <input type="text" class="form-control" id="roles_id" name="roles_id" required>
-                </div>
-                <div>
+                  
+                <div class="form-group mb-3">
                     <label for="phone_no" class="form-label">Phone Number:</label>
-                    <input type="text" class="form-control" id="phone_no" name="Phone_no" required>
+                    <input type="text" class="form-control" id="phone_no" name="phone_no" required>
                     <span asp-validation-for="Phone_no" class="text-danger"></span>
                 </div>
+                <div>
                 <div class="form-group mb-3">
                     <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="Email" required>
+                    <input type="email" class="form-control" id="email" name="email" required>
                 </div>
 
                 <div class="form-group mb-3 offset-md-4">
@@ -138,11 +114,9 @@
                         </div>
                     </div>
                 }
-
+                </div>
             </form>
         </div>
     </div>
-
 </body>
 </html>
-
