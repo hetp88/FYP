@@ -43,18 +43,13 @@ namespace FYP.Controllers
         {
             return View();
         }
-        public IActionResult DataCollected()
-        {
-            return View();
-        }
 
         [HttpPost]
         public IActionResult AddTicket(Ticket ticket)
         {
             int ticketid = 0;
             int uid = 0;
-            //int? currentuser = HttpContext.Session.GetInt32("userID");
-            Console.WriteLine(User.Identity!.Name);
+            //int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
             var generate = new Random();
             DateTime now = DateTime.Now;
 
@@ -77,8 +72,8 @@ namespace FYP.Controllers
                 //List<int> userid = connection.Query<int>(userquery).AsList();
                 //foreach (int id in userid)
                 //{
-                    //uid = id;
-                    //Console.WriteLine(uid);
+                //uid = id;
+                //Console.WriteLine(uid);
                 //}
                 //Console.WriteLine(uid);
 
@@ -115,6 +110,11 @@ namespace FYP.Controllers
                 }
             }
             return RedirectToAction("Ticket", "ViewTicket");
+        }
+
+        public IActionResult DataCollected()
+        {
+            return View();
         }
     }
 }

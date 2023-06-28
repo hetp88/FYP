@@ -1,11 +1,4 @@
-﻿@model List<FYP.Models.NewEmployee>
-
-@{
-    Layout = "_Ticket";
-}
-
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -95,39 +88,57 @@
 <body>
     <div class="container">
         <div class="card">
-            <h3 class="mb-4">New Employee</h3>
+            <h3 class="mb-4">Apply Leave</h3>
             <form action="@Url.Action("NewEmployee", "Employee")" method="POST" enctype="multipart/form-data">
               
-                <div>
+                @*<div>
                     <label for="employee_id" class="form-label">Employee ID:</label>
                     <input type="text" class="form-control" id="employee_id" name="employee_id" required>
-                </div> 
+                </div>
+                <div>
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" name="Name" required>
+                </div>
+                <div>
+                    <label for="EmpPw" class="form-label">Password:</label>
+                    <input type="password" class="form-control" id="EmpPw" name="EmpPw" required>
+                </div>
                 <div>
                     <label for="roles_id" class="form-label">Role ID:</label>
                     <input type="text" class="form-control" id="roles_id" name="roles_id" required>
                 </div>
                 <div>
-                    <label for="name" class="form-label">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
-                </div>
-                <div>
-                    <label for="employee_pw" class="form-label">Password:</label>
-                    <input type="password" class="form-control" id="employee_pw" name="employee_pw" required>
-                </div>
-           
-                <div>
                     <label for="phone_no" class="form-label">Phone Number:</label>
-                    <input type="text" class="form-control" id="phone_no" name="phone_no" required>
+                    <input type="text" class="form-control" id="phone_no" name="Phone_no" required>
+                    <span asp-validation-for="Phone_no" class="text-danger"></span>
                 </div>
-                <div>
+                <div class="form-group mb-3">
                     <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
+                    <input type="email" class="form-control" id="email" name="Email" required>
                 </div>
 
                 <div class="form-group mb-3 offset-md-4">
                     <button type="submit" class="btn btn-primary" style="margin-left: 50px">Submit</button>
                     <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
                 </div>
+
+                @if (ViewData["Message"] != null)
+                {
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <div class="alert alert-@ViewData["MsgType"]">
+                                <b>Message: </b>@ViewData["Message"]<br />
+                                @if (!String.IsNullOrEmpty(ViewData["ExecSQL"]?.ToString()))
+                                {
+                                    <b>SQL: </b>
+
+                                    @ViewData["ExecSQL"]?.ToString()
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
             </form>
         </div>
     </div>

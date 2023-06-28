@@ -7,6 +7,6 @@
         public string role { get; set; } = null!;
         public string school { get; set; } = null!;
         public string email { get; set; } = null!;
-        public string PhoneNo { get; set; } = null!;
+        public int phoneNo { get; set; }
     }
 }
