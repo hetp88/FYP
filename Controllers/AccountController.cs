@@ -44,10 +44,12 @@ public class AccountController : Controller
     //private const string LV = "Login";
 
     private readonly IConfiguration _configuration;
+    private readonly IHttpContextAccessor contextAccessor;
 
-    public AccountController(IConfiguration configuration)
+    public AccountController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
         _configuration = configuration;
+        contextAccessor = httpContextAccessor;
     }
     private string GetConnectionString()
     {
@@ -93,7 +95,7 @@ public class AccountController : Controller
 
             user.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-            //HttpContext.Session.SetInt32("userID", value: user.UserID);
+            contextAccessor.HttpContext.Session.SetInt32("userID", user.UserID);
 
             return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
@@ -230,19 +232,18 @@ public class AccountController : Controller
     {
         return View();
     }
-    public IActionResult Profile(UserLogin user)
+    public IActionResult Profile()
     {
-        string currentuser = User.Identity.Name;
+        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
             string query = $"SELECT userid, email, phone_no, username, school FROM users WHERE userid='{currentuser}'";
 
             connection.Open();
-
             List<Users> u = connection.Query<Users>(query).AsList();
+            //Console.WriteLine(currentuser);
             return View(u);
         }
-        //return View();
     }
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)

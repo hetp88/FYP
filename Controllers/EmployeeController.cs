@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using FYP.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Security.Claims;
+using System.Collections;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FYP.Controllers
 {
@@ -28,9 +30,18 @@ namespace FYP.Controllers
             return _configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult Index()
+        public IActionResult EmployeeList()
         {
-            return View();
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                string query = @"SELECT e.employee_id, r.roles_type, e.name, e.email, e.phone_no, e.tickets
+                                FROM employee e
+                                INNER JOIN roles r ON r.roles_id = e.roles_id;";
+
+                connection.Open();
+                List<Employee> employee = connection.Query<Employee>(query).AsList();
+                return View(employee);
+            }
         }
 
         public IActionResult Schedule()
@@ -48,23 +59,23 @@ namespace FYP.Controllers
 
             return View(schedule);
         }
-        private int GetNextLeaveId()
-        {
-            int leaveid = 0;
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-            {
-                connection.Open();
-                string query = $"SELECT MAX(leave_id) FROM leave";
+        //private int GetNextLeaveId()
+        //{
+        //    int leaveid = 0;
+        //    using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        //    {
+        //        connection.Open();
+        //        string query = $"SELECT MAX(leave_id) FROM leave";
 
-                List<int> id = connection.Query<int>(query).AsList();
-                foreach (int lid in id)
-                {
-                    leaveid = lid;
-                }
+        //        List<int> id = connection.Query<int>(query).AsList();
+        //        foreach (int lid in id)
+        //        {
+        //            leaveid = lid;
+        //        }
 
-                return leaveid;
-            }
-        }
+        //        return leaveid;
+        //    }
+        //}
 
         public IActionResult ApplyLeave()
         {
@@ -198,10 +209,121 @@ namespace FYP.Controllers
 
             return RedirectToAction("LeaveRequests");
         }
+
+        //for admin to add?
         public IActionResult NewEmployee()
         {
             return View();
         }
 
+        [HttpPost]
+        public IActionResult NewEmployee(NewEmployee newEmp)
+        {
+            if (!ModelState.IsValid)
+            {
+                //Validation Check
+                ViewData["MsgType"] = "danger";
+                return View("NewEmployee");
+            }
+            else
+            {
+                // Save the add employee data to the database
+                string[] NumArray = newEmp.Email.Split("@");
+                string numbers = NumArray[0];
+                int EmpID = int.Parse(numbers);
+                int totalDigits = EmpID.ToString().Length;
+
+                using (var connection = new SqlConnection(GetConnectionString()))
+                {
+                    connection.Open();
+
+                    NewEmployee helpdesk_agent = new NewEmployee
+                    {
+                        Employee_id = EmpID,
+                        roles_id = 3,
+                        EmpPw = "helpdeskagent"+EmpID,
+                        Name = newEmp.Name,
+                        Email = newEmp.Email,
+                        Phone_no = newEmp.Phone_no,
+                        Tickets = "null",
+                    };
+
+                    NewEmployee support_eng = new NewEmployee
+                    {
+                        Employee_id = EmpID,
+                        roles_id = 4,
+                        EmpPw = "supporteng" + EmpID,
+                        Name = newEmp.Name,
+                        Email = newEmp.Email,
+                        Phone_no = newEmp.Phone_no,
+                        Tickets = "null",
+                    };
+
+                    NewEmployee admin = new NewEmployee
+                    {
+                        Employee_id = EmpID,
+                        roles_id = 5,
+                        EmpPw = "admin" + EmpID,
+                        Name = newEmp.Name,
+                        Email = newEmp.Email,
+                        Phone_no = newEmp.Phone_no,
+                        Tickets = "null",
+                    };
+
+                    if (totalDigits == 3)
+                    {
+
+                        string insertQuery1 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+
+                        if (connection.Execute(insertQuery1, helpdesk_agent) == 1)
+                        {
+                            TempData["Message"] = "Helpdesk Agent registered successfully";
+                            TempData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            TempData["Message"] = "Account registered failed";
+                            TempData["MsgType"] = "danger";
+                        }
+                    }
+
+                    else if (totalDigits == 4)
+                    {
+                        string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+
+                        if (connection.Execute(insertQuery2, support_eng) == 1)
+                        {
+                            TempData["Message"] = "Support Engineer registered successfully";
+                            TempData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            TempData["Message"] = "Account registered failed";
+                            TempData["MsgType"] = "danger";
+                        }
+                    }
+
+                    else if (totalDigits == 5)
+                    {
+                        string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+
+                        if (connection.Execute(insertQuery3, admin) == 1)
+                        {
+                            TempData["Message"] = "Admin registered successfully";
+                            TempData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            TempData["Message"] = "Account registered failed";
+                            TempData["MsgType"] = "danger";
+                        }
+                    }
+                }
+            }
+            return RedirectToAction("EmployeeList", "Employee");
+        }
     }
 }

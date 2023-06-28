@@ -1,4 +1,5 @@
 ﻿@model List<FYP.Models.Users>
+@inject IHttpContextAccessor contextAccessor
 @{
     Layout = "_Ticket";
 }
@@ -55,11 +56,21 @@
         <h1>User Profile</h1>
         @foreach (var users in Model)
         {
-            <p><label>User ID: </label><span id="userid">@users.userId</span></p>
-            <p><label>Email: </label><span id="email">@users.email</span></p>
-            <p><label>Phone Number: </label><span id="phoneNumber">@users.PhoneNo</span></p>
-            <p><label>Name: </label><span id="name">@users.username</span></p>
-            <p><label>School: </label><span id="school">@users.school</span></p>
+            <p><label>User ID: </label>
+                <ul>@users.userId</ul>
+            </p>
+            <p><label>Email: </label>
+                <ul>@users.email</ul>
+            </p>
+            <p><label>Phone Number: </label>
+                <ul>@users.phoneNo</ul>
+            </p>
+            <p><label>Name: </label>
+                <ul>@users.username</ul>
+            </p>
+            <p><label>School: </label>
+                <ul>@users.school</ul>
+            </p>
         }
 
         <div class="btn-container">
@@ -73,15 +84,30 @@
     @*THE VALUES TO BE CHANGED AND EXTRACTED WHERE IT WILL SHOW THE details of the fella who logged in*@
     <script>
         function changePassword() {
-            alert("Password changed successfully!");
+            var newEmail = prompt("Enter updated password:");
+            if (newEmail !== null) {
+                alert("Password changed successfully!");
+            } else {
+                alert("Password change cancelled");
+            }
         }
+
         function updateEmail() {
             var newEmail = prompt("Enter new email:");
-            alert("Email updated successfully!");
+            if (newEmail !== null) {
+                alert("Email updated successfully!");
+            } else {
+                alert("Email not updated");
+            }
         }
+
         function updatePhoneNumber() {
             var newPhoneNumber = prompt("Enter new phone number:");
-            alert("Phone number updated successfully!");
+            if (newPhoneNumber !== null) {
+                alert("Phone number updated successfully!");
+            } else {
+                alert("Phone number update canceled.");
+            }
         }
     </script>
 </body>

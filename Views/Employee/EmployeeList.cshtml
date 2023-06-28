@@ -1,1 +1,51 @@
-﻿
+﻿@model List<FYP.Models.Employee>
+@{
+    Layout = "_Ticket";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tickets </title>
+    <style>
+        .container {
+            margin-top: 40px;
+            width: auto;
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No employee found.</p>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th style="text-align:center">Employee ID</th>
+                    <th style="text-align:center">Role</th>
+                    <th style="text-align:center">Name</th>
+                    <th style="text-align:center">Email</th>
+                    <th style="text-align:center">Phone Number</th>
+                    <th style="text-align:center">Number of tickets assigned</th>
+                </tr>
+                @foreach (var employee in Model)
+                {
+                    <tr>
+                        <td style="text-align:center">@employee.EmployeeId</td>
+                        <td style="text-align:center">@employee.Role</td>
+                        <td style="text-align:center">@employee.Name</td>
+                        <td style="text-align:center">@employee.Email</td>
+                        <td style="text-align:center">@employee.Phone_no</td>
+                        <td style="text-align:center">@employee.no_tickets</td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</body>
+</html>
