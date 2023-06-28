@@ -25,7 +25,7 @@ namespace FYP.Controllers
             List<FAQ> faqs = new List<FAQ>();
             using (SqlConnection connection = new SqlConnection(_connectionString))
             { 
-                string query = @"SELECT f.faq_id, tc.category, f.question, f.solution 
+                string query = @"SELECT f.faq_id AS FaqId, tc.category, f.question, f.solution 
                                  FROM FAQ f
                                  INNER JOIN ticket_categories tc ON tc.category_id = f.category_id;";
 
@@ -45,17 +45,14 @@ namespace FYP.Controllers
         public IActionResult CreateFAQ(FAQ faq)
         {
             //int categoryid = 0;
-            int faqid = 0;
+            int faqid=0;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string idQuery = $"SELECT MAX(faq_id) FROM FAQ";
                 connection.Open();
 
-                List<int> faqs = connection.Query<int>(idQuery).AsList();
-                foreach (int fid in faqs)
-                {
-                    faqid = fid;
-                }
+                faqid = connection.QuerySingleOrDefault<int>(idQuery) + 1;
+                
 
                 FAQ newFaq = new FAQ
                 {

@@ -34,15 +34,19 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                string query = @"SELECT e.employee_id, r.roles_type, e.name, e.email, e.phone_no, e.tickets
-                                FROM employee e
-                                INNER JOIN roles r ON r.roles_id = e.roles_id;";
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets
+                FROM employee e
+                INNER JOIN roles r ON r.roles_id = e.roles_id;";
 
                 connection.Open();
-                List<Employee> employee = connection.Query<Employee>(query).AsList();
-                return View(employee);
+
+                List<Employee> employees = connection.Query<Employee>(query).ToList();
+
+                return View(employees);
             }
         }
+
+
 
         public IActionResult Schedule()
         {
@@ -100,7 +104,7 @@ namespace FYP.Controllers
                 connection.Open();
 
                 string idquery = $"SELECT MAX(leave_id) FROM leave";
-                string empquery = $"SELECT employee_id FROM employee WHERE name='{currentemp}'";
+                string empquery = $"SELECT employee_id AS EmployeeId FROM employee WHERE name='{currentemp}'";
 
                 List<int> id = connection.Query<int>(idquery).AsList();
                 foreach (int lid in id)
