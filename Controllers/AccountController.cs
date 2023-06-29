@@ -64,7 +64,7 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(UserLogin user)
     {
-        if (!AuthenticateUser(user.UserID.ToString(), user.Password, out ClaimsPrincipal principal))
+        if (!AuthenticateUser(user.UserID.ToString() , user.Password, out ClaimsPrincipal principal))
         {
             ViewData["Message"] = "Incorrect User ID or Password";
             ViewData["MsgType"] = "warning";
@@ -100,6 +100,7 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
     }
+
 
     public IActionResult Logout(string returnUrl = null!)
     {
@@ -246,19 +247,47 @@ public class AccountController : Controller
         }
     }
 
+    public IActionResult EditProfile()
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("EditProfile");
+        }
+        else
+        {
+            return RedirectToAction("");
+        }
+    }
+
+
+
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
 
         DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
+        DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
         if (ds.Rows.Count == 1)
         {
             principal =
                new ClaimsPrincipal(
                   new ClaimsIdentity(
                      new Claim[] {
-                     new Claim(ClaimTypes.NameIdentifier, uid),
-                     new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
+                         new Claim(ClaimTypes.NameIdentifier, uid),
+                         new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
+                     }, "Basic"
+                  )
+               );
+            return true;
+        }
+        else if (de.Rows.Count == 1)
+        {
+            principal =
+               new ClaimsPrincipal(
+                  new ClaimsIdentity(
+                     new Claim[] {
+                         new Claim(ClaimTypes.NameIdentifier, uid),
+                         new Claim(ClaimTypes.Role, de.Rows[0]["roles_id"].ToString()!)
                      }, "Basic"
                   )
                );
