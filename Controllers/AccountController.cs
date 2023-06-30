@@ -211,14 +211,21 @@ public class AccountController : Controller
         return RedirectToAction("Login", "Account");
     }
 
-    [Authorize(Roles = "support engineer, administrator")]
+    //[Authorize(Roles = "support engineer, administrator")]
     public IActionResult Users()
     {
-        // Retrieve user data and pass it to the view
-        DataTable usersData = DBUtl.GetTable("SELECT * FROM users " +
-                                                "INNER JOIN role ON role.role_id = users.role_id " +
-                                                "WHERE role_type = 'support engineer' OR role_type = 'administrator'"); // Query to retrieve user data
-        return View(usersData);
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo
+                           FROM users u
+                           INNER JOIN roles r ON r.roles_id = u.roles_id;";
+
+            connection.Open();
+
+            List<Users> users = connection.Query<Users>(query).ToList();
+
+            return View(users);
+        }
     }
 
     public IActionResult Policy()
