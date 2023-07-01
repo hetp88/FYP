@@ -1,4 +1,4 @@
-﻿@model List<FYP.Models.Users> 
+﻿@model List<FYP.Models.Users>
 @inject IHttpContextAccessor contextAccessor
 @{
     Layout = "_Ticket";
@@ -71,14 +71,38 @@
             <p><label>School: </label>
                 <ul>@users.school</ul>
             </p>
+        }        
+    </div>
+
+    @*THE VALUES TO BE CHANGED AND EXTRACTED WHERE IT WILL SHOW THE details of the fella who logged in*@
+    <script>
+        function changePassword() {
+            var newEmail = prompt("Enter updated password:");
+            if (newEmail !== null) {
+                alert("Password changed successfully!");
+            } else {
+                alert("Password change cancelled");
+            }
         }
 
-        <div class="btn-container">
-            <button type="button" class="btn btn-primary btn-block"  asp-controller="Travel"
-               asp-action="Update"
-               >Edit Profile</button>
-        </div>
-    </div>
+        function updateEmail() {
+            var newEmail = prompt("Enter new email:");
+            if (newEmail !== null) {
+                alert("Email updated successfully!");
+            } else {
+                alert("Email not updated");
+            }
+        }
+
+        function updatePhoneNumber() {
+            var newPhoneNumber = prompt("Enter new phone number:");
+            if (newPhoneNumber !== null) {
+                alert("Phone number updated successfully!");
+            } else {
+                alert("Phone number update canceled.");
+            }
+        }
+    </script>
 </body>
 </html>
 

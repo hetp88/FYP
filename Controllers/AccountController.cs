@@ -64,7 +64,7 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(UserLogin user)
     {
-        if (!AuthenticateUser(user.UserID.ToString(), user.Password, out ClaimsPrincipal principal))
+        if (!AuthenticateUser(user.UserID.ToString() , user.Password, out ClaimsPrincipal principal))
         {
             ViewData["Message"] = "Incorrect User ID or Password";
             ViewData["MsgType"] = "warning";
@@ -100,6 +100,7 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
     }
+
 
     public IActionResult Logout(string returnUrl = null!)
     {
@@ -210,14 +211,21 @@ public class AccountController : Controller
         return RedirectToAction("Login", "Account");
     }
 
-    [Authorize(Roles = "support engineer, administrator")]
+    //[Authorize(Roles = "support engineer, administrator")]
     public IActionResult Users()
     {
-        // Retrieve user data and pass it to the view
-        DataTable usersData = DBUtl.GetTable("SELECT * FROM users " +
-                                                "INNER JOIN role ON role.role_id = users.role_id " +
-                                                "WHERE role_type = 'support engineer' OR role_type = 'administrator'"); // Query to retrieve user data
-        return View(usersData);
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo
+                           FROM users u
+                           INNER JOIN roles r ON r.roles_id = u.roles_id;";
+
+            connection.Open();
+
+            List<Users> users = connection.Query<Users>(query).ToList();
+
+            return View(users);
+        }
     }
 
     public IActionResult Policy()
@@ -246,19 +254,47 @@ public class AccountController : Controller
         }
     }
 
+    public IActionResult EditProfile()
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("EditProfile");
+        }
+        else
+        {
+            return RedirectToAction("");
+        }
+    }
+
+
+
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
 
         DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
+        DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
         if (ds.Rows.Count == 1)
         {
             principal =
                new ClaimsPrincipal(
                   new ClaimsIdentity(
                      new Claim[] {
-                     new Claim(ClaimTypes.NameIdentifier, uid),
-                     new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
+                         new Claim(ClaimTypes.NameIdentifier, uid),
+                         new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
+                     }, "Basic"
+                  )
+               );
+            return true;
+        }
+        else if (de.Rows.Count == 1)
+        {
+            principal =
+               new ClaimsPrincipal(
+                  new ClaimsIdentity(
+                     new Claim[] {
+                         new Claim(ClaimTypes.NameIdentifier, uid),
+                         new Claim(ClaimTypes.Role, de.Rows[0]["roles_id"].ToString()!)
                      }, "Basic"
                   )
                );

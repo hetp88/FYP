@@ -1,38 +1,51 @@
-﻿
+﻿@model List<FYP.Models.Users>
+@{
+    Layout = "_Ticket";
+}
+
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>User Details</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <title>Tickets </title>
+    <style>
+        .container {
+            margin-top: 40px;
+            width: auto;
+            background: #FFFFFF;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>User Details</h1>
-        <table class="table">
-            <tbody>
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No employee found.</p>
+        }
+        else
+        {
+            <table class="table">
                 <tr>
-                    <th>User ID</th>
-                    <td>@Model.UserID</td>
+                    <th style="text-align:center">User ID</th>
+                    <th style="text-align:center">Role</th>
+                    <th style="text-align:center">Name</th>
+                    <th style="text-align:center">School</th>
+                    <th style="text-align:center">Email</th>
+                    <th style="text-align:center">Phone Number</th>
                 </tr>
-                <tr>
-                    <th>Full Name</th>
-                    <td>@Model.UserName</td>
-                </tr>
-                <tr>
-                    <th>School</th>
-                    <td>@Model.School</td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td>@Model.Email</td>
-                </tr>
-                <tr>
-                    <th>Phone Number</th>
-                    <td>@Model.PhoneNo</td>
-                </tr>
-            </tbody>
-        </table>
+                @foreach (var users in Model)
+                {
+                    <tr>
+                        <td style="text-align:center">@users.userId</td>
+                        <td style="text-align:center">@users.role</td>
+                        <td style="text-align:center">@users.username</td>
+                        <td style="text-align:center">@users.school</td>
+                        <td style="text-align:center">@users.email</td>
+                        <td style="text-align:center">@users.phoneNo</td>
+                    </tr>
+                }
+            </table>
+        }
     </div>
 </body>
 </html>
