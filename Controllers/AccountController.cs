@@ -62,9 +62,9 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(UserLogin user)
+    public IActionResult Login(UserLogin account)
     {
-        if (!AuthenticateUser(user.UserID.ToString() , user.Password, out ClaimsPrincipal principal))
+        if (!AuthenticateUser(account.UserID.ToString() , account.Password, out ClaimsPrincipal principal))
         {
             ViewData["Message"] = "Incorrect User ID or Password";
             ViewData["MsgType"] = "warning";
@@ -77,7 +77,7 @@ public class AccountController : Controller
                 principal,
                 new AuthenticationProperties
                 {
-                    IsPersistent = user.RememberMe
+                    IsPersistent = account.RememberMe
                 });
 
             using (var connection = new SqlConnection(GetConnectionString()))
@@ -86,16 +86,16 @@ public class AccountController : Controller
 
                 UserLogin u = new UserLogin
                 {
-                    UserID = user.UserID,
+                    UserID = account.UserID,
                 };
 
                 connection.Execute(LASTLOGIN_SQ, u);
             }
-                //DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID, user.Password); //update the last login timestamp of the user
+            //DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID, user.Password); //update the last login timestamp of the user
 
-            user.RedirectToUsers = true; // Set the RedirectToUsers property to true
+            account.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
-            contextAccessor.HttpContext.Session.SetInt32("userID", user.UserID);
+            contextAccessor.HttpContext.Session.SetInt32("userID", account.UserID);
 
             return RedirectToAction("Index", "Home"); // Redirect to the users to home
         }
