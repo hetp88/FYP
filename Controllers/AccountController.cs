@@ -18,30 +18,28 @@ using System.Data;
 using Microsoft.AspNetCore.Http;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 using System.Security.Principal;
+using XAct.Users;
+using XAct;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 
 namespace FYP.Controllers;
 public class AccountController : Controller
 {
     private const string LOGIN_SQ =
-        @"SELECT * FROM users WHERE userid = '{0}' AND user_pw = HASHBYTES('SHA1', '{1}')";
+        @"SELECT u.userid, u.user_pw, r.roles_type FROM users u 
+            INNER JOIN roles r ON r.roles_id = u.roles_id
+            WHERE u.userid = '{0}' AND u.user_pw = HASHBYTES('SHA1', '{1}')";
     private const string LOGIN_EMP =
-        @"SELECT * FROM employee WHERE employee_id = '{0}' AND employee_pw = HASHBYTES('SHA1', '{1}')";
+        @"SELECT e.employee_id, e.employee_pw, r.roles_type FROM employee e 
+            INNER JOIN roles r ON r.roles_id = e.roles_id
+            WHERE e.employee_id = '{0}' AND e.employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
         @"UPDATE users SET last_login=GETDATE() WHERE userid = @UserID";
 
     private const string ForgetPW_SQ =
-        @"SELECT password FROM Users WHERE userid = '{0}' AND email = '{1}'";
-
-    //private const string UROLE = "roles_id";
-
-    //private const string RECN = "Home";
-    //private const string REVW = "Index";
-
-    //private const string RECN1 = "Account";
-    //private const string REVW1 = "Login";
-
-    //private const string LV = "Login";
+        @"SELECT password FROM Users WHERE userid = @UserID AND email = @Email";
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor contextAccessor;
@@ -56,11 +54,13 @@ public class AccountController : Controller
         return _configuration.GetConnectionString("DefaultConnection");
     }
 
+    [AllowAnonymous]
     public IActionResult Login()
     {
         return View();
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public IActionResult Login(UserLogin account)
     {
@@ -80,18 +80,17 @@ public class AccountController : Controller
                     IsPersistent = account.RememberMe
                 });
 
-            using (var connection = new SqlConnection(GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
                 UserLogin u = new UserLogin
                 {
-                    UserID = account.UserID,
+                    UserID = account.UserID, 
                 };
 
-                connection.Execute(LASTLOGIN_SQ, u);
+                connection.Execute(LASTLOGIN_SQ, u); //update the last login timestamp of the user
             }
-            //DBUtl.ExecSQL(LASTLOGIN_SQ, user.UserID, user.Password); //update the last login timestamp of the user
 
             account.RedirectToUsers = true; // Set the RedirectToUsers property to true
 
@@ -101,7 +100,7 @@ public class AccountController : Controller
         }
     }
 
-
+    [Authorize]
     public IActionResult Logout(string returnUrl = null!)
     {
         HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -143,7 +142,7 @@ public class AccountController : Controller
             int UserID = int.Parse(numbers);
             int totalDigits = UserID.ToString().Length;
 
-            using (var connection = new SqlConnection(GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
@@ -216,7 +215,7 @@ public class AccountController : Controller
     {
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
-            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo
+            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo, u.last_login 
                            FROM users u
                            INNER JOIN roles r ON r.roles_id = u.roles_id;";
 
@@ -245,7 +244,7 @@ public class AccountController : Controller
         int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
-            string query = $"SELECT userid, email, phone_no, username, school FROM users WHERE userid='{currentuser}'";
+            string query = $"SELECT userid, email, phone_no AS phoneNo, username, school FROM users WHERE userid='{currentuser}'";
 
             connection.Open();
             List<Users> u = connection.Query<Users>(query).AsList();
@@ -254,6 +253,7 @@ public class AccountController : Controller
         }
     }
 
+    [Authorize(Roles = "student, staff")]
     public IActionResult EditProfile()
     {
         if (!ModelState.IsValid)
@@ -281,7 +281,7 @@ public class AccountController : Controller
                   new ClaimsIdentity(
                      new Claim[] {
                          new Claim(ClaimTypes.NameIdentifier, uid),
-                         new Claim(ClaimTypes.Role, ds.Rows[0]["roles_id"].ToString()!)
+                         new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
                      }, "Basic"
                   )
                );
@@ -294,7 +294,7 @@ public class AccountController : Controller
                   new ClaimsIdentity(
                      new Claim[] {
                          new Claim(ClaimTypes.NameIdentifier, uid),
-                         new Claim(ClaimTypes.Role, de.Rows[0]["roles_id"].ToString()!)
+                         new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
                      }, "Basic"
                   )
                );

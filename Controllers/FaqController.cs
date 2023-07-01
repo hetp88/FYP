@@ -8,6 +8,8 @@ using FYP.Models;
 using System.Reflection.Metadata;
 using Dapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Linq;
 
 namespace FYP.Controllers
 {
@@ -44,11 +46,10 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
-            //int categoryid = 0;
-            int faqid=0;
+            int faqid = 0;
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string idQuery = $"SELECT MAX(faq_id) FROM FAQ";
+                string idQuery = @"SELECT MAX(faq_id) FROM FAQ";
                 connection.Open();
 
                 faqid = connection.QuerySingleOrDefault<int>(idQuery) + 1;
@@ -78,22 +79,24 @@ namespace FYP.Controllers
             // Redirect to the index homepage
             return RedirectToAction("Details", "FAQ");
         }
-       
-        [HttpPost]
-        public IActionResult Delete(int faqId)
-        {
-            DeleteFAQFromDatabase(faqId);
-            return RedirectToAction("Details");
-        }
-        private void DeleteFAQFromDatabase(int faqId)
+
+        public IActionResult Delete(int fid)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = "DELETE FROM FAQ WHERE faq_id = @FaqId";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@FaqId", faqId);
+                string delete = "DELETE FROM FAQ WHERE faq_id = {0}";
+
                 connection.Open();
-                command.ExecuteNonQuery();
+                
+                if (connection.Execute(delete, fid) == 1)
+                {
+                    ViewData["Message"] = "Deleted successfully.";
+                }
+                else 
+                {
+                    ViewData["Message"] = "Unsuccessful delete. Do try again.";
+                }
+                return RedirectToAction("Details");
             }
         }        
     }

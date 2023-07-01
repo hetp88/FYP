@@ -27,7 +27,7 @@ namespace FYP.Controllers
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"SELECT t.ticket_id, t.userid, t.type, t.description, tc.category, t.status, 
-                                       t.datetime, t.priority, e.name, t.devices_involved, t.additional_details, t.resolution
+                                       t.datetime, t.priority, e.name, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution
                                 FROM ticket t
                                 INNER JOIN users u ON u.userid = t.userid
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id

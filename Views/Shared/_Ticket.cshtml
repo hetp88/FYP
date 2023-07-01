@@ -21,28 +21,33 @@
         height: 120vh;
     }
 </style>
-<body  background="\Images\MainBackground.jpg">
-    @if (User.Identity!.IsAuthenticated)
+<body background="\Images\MainBackground.jpg">
+    @if ((User.Identity!.IsAuthenticated))
     {
-        if (User.IsInRole("4"))
+        if (User.IsInRole("student"))
         {
-            <partial name="TicketEmployee"/>
+            <partial name="TicketUser" />
         }
-        else if (User.IsInRole("3"))
+        else if (User.IsInRole("staff"))
         {
-            <partial name="TicketEmployee"/>
+            <partial name="TicketUser" />
         }
-        else if (User.IsInRole("5")){
-            <partial name="TicketAdmin"/>
-        }
-        else
+        else if (User.IsInRole("helpdesk agent"))
         {
-            <partial name="TicketUser"/>
+            <partial name="TicketEmployee" />
+        }
+        else if (User.IsInRole("support engineer"))
+        {
+            <partial name="TicketEmployee" />
+        }
+        else if (User.IsInRole("administrator"))
+        {
+            <partial name="TicketAdmin" />
         }
     }
     else
     {
-        <partial name="TicketAdmin"/>
+        <partial name="TicketEmployee" />
     }
     <div class="container mt-10">
         @RenderBody()
