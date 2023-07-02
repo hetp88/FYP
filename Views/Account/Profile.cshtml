@@ -75,15 +75,15 @@
                 <span>@users.email</span>
             </p>
             <p style="text-align:center">
-                <label>Phone Number: </label>
-                <span>
-                    @users.phoneNo
-
+                <label>Phone Number:  </label>
+                <span class="bi bi-pencil-square" data-toggle="tooltip">
+                    @users.phoneNo <a class="nav-link" asp-controller="Account" asp-action="EditProfile">
+                </a>
                 </span> 
             </p>
             <p style ="text-align:center">
                 <label>Name: </label>
-                <span>@users.username</span>
+                <span>@users.username </span>
             </p>
             <p style="text-align:center">
                 <label>School: </label>
