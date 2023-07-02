@@ -245,11 +245,25 @@ public class AccountController : Controller
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
             string query = $"SELECT userid, email, phone_no AS phoneNo, username, school FROM users WHERE userid='{currentuser}'";
+            
 
             connection.Open();
             List<Users> u = connection.Query<Users>(query).AsList();
             //Console.WriteLine(currentuser);
             return View(u);
+        }
+    }
+    public IActionResult EmpProfile()
+    {
+        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            string query2 = $"SELECT employee_id AS EmployeeId, email, phone_no AS Phone_no, name FROM employee WHERE employee_id='{currentuser}'";
+
+            connection.Open();
+            List<Employee> f = connection.Query<Employee>(query2).AsList();
+            //Console.WriteLine(currentuser);
+            return View(f);
         }
     }
 
