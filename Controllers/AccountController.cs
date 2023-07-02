@@ -291,8 +291,6 @@ public class AccountController : Controller
         }
     }
 
-
-
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
