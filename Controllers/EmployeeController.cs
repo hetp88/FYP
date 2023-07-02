@@ -129,7 +129,8 @@ namespace FYP.Controllers
                     IsApproved = "pending"
                 };
 
-                string insertQuery = @"INSERT INTO leave (employee_id, leave_id, startDate, end_date, reason, proof_provided, is_approved) VALUES (@EmployeeId, @LeaveId, @StartDate, @EndDate, @Reason, @ProofProvided, @IsApproved)";
+                string insertQuery = @"INSERT INTO leave (employee_id, leave_id, startDate, end_date, reason, proof_provided, is_approved) 
+                                        VALUES (@EmployeeId, @LeaveId, @StartDate, @EndDate, @Reason, @ProofProvided, @IsApproved)";
 
                 if (connection.Execute(insertQuery, newLeave) == 1)
                 {
@@ -243,34 +244,37 @@ namespace FYP.Controllers
                     NewEmployee helpdesk_agent = new NewEmployee
                     {
                         Employee_id = EmpID,
-                        roles_id = 3,
+                        Roles_id = 3,
                         EmpPw = "helpdeskagent"+EmpID.ToString(),
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
-                        Tickets = "null",
+                        Tickets = 0,
+                        Last_login = null,
                     };
 
                     NewEmployee support_eng = new NewEmployee
                     {
                         Employee_id = EmpID,
-                        roles_id = 4,
+                        Roles_id = 4,
                         EmpPw = "supporteng" + EmpID.ToString(),
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
-                        Tickets = "null",
+                        Tickets = 0,
+                        Last_login = null,
                     };
 
                     NewEmployee admin = new NewEmployee
                     {
                         Employee_id = EmpID,
-                        roles_id = 5,
+                        Roles_id = 5,
                         EmpPw = "admin" + EmpID.ToString(),
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
-                        Tickets = "null",
+                        Tickets = 0,
+                        Last_login = null,
                     };
 
                     if (totalDigits == 3)
@@ -291,14 +295,14 @@ namespace FYP.Controllers
                         }
                     }
 
-                    else if (totalDigits == 4)
+                    else if (totalDigits == 5)
                     {
                         string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
                                             VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
 
-                        if (connection.Execute(insertQuery2, support_eng) == 1)
+                        if (connection.Execute(insertQuery2, admin) == 1)
                         {
-                            TempData["Message"] = "Support Engineer registered successfully";
+                            TempData["Message"] = "Admin registered successfully";
                             TempData["MsgType"] = "success";
                         }
                         else
@@ -308,14 +312,14 @@ namespace FYP.Controllers
                         }
                     }
 
-                    else if (totalDigits == 5)
+                    else if (totalDigits == 6)
                     {
                         string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
                                             VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
 
-                        if (connection.Execute(insertQuery3, admin) == 1)
+                        if (connection.Execute(insertQuery3, support_eng) == 1)
                         {
-                            TempData["Message"] = "Admin registered successfully";
+                            TempData["Message"] = "Support Engineer registered successfully";
                             TempData["MsgType"] = "success";
                         }
                         else

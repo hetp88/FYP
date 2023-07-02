@@ -48,18 +48,16 @@ namespace FYP.Controllers
         public IActionResult AddTicket(Ticket ticket)
         {
             int ticketid = 0;
-            int uid = 0;
-            //int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
-            var generate = new Random();
-            DateTime now = DateTime.Now;
+            Random generate = new Random();
+            int noticket = 0;
+            DateTime created = DateTime.Now;
+            string input = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string idQuery = $"SELECT MAX(ticket_id) FROM ticket";
+                string idQuery = @"SELECT MAX(ticket_id) FROM ticket";
 
-                //string userquery = $"SELECT userid FROM users WHERE username='{currentuser}'";
-
-                string empquery = $"SELECT employee_id FROM employee";
+                string empquery = @"SELECT employee_id FROM employee WHERE roles_id = 3 OR roles_id = 4";
 
                 connection.Open();
 
@@ -69,36 +67,52 @@ namespace FYP.Controllers
                     ticketid = id;
                 }
 
-                //List<int> userid = connection.Query<int>(userquery).AsList();
-                //foreach (int id in userid)
-                //{
-                //uid = id;
-                //Console.WriteLine(uid);
-                //}
-                //Console.WriteLine(uid);
-
                 List<int> empid = connection.Query<int>(empquery).AsList();
+                int emp = generate.Next(0, empid.Count);
+
+                if (ticket.Additional_Details.Equals(" ") || ticket.Additional_Details.Equals("null") || ticket.Additional_Details.Equals(null))
+                {
+                    input = "-";
+                }
+                else
+                {
+                    input = ticket.Additional_Details;
+                }
 
                 Ticket newTicket = new Ticket
                 {
                     TicketId = ticketid + 1,
-                    UserId = uid,
+                    UserId = ticket.UserId,
                     Type = ticket.Type,
                     Description = ticket.Description,
                     Category = ticket.Category,
-                    Status = "new",
-                    DateTime = Convert.ToDateTime(now),
+                    Status = "submitted",
+                    DateTime = Convert.ToDateTime(created),
                     Priority = ticket.Priority,
-                    Employee = generate.Next(empid.Count),
-                    DevicesInvolved = ticket.DevicesInvolved,
+                    Employee = empid[emp],
+                    DevicesInvolved = input,
                     Additional_Details = ticket.Additional_Details,
-                    Resolution = "null",
+                    Resolution = "-",
+                };
+
+                string empticket = $"SELECT tickets FROM employee WHERE employee_id = '{empid[emp]}'";
+                List<int> eticket = connection.Query<int>(empticket).AsList();
+                foreach (int id in eticket)
+                {
+                    noticket = id + 1;
+                }
+
+                Ticket empupdate = new Ticket
+                {
+                    Employee = empid[emp],
                 };
 
                 string query = @"INSERT INTO ticket (ticket_id, userid, type, description, category_id, status, datetime, priority, employee_id, devices_involved, additional_details, resolution) 
                                     VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, @DateTime, @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution)";
 
-                if (connection.Execute(query, newTicket) == 1)
+                string update = $"UPDATE employee SET tickets = '{noticket}' WHERE employee_id = @Employee";
+
+                if (connection.Execute(query, newTicket) == 1 && connection.Execute(update, empupdate) == 1)
                 {
                     TempData["Message"] = "Ticket submitted successfully";
                     TempData["MsgType"] = "success";
@@ -109,7 +123,7 @@ namespace FYP.Controllers
                     TempData["MsgType"] = "danger";
                 }
             }
-            return RedirectToAction("Ticket", "ViewTicket");
+            return RedirectToAction("ViewTicket", "Ticket");
         }
 
         public IActionResult DataCollected()

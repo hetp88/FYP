@@ -13,15 +13,17 @@ namespace FYP.Models
         //[DataType(DataType.Password)]
         public string EmpPw { get; set; } = null!;
 
-        public int roles_id { get; set; }
+        public int Roles_id { get; set; }
 
         [Required(ErrorMessage = "Please enter Phone Number")]
         [RegularExpression("\\d{8}", ErrorMessage = "8 numbers only")]
         public int Phone_no { get; set; }
 
         [Required(ErrorMessage = "Please enter Email")]
-        [RegularExpression("(\\d{3}@tickethelper.com|\\d{4}@tickethelper.com|\\d{5}@tickethelper.com)", ErrorMessage = "Invalid Email")]
+        [RegularExpression("(\\d{3}@tickethelper.com|\\d{5}@tickethelper.com|\\d{6}@tickethelper.com)", ErrorMessage = "Invalid Email")]
         public string Email { get; set; } = null!;
-        public string Tickets { get; set; } = null!;
+        public int Tickets { get; set; } 
+
+        public DateTime? Last_login { get; set; }
     }
 }

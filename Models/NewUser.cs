@@ -5,7 +5,7 @@ namespace FYP.Models
     public class NewUser
     {
         //[Required(ErrorMessage = "Please enter User ID")]
-        //[RegularExpression("(\\d{8}|\\d{4}|\\d{5}|\\d{3})", ErrorMessage = "either 2,3,5 or 8 digits only")]
+        //[RegularExpression("(\\d{8}|\\d{4}|\\d{5}|\\d{3})", ErrorMessage = "either 3,4,5 or 8 digits only")]
         public int UserID { get; set; }
 
         [Required(ErrorMessage = "Please enter Password")]

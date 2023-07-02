@@ -36,7 +36,10 @@ public class AccountController : Controller
             WHERE e.employee_id = '{0}' AND e.employee_pw = HASHBYTES('SHA1', '{1}')";
 
     private const string LASTLOGIN_SQ =
-        @"UPDATE users SET last_login=GETDATE() WHERE userid = @UserID";
+        @"UPDATE users SET last_login=@Last_login WHERE userid = @UserID";
+
+    private const string LASTLOGIN_EMP =
+        @"UPDATE employee SET last_login=@Last_login WHERE employee_id = @UserID";
 
     private const string ForgetPW_SQ =
         @"SELECT password FROM Users WHERE userid = @UserID AND email = @Email";
@@ -86,10 +89,18 @@ public class AccountController : Controller
 
                 UserLogin u = new UserLogin
                 {
+                    Last_login = DateTime.Now,
                     UserID = account.UserID, 
                 };
 
-                connection.Execute(LASTLOGIN_SQ, u); //update the last login timestamp of the user
+                if (account.UserID.ToString().Length == 4 || account.UserID.ToString().Length == 8)
+                {
+                    connection.Execute(LASTLOGIN_SQ, u); //update the last login timestamp of the user
+                }
+                else if (account.UserID.ToString().Length == 3 || account.UserID.ToString().Length == 5 || account.UserID.ToString().Length == 6)
+                {
+                    connection.Execute(LASTLOGIN_EMP, u); //update the last login timestamp of the user
+                }
             }
 
             account.RedirectToUsers = true; // Set the RedirectToUsers property to true

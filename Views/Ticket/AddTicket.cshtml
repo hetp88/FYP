@@ -87,6 +87,11 @@
             <form method="post" action="/Ticket/AddTicket">
 
                 <div class="form-group mb-3">
+                    <label for="userid" class="form-label">User ID:</label>
+                    <input type="text" name="userid" class="form-control" required>
+                </div>
+
+                <div class="form-group mb-3">
                     <label for="type" class="form-label">Ticket type:</label>
                     <select id="type" name="type" class="form-control" required>
                         <option value="">Select a ticket type</option>
@@ -126,13 +131,13 @@
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="devices" class="form-label">Devices Involved:</label>
-                    <input type="text" name="devices" class="form-control" required>
+                    <label for="devicesInvolved" class="form-label">Devices Involved:</label>
+                    <input type="text" name="devicesInvolved" class="form-control" required>
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="additional" class="form-label">Additional Details:</label>
-                    <input type="text" name="additional" class="form-control" required>
+                    <input type="text" name="additional" class="form-control">
                 </div>
 
                 <div class="form-group mb-3 offset-md-4">
