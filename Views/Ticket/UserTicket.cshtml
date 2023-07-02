@@ -1,106 +1,61 @@
 @model List<FYP.Models.Ticket>
+@{
+    Layout = "_Ticket";
+}
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Ticket Details</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <title>Tickets </title>
     <style>
-        body {
-            background-color: #000000;
-            color: #FFFFFF;
-            font-family: Arial, sans-serif;
-        }
-
         .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .card {
-            background-color: #2A2A43;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin: 5px;
-            flex: 1;
-            width: 800px;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .table {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-            .table th {
-                background-color: #34345E;
-                color: #FFFFFF;
-                font-weight: bold;
-            }
-
-            .table td {
-                background-color: #3A3A63;
-                color: #FFFFFF;
-                padding: 10px;
-                text-align: center;
-            }
-
-        .no-tickets-message {
-            text-align: center;
-            margin-top: 20px;
-            font-style: italic;
+            margin-top: 40px;
+            width: auto;
+            background: #FFFFFF;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <h1 class="text-center">Ticket Details</h1>
 
-            @if (Model == null || Model.Count == 0)
-            {
-                <p class="no-tickets-message">No tickets found.</p>
-            }
-            else
-            {
-                <table class="table">
+        @if (Model == null || Model.Count == 0)
+        {
+            <p class="no-tickets-message">No tickets found.</p>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th style="text-align:center">User ID</th>
+                    <th style="text-align:center">Ticket Type</th>
+                    <th style="text-align:center">Description</th>
+                    <th style="text-align:center">Category</th>
+                    <th style="text-align:center">Status</th>
+                    <th style="text-align:center">DateTime</th>
+                    <th style="text-align:center">Priority</th>
+                    <th style="text-align:center">Devices Involved</th>
+                    <th style="text-align:center">Additional Details</th>
+                    <th style="text-align:center">Resolution</th>
+                    <th style="text-align:center">Employee In-Charge</th>
+                </tr>
+                @foreach (var ticket in Model)
+                {
                     <tr>
-                        <th>User ID</th>
-                        <th>Ticket Type</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Status</th>
-                        <th>Date and Time</th>
-                        <th>Priority</th>
-                        <th>Employee</th>
-                        <th>Devices Involved</th>
-                        <th>Additional Details</th>
-                        <th>Resolution</th>
+                        <td style="text-align:center">@ticket.UserId</td>
+                        <td style="text-align:center">@ticket.Type</td>
+                        <td style="text-align:center">@ticket.Description</td>
+                        <td style="text-align:center">@ticket.Category</td>
+                        <td style="text-align:center">@ticket.Status</td>
+                        <td style="text-align:center">@ticket.DateTime</td>
+                        <td style="text-align:center">@ticket.Priority</td>
+                        <td style="text-align:center">@ticket.DevicesInvolved</td>
+                        <td style="text-align:center">@ticket.Additional_Details</td>
+                        <td style="text-align:center">@ticket.Resolution</td>
+                        <td style="text-align:center">@ticket.EmployeeName</td>
                     </tr>
-                    @foreach (var ticket in Model)
-                    {
-                        <tr>
-                            <td>@ticket.UserId</td>
-                            <td>@ticket.Type</td>
-                            <td>@ticket.Description</td>
-                            <td>@ticket.Category</td>
-                            <td>@ticket.Status</td>
-                            <td>@ticket.DateTime</td>
-                            <td>@ticket.Priority</td>
-                            <td>@ticket.Employee</td>
-                            <td>@ticket.DevicesInvolved</td>
-                            <td>@ticket.Additional_Details</td>
-                            <td>@ticket.Resolution</td>
-                        </tr>
-                    }
-                </table>
-            }
-        </div>
+                }
+            </table>
+        }
     </div>
 </body>
 </html>

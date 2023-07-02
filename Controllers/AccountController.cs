@@ -221,7 +221,7 @@ public class AccountController : Controller
         return RedirectToAction("Login", "Account");
     }
 
-    //[Authorize(Roles = "support engineer, administrator")]
+    //[Authorize(Roles = "helpdesk agent, support engineer, administrator")]
     public IActionResult Users()
     {
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
@@ -237,11 +237,12 @@ public class AccountController : Controller
             return View(users);
         }
     }
-
+    [AllowAnonymous]
     public IActionResult Policy()
     {
         return View();
     }
+    [AllowAnonymous]
     public IActionResult TermsConditions()
     {
         return View();
@@ -250,6 +251,7 @@ public class AccountController : Controller
     {
         return View();
     }
+
     public IActionResult Profile()
     {
         int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
@@ -264,6 +266,7 @@ public class AccountController : Controller
             return View(u);
         }
     }
+    [Authorize(Roles = "helpdesk agent,support engineer, administrator")]
     public IActionResult EmpProfile()
     {
         int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
