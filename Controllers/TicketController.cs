@@ -19,25 +19,60 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult ViewTicket()
-        {
-            // Retrieve ticket data from the database
-            //List<Ticket> tickets = new List<Ticket>();
+        //public IActionResult ViewTicket()
+        //{
+        //    // Retrieve ticket data from the database
+        //    //List<Ticket> tickets = new List<Ticket>();
 
+        //    using (SqlConnection connection = new SqlConnection(_connectionString))
+        //    {
+        //        string query = @"SELECT t.ticket_id, t.userid, t.type, t.description, tc.category, t.status, 
+        //                               t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution
+        //                        FROM ticket t
+        //                        INNER JOIN users u ON u.userid = t.userid
+        //                        INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+        //                        INNER JOIN employee e ON t.employee_id = e.employee_id;";
+
+        //        connection.Open();
+        //        List<Ticket> tickets = connection.Query<Ticket>(query).AsList();
+        //        return View(tickets);
+        //    }
+        //}
+        public IActionResult ViewTicket(string userIdQuery, string ticketTypeQuery, string descriptionQuery, string categoryQuery, string statusQuery, string dateTimeQuery, string priorityQuery, string devicesInvolvedQuery, string additionalDetailsQuery, string resolutionQuery, string employeeQuery)
+        {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = @"SELECT t.ticket_id, t.userid, t.type, t.description, tc.category, t.status, 
-                                       t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution
-                                FROM ticket t
-                                INNER JOIN users u ON u.userid = t.userid
-                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON t.employee_id = e.employee_id;";
+                string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.status, 
+                       t.priority, e.name AS EmployeeName, t.resolution
+                FROM ticket t
+                INNER JOIN users u ON u.userid = t.userid
+                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                INNER JOIN employee e ON t.employee_id = e.employee_id
+                WHERE (@UserIdQuery IS NULL OR t.userid = @UserIdQuery)
+                AND (@TicketTypeQuery IS NULL OR t.type = @TicketTypeQuery)
+                AND (@StatusQuery IS NULL OR t.status = @StatusQuery)               
+                AND (@PriorityQuery IS NULL OR t.priority = @PriorityQuery)               
+                AND (@ResolutionQuery IS NULL OR t.resolution LIKE '%' + @ResolutionQuery + '%')
+                AND (@EmployeeQuery IS NULL OR e.name = @EmployeeQuery)";
 
                 connection.Open();
-                List<Ticket> tickets = connection.Query<Ticket>(query).AsList();
+
+                List<Ticket> tickets = connection.Query<Ticket>(query, new
+                {
+                    UserIdQuery = userIdQuery,
+                    TicketTypeQuery = ticketTypeQuery,                  
+                    StatusQuery = statusQuery,                    
+                    PriorityQuery = priorityQuery,
+                    ResolutionQuery = resolutionQuery,
+                    EmployeeQuery = employeeQuery
+                }).AsList();
+
                 return View(tickets);
             }
         }
+
+
+
 
         public IActionResult AddTicket()
         {
