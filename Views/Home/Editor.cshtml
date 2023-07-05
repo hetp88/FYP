@@ -1,0 +1,36 @@
+﻿@model FYP.Models.News
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Announcements</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div>
+            <form method="post" action="/Home/Editor">
+                <div class="mb-3">
+                    <label for="news_u" class="form-label">New Announcement:</label>
+                    <input type="text" name="news_u" class="form-control">
+                </div>
+
+                <div class="mb-3 offset-md-4">
+                    <button type="submit" class="btn btn-primary" style="margin-left: 50px">Add Announcement</button>
+                    <button type="button" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showMessage() {
+        var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+        if (confirmation) {
+            window.location.href = "/Home/Index";
+        } else {
+        }
+    }
+    </script>
+</body>
+</html>
