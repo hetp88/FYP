@@ -1,4 +1,5 @@
 @model List<FYP.Models.Ticket>
+
 @{
     Layout = "_Ticket";
 }
@@ -6,65 +7,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tickets </title>
+    <title>Tickets</title>
     <style>
         .container {
-            margin-top: 40px;
-            width: auto;
+            margin-top: 30px;
             background: #FFFFFF;
+            padding: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .search-form input[type="text"],
+            .search-form select {
+                padding: 8px;
+                width: 200px;
+            }
+
+            .search-form button {
+                padding: 2px 4px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .no-tickets-message {
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <form method="get" action="/Ticket/ViewTicket" class="search-form">
+            <div>
+                <input type="text" name="userIdQuery" placeholder="User ID" />
+            </div>
+            <div>
+                <input type="text" name="ticketTypeQuery" placeholder="Ticket Type" />
+            </div>         
+            <div>
+                <input type="text" name="statusQuery" placeholder="Status" />
+            </div>           
+            <div>
+                <input type="text" name="priorityQuery" placeholder="Priority" />
+            </div>
+            <div>
+                <input type="text" name="resolutionQuery" placeholder="Resolution" />
+            </div>
+            <div>
+                <input type="text" name="employeeQuery" placeholder="Employee In-Charge" />
+            </div>
+            <div>
+                <button type="submit">Search</button>
+            </div>
+        </form>
 
         @if (Model == null || Model.Count == 0)
         {
-            <p class="no-tickets-message">No tickets found.</p>
+            <p class="no-tickets-message">No tickets available.</p>
         }
         else
         {
-            <table class="table">
+            <table>
                 <tr>
-                    <th style="text-align:center">Ticket ID</th>
-                    <th style="text-align:center">User ID</th>
-                    <th style="text-align:center">Ticket Type</th>
-                    <th style="text-align:center">Description</th>
-                    <th style="text-align:center">Category</th>
-                    <th style="text-align:center">Status</th>
-                    <th style="text-align:center">DateTime</th>
-                    <th style="text-align:center">Priority</th>
-                    <th style="text-align:center">Devices Involved</th>
-                    <th style="text-align:center">Additional Details</th>
-                    <th style="text-align:center">Resolution</th>
-                    <th style="text-align:center">Employee In-Charge</th>
+                    <th>Ticket ID</th>
+                    <th>User ID</th>
+                    <th>Ticket Type</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>DateTime</th>
+                    <th>Priority</th>
+                    <th>Devices Involved</th>
+                    <th>Additional Details</th>
+                    <th>Resolution</th>
+                    <th>Employee In-Charge</th>
                     @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                     {
-                        <th style="text-align:center">Action</th>
+                        <th>Action</th>
                     }
                 </tr>
+
                 @foreach (var ticket in Model)
                 {
                     <tr>
-                        <td style="text-align:center">@ticket.TicketId</td>
-                        <td style="text-align:center">@ticket.UserId</td>
-                        <td style="text-align:center">@ticket.Type</td>
-                        <td style="text-align:center">@ticket.Description</td>
-                        <td style="text-align:center">@ticket.Category</td>
-                        <td style="text-align:center">@ticket.Status</td>
-                        <td style="text-align:center">@ticket.DateTime</td>
-                        <td style="text-align:center">@ticket.Priority</td>
-                        <td style="text-align:center">@ticket.DevicesInvolved</td>
-                        <td style="text-align:center">@ticket.Additional_Details</td>
-                        <td style="text-align:center">@ticket.Resolution</td>
-                        <td style="text-align:center">@ticket.EmployeeName</td>
+                        <td>@ticket.TicketId</td>
+                        <td>@ticket.UserId</td>
+                        <td>@ticket.Type</td>
+                        <td>@ticket.Description</td>
+                        <td>@ticket.Category</td>
+                        <td>@ticket.Status</td>
+                        <td>@ticket.DateTime</td>
+                        <td>@ticket.Priority</td>
+                        <td>@ticket.DevicesInvolved</td>
+                        <td>@ticket.Additional_Details</td>
+                        <td>@ticket.Resolution</td>
+                        <td>@ticket.EmployeeName</td>
+
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                         {
-                            <td style="text-align:center">
-                                <a href="/Ticket/UpdateTicket/@ticket.TicketId"
-                                   style="text-decoration:none; color:steelblue"
-                                   onclick="return confirm('Edit product " @ticket.Description?"')">
-                                    <i class="bi bi-pencil"></i>
+                            <td>
+                                <a href="/Ticket/Delete/@ticket.TicketId" style="text-decoration:none; color:indianred"
+                                   onclick="return confirm('Delete ticket with ID @ticket.TicketId?')">
+                                    <i class="bi bi-trash3"></i>
                                 </a>
                             </td>
                         }

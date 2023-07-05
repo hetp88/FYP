@@ -6,21 +6,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tickets </title>
+    <title>Tickets</title>
     <style>
         .container {
             margin-top: 40px;
             width: auto;
             background: #FFFFFF;
         }
+
+        
+        }
     </style>
 </head>
 <body>
     <div class="container">
 
+        <form method="get" action="/Employee/SearchEmployees">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="employeeId" placeholder="Employee ID" aria-label="Employee ID">
+                <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
+                <input type="text" class="form-control" name="name" placeholder="Name" aria-label="Name">
+                <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
+                <input type="text" class="form-control" name="Phone_no" placeholder="Phone Number" aria-label="Phone Number">
+                <input type="text" class="form-control" name="no_tickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+
         @if (Model == null || Model.Count == 0)
         {
-            <p class="no-tickets-message">No employee found.</p>
+            <p class="no-tickets-message">No employees found.</p>
         }
         else
         {
@@ -31,6 +48,7 @@
                     <th style="text-align:center">Name</th>
                     <th style="text-align:center">Email</th>
                     <th style="text-align:center">Phone Number</th>
+                    <th style="text-align:center">Number of Tickets Assigned</th>
                     <th style="text-align:center">Number of tickets assigned</th>
                     <th style="text-align:center">Number of tickets closed</th>
                 </tr>
