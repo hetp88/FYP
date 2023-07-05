@@ -45,6 +45,35 @@ namespace FYP.Controllers
                 return View(employees);
             }
         }
+        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets)
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets
+                         FROM employee e
+                         INNER JOIN roles r ON r.roles_id = e.roles_id
+                         WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
+                            AND (@Role IS NULL OR r.roles_type LIKE @Role)
+                            AND (@Name IS NULL OR e.name LIKE @Name)
+                            AND (@Email IS NULL OR e.email LIKE @Email)
+                            AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
+                            AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)";
+
+                List<Employee> employees = connection.Query<Employee>(query, new
+                {
+                    EmployeeId = string.IsNullOrEmpty(employeeId) ? null : "%" + employeeId + "%",
+                    Role = string.IsNullOrEmpty(role) ? null : "%" + role + "%",
+                    Name = string.IsNullOrEmpty(name) ? null : "%" + name + "%",
+                    Email = string.IsNullOrEmpty(email) ? null : "%" + email + "%",
+                    Phone_no = string.IsNullOrEmpty(phoneNumber) ? null : "%" + phoneNumber + "%",
+                    no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%"
+                }).ToList();
+
+                return View("EmployeeList", employees);
+            }
+        }
 
 
 

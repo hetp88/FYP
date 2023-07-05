@@ -11,11 +11,78 @@
         .container {
             margin-top: 30px;
             background: #FFFFFF;
+            padding: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .search-form input[type="text"],
+            .search-form select {
+                padding: 8px;
+                width: 200px;
+            }
+
+            .search-form button {
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .no-tickets-message {
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <form method="get" action="/FAQ/Details" class="search-form">
+            <div>
+                <input type="text" name="faqIdQuery" placeholder="FAQ ID" />
+            </div>
+            <div>
+                <input type="text" name="questionQuery" placeholder="Question" />
+            </div>
+            <div>
+                <input type="text" name="solutionQuery" placeholder="Solution" />
+            </div>
+            <div>
+                <select name="categoryQuery">
+                    <option value="">Select a category</option>
+                    <option value="1">Software</option>
+                    <option value="2">Hardware</option>
+                    <option value="3">Network Connectivity</option>
+                    <option value="4">Access Portal</option>
+                    <!-- Add more options for other categories -->
+                </select>
+            </div>
+            <div>
+                <button type="submit">Search</button>
+            </div>
+        </form>
 
         @if (Model == null || Model.Count == 0)
         {
@@ -23,37 +90,35 @@
         }
         else
         {
-            <table class="table">
+            <table>
                 <tr>
-                    <th style="text-align:center">FAQ ID</th>
-                    <th style="text-align:center">Question</th>
-                    <th style="text-align:center">Solution</th>
-                    <th style="text-align:center">Category</th>
+                    <th>FAQ ID</th>
+                    <th>Question</th>
+                    <th>Solution</th>
+                    <th>Category</th>
                     @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
-                          {
-                            <th style="text-align:center">Action</th>
-                          }
+                    {
+                        <th>Action</th>
+                    }
                 </tr>
-           
-                @foreach (var fAQ in Model)
+
+                @foreach (var faq in Model)
                 {
                     <tr>
-                        <td style="text-align:center">@fAQ.FaqId</td>
-                        <td style="text-align:center">@fAQ.Question</td>
-                        <td style="text-align:center">@fAQ.Solution</td>
-                        <td style="text-align:center">@fAQ.Category</td>
+                        <td>@faq.FaqId</td>
+                        <td>@faq.Question</td>
+                        <td>@faq.Solution</td>
+                        <td>@faq.Category</td>
 
-                        @*To be Set to employee and Admin roles only*@
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
-                          {
-                            <td style="text-align:center">
-                                <a href="/FAQ/Delete/@fAQ.FaqId"
-                                    style="text-decoration:none; color:indianred"
-                                    onclick="return confirm('Delete product "@fAQ.Question?"')">
-                                        <i class="bi bi-trash3"></i>
+                        {
+                            <td>
+                                <a href="/FAQ/Delete/@faq.FaqId" style="text-decoration:none; color:indianred"
+                                   onclick="return confirm('Delete FAQ with ID @faq.FaqId?')">
+                                    <i class="bi bi-trash3"></i>
                                 </a>
                             </td>
-                          }
+                        }
                     </tr>
                 }
             </table>
