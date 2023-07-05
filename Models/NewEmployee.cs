@@ -22,8 +22,11 @@ namespace FYP.Models
         [Required(ErrorMessage = "Please enter Email")]
         [RegularExpression("(\\d{3}@tickethelper.com|\\d{5}@tickethelper.com|\\d{6}@tickethelper.com)", ErrorMessage = "Invalid Email")]
         public string Email { get; set; } = null!;
+        
         public int Tickets { get; set; } 
 
         public DateTime? Last_login { get; set; }
+
+        public int Closed_Tickets { get; set; }
     }
 }

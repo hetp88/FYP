@@ -32,6 +32,7 @@
                     <th style="text-align:center">Email</th>
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Number of tickets assigned</th>
+                    <th style="text-align:center">Number of tickets closed</th>
                 </tr>
                 @foreach (var employee in Model)
                 {
@@ -42,6 +43,7 @@
                         <td style="text-align:center">@employee.Email</td>
                         <td style="text-align:center">@employee.Phone_no</td>
                         <td style="text-align:center">@employee.no_tickets</td>
+                        <td style="text-align:center">@employee.closed_tickets</td>
                     </tr>
                 }
             </table>

@@ -26,7 +26,7 @@ namespace FYP.Controllers
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = @"SELECT t.ticket_id, t.userid, t.type, t.description, tc.category, t.status, 
+                string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
                                        t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution
                                 FROM ticket t
                                 INNER JOIN users u ON u.userid = t.userid
@@ -57,7 +57,11 @@ namespace FYP.Controllers
             {
                 string idQuery = @"SELECT MAX(ticket_id) FROM ticket";
 
-                string empquery = @"SELECT employee_id FROM employee WHERE roles_id = 3 OR roles_id = 4";
+                string empquery = @"SELECT e.employee_id 
+                                    FROM employee 
+                                    INNER JOIN l.leave ON l.employee_id = e.employee_id
+                                    WHERE e.roles_id = 3 OR e.roles_id = 4
+                                    AND e.startDate";
 
                 connection.Open();
 
@@ -70,13 +74,13 @@ namespace FYP.Controllers
                 List<int> empid = connection.Query<int>(empquery).AsList();
                 int emp = generate.Next(0, empid.Count);
 
-                if (ticket.Additional_Details.Equals(" ") || ticket.Additional_Details.Equals("null") || ticket.Additional_Details.Equals(null))
+                if (ticket.Additional_Details != null)
                 {
-                    input = "-";
+                    input = ticket.Additional_Details;
                 }
                 else
                 {
-                    input = ticket.Additional_Details;
+                    input = "-";
                 }
 
                 Ticket newTicket = new Ticket
@@ -90,8 +94,8 @@ namespace FYP.Controllers
                     DateTime = Convert.ToDateTime(created),
                     Priority = ticket.Priority,
                     Employee = empid[emp],
-                    DevicesInvolved = input,
-                    Additional_Details = ticket.Additional_Details,
+                    DevicesInvolved = ticket.DevicesInvolved,
+                    Additional_Details = input,
                     Resolution = "-",
                 };
 
@@ -122,6 +126,39 @@ namespace FYP.Controllers
                     TempData["Message"] = "Ticket submit failed";
                     TempData["MsgType"] = "danger";
                 }
+            }
+            return RedirectToAction("ViewTicket", "Ticket");
+        }
+
+        public IActionResult UpdateTicket()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTicket(int tid, Ticket ticket)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                Ticket Ticket = new Ticket
+                {
+                    Status = ticket.Status,
+                    Resolution = ticket.Resolution,
+                };
+
+                string update = $"UPDATE INTO Ticket SET status = @Status, resolution = @Resolution WHERE ticket_id = {tid}";
+
+                if (connection.Execute(update, Ticket) == 1)
+                {
+                    ViewData["Message"] = "Updated successfully.";
+                }
+                else
+                {
+                    ViewData["Message"] = "Unsuccessful update. Do try again.";
+                }
+
             }
             return RedirectToAction("ViewTicket", "Ticket");
         }

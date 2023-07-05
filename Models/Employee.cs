@@ -14,5 +14,7 @@
         public int Phone_no { get; set; }
 
         public int no_tickets { get; set; }
+
+        public int closed_tickets { get; set; }
     }
 }

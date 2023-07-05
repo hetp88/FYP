@@ -34,7 +34,7 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
                 FROM employee e
                 INNER JOIN roles r ON r.roles_id = e.roles_id;";
 
@@ -251,6 +251,7 @@ namespace FYP.Controllers
                         Phone_no = newEmp.Phone_no,
                         Tickets = 0,
                         Last_login = null,
+                        Closed_Tickets = 0,
                     };
 
                     NewEmployee support_eng = new NewEmployee
@@ -263,6 +264,7 @@ namespace FYP.Controllers
                         Phone_no = newEmp.Phone_no,
                         Tickets = 0,
                         Last_login = null,
+                        Closed_Tickets = 0,
                     };
 
                     NewEmployee admin = new NewEmployee
@@ -275,13 +277,14 @@ namespace FYP.Controllers
                         Phone_no = newEmp.Phone_no,
                         Tickets = 0,
                         Last_login = null,
+                        Closed_Tickets = 0,
                     };
 
                     if (totalDigits == 3)
                     {
 
-                        string insertQuery1 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+                        string insertQuery1 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery1, helpdesk_agent) == 1)
                         {
@@ -297,8 +300,8 @@ namespace FYP.Controllers
 
                     else if (totalDigits == 5)
                     {
-                        string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+                        string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery2, admin) == 1)
                         {
@@ -314,8 +317,8 @@ namespace FYP.Controllers
 
                     else if (totalDigits == 6)
                     {
-                        string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+                        string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery3, support_eng) == 1)
                         {
