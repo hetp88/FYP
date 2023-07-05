@@ -45,13 +45,6 @@
             flex-basis: 100%;
         }
 
-        #editable-container {
-            margin-top: 20px;
-            background-color: #E6EDF2;
-            padding: 10px;
-            border-radius: 5px;
-            justify-content: left;
-        }
     </style>
 </head>
 <body>
@@ -71,24 +64,22 @@
     </div>
 
     <div class="container">
-        <div class="news-container">
-            <h1>News Updates</h1>
+        <h1>News Updates</h1>
             @if (Model == null || Model.Count == 0)
             {
-                <p class="no-tickets-message">No FAQ available.</p>
+                <p class="no-tickets-message">No Announcements available.</p>
             }
             else
             {
                 <table class="table">
-                    @foreach (var newu in Model)
-                    {
-                        <tr>
-                            <td style="text-align:left">@newu.newsUpdate</td>
-                        </tr>
-                    }
+                @foreach (var newsu in Model)
+                {
+                    <tr>
+                        <td>@newsu.newsU</td>
+                    </tr>
+                }
                 </table>
             }
-        </div>
     </div>
     <div class="container">
         <div>
@@ -100,21 +91,6 @@
         </div>
     </div>
 
-    @if (User.IsInRole("administrator"))
-    {
-        <div class="container">
-        <textarea id="updated-content" rows="3" cols="50"></textarea>
-        <br>
-        <button onclick="updateContent()">Update</button>
-    </div>
-    }
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function updateContent() {
-            var updatedContent = document.getElementById('updated-content').value;
-            document.getElementById('content-paragraph').textContent = updatedContent;
-            document.getElementById('updated-content').value = '';
-        }
-    </script>
+
 </body>
 </html>
