@@ -29,6 +29,7 @@
                 <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
                 <input type="text" class="form-control" name="Phone_no" placeholder="Phone Number" aria-label="Phone Number">
                 <input type="text" class="form-control" name="no_tickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
+                <input type="text" class="form-control" name="closed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
@@ -49,8 +50,7 @@
                     <th style="text-align:center">Email</th>
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Number of Tickets Assigned</th>
-                    <th style="text-align:center">Number of tickets assigned</th>
-                    <th style="text-align:center">Number of tickets closed</th>
+                    <th style="text-align:center">Number of Tickets Closed</th>
                 </tr>
                 @foreach (var employee in Model)
                 {

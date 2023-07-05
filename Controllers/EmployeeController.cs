@@ -45,13 +45,13 @@ namespace FYP.Controllers
                 return View(employees);
             }
         }
-        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets)
+        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
                          FROM employee e
                          INNER JOIN roles r ON r.roles_id = e.roles_id
                          WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
@@ -59,7 +59,8 @@ namespace FYP.Controllers
                             AND (@Name IS NULL OR e.name LIKE @Name)
                             AND (@Email IS NULL OR e.email LIKE @Email)
                             AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
-                            AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)";
+                            AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
+                            AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)";
 
                 List<Employee> employees = connection.Query<Employee>(query, new
                 {
@@ -68,7 +69,8 @@ namespace FYP.Controllers
                     Name = string.IsNullOrEmpty(name) ? null : "%" + name + "%",
                     Email = string.IsNullOrEmpty(email) ? null : "%" + email + "%",
                     Phone_no = string.IsNullOrEmpty(phoneNumber) ? null : "%" + phoneNumber + "%",
-                    no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%"
+                    no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%",
+                    closed_tickets = string.IsNullOrEmpty(numclosed_tickets) ? null : "%" + numclosed_tickets + "%"
                 }).ToList();
 
                 return View("EmployeeList", employees);
