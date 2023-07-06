@@ -1,0 +1,156 @@
+﻿@model Ticket;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
+    <script>
+        function showMessage() {
+            var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+            if (confirmation) {
+                window.location.href = "/Home/Index";
+            } else {
+                // User chose to cancel will just get back to the form
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #AAD1EE;
+            color: #FFFFFF;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 95vh;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            color: #000000;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 38px;
+            margin: 5px;
+            flex: 1;
+            width: 450px; /* Adjust the width as needed */
+            height: auto; /* Remove fixed height */
+        }
+
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label {
+            color: #000000; /* Change label color to black */
+        }
+
+        .form-control {
+            background-color: #FFFFFF;
+            color: #000000; /* Change input text color to black */
+            border: none;
+            border-radius: 0;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .form-control:focus {
+                background-color: #FFFFFF;
+                color: #000000; /* Change focused input text color to black */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                border-color: #FFFFFF;
+                outline: 0;
+            }
+
+        .form-select {
+            background-color: #FFFFFF;
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            height: 38px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h3 class="mb-4">Update Ticket</h3>
+            <form method="post" action="/Ticket/UpdateTicket">
+
+                <div class="form-group mb-2">
+                    <label for="userid" class="form-label">User ID:</label>
+                    <input type="number" class="form-control" id="userid" name="userid"
+                           placeholder="title" value="@Model.UserId" readonly />
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="type" class="form-label">Ticket type:</label>
+                    <input type="text" class="form-control" id="type" name="type"
+                           placeholder="type" value="@Model.Type" readonly />
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="category" class="form-label">Ticket type:</label>
+                    <input type="text" class="form-control" id="category" name="category"
+                           placeholder="type" value="@Model.Category" readonly />
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="description" class="form-label">Ticket type:</label>
+                    <textarea id="description" name="description" class="form-control" 
+                              placeholder="description" value="@Model.Description" readonly></textarea>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="priority" class="form-label">Priority:</label>
+                    <input type="text" class="form-control" id="priority" name="priority"
+                           placeholder="priority" value="@Model.Priority" readonly/>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="devicesInvolved" class="form-label">Devices Involved:</label>
+                    <input type="text" name="devicesInvolved" class="form-control" readonly>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="additional" class="form-label">Additional Details:</label>
+                    <textarea id="additional" name="additional" class="form-control"
+                           placeholder="additional" value="@Model.Additional_Details" readonly />
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="status" class="form-label">Status:</label>
+                    <select id="status" name="status" class="form-control" required>
+                        <option value="">Select status update</option>
+                        <option value="pending">Pending</option>
+                        <option value="logged">Logged</option>
+                        <option value="on hold">On hold</option>
+                        <option value="solved">Solved</option>
+                        <option value="closed">Closed</option>
+                        <!-- Add more Options When needed to -->
+                    </select>
+                </div>
+
+                <div class="form-group mb-2">
+                    <label for="resolution" class="form-label">Resolution:</label>
+                    <textarea id="resolution" name="resolution" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group mb-2 offset-md-4">
+                    <button type="submit" class="btn btn-primary" style="margin-left: 50px">Update Ticket</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

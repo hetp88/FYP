@@ -34,7 +34,7 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
                 FROM employee e
                 INNER JOIN roles r ON r.roles_id = e.roles_id;";
 
@@ -45,13 +45,13 @@ namespace FYP.Controllers
                 return View(employees);
             }
         }
-        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets)
+        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
                          FROM employee e
                          INNER JOIN roles r ON r.roles_id = e.roles_id
                          WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
@@ -59,7 +59,8 @@ namespace FYP.Controllers
                             AND (@Name IS NULL OR e.name LIKE @Name)
                             AND (@Email IS NULL OR e.email LIKE @Email)
                             AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
-                            AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)";
+                            AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
+                            AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)";
 
                 List<Employee> employees = connection.Query<Employee>(query, new
                 {
@@ -68,7 +69,8 @@ namespace FYP.Controllers
                     Name = string.IsNullOrEmpty(name) ? null : "%" + name + "%",
                     Email = string.IsNullOrEmpty(email) ? null : "%" + email + "%",
                     Phone_no = string.IsNullOrEmpty(phoneNumber) ? null : "%" + phoneNumber + "%",
-                    no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%"
+                    no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%",
+                    closed_tickets = string.IsNullOrEmpty(numclosed_tickets) ? null : "%" + numclosed_tickets + "%"
                 }).ToList();
 
                 return View("EmployeeList", employees);
@@ -280,6 +282,7 @@ namespace FYP.Controllers
                         Phone_no = newEmp.Phone_no,
                         Tickets = 0,
                         Last_login = null,
+                        Closed_Tickets = 0,
                     };
 
                     NewEmployee support_eng = new NewEmployee
@@ -292,6 +295,7 @@ namespace FYP.Controllers
                         Phone_no = newEmp.Phone_no,
                         Tickets = 0,
                         Last_login = null,
+                        Closed_Tickets = 0,
                     };
 
                     NewEmployee admin = new NewEmployee
@@ -304,13 +308,14 @@ namespace FYP.Controllers
                         Phone_no = newEmp.Phone_no,
                         Tickets = 0,
                         Last_login = null,
+                        Closed_Tickets = 0,
                     };
 
                     if (totalDigits == 3)
                     {
 
-                        string insertQuery1 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+                        string insertQuery1 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery1, helpdesk_agent) == 1)
                         {
@@ -326,8 +331,8 @@ namespace FYP.Controllers
 
                     else if (totalDigits == 5)
                     {
-                        string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+                        string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery2, admin) == 1)
                         {
@@ -343,8 +348,8 @@ namespace FYP.Controllers
 
                     else if (totalDigits == 6)
                     {
-                        string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets)";
+                        string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery3, support_eng) == 1)
                         {

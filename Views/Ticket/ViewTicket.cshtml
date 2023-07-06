@@ -10,36 +10,29 @@
     <title>Tickets</title>
     <style>
         .container {
-            margin-top: 30px;
+            margin-top: 20px;
             background: #FFFFFF;
             padding: 20px;
+            width: auto;
         }
 
         .search-form {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
             .search-form input[type="text"],
             .search-form select {
-                padding: 8px;
-                width: 200px;
-            }
-
-            .search-form button {
-                padding: 2px 4px;
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                cursor: pointer;
+                padding: 5px;
+                width: 185px;
             }
 
         table {
-            width: 100%;
+            width: auto;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         th, td {
@@ -60,9 +53,9 @@
 </head>
 <body>
     <div class="container">
-        <form method="get" action="/Ticket/ViewTicket" class="search-form">
+        <form method="get" action="/Ticket/SearchTicket" class="search-form">
             <div>
-                <input type="text" name="userIdQuery" placeholder="User ID" />
+                <input type="text" name="ticketIdQuery" placeholder="Ticket ID" />
             </div>
             <div>
                 <input type="text" name="ticketTypeQuery" placeholder="Ticket Type" />
@@ -79,8 +72,8 @@
             <div>
                 <input type="text" name="employeeQuery" placeholder="Employee In-Charge" />
             </div>
-            <div>
-                <button type="submit">Search</button>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
 
@@ -128,10 +121,11 @@
 
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                         {
-                            <td>
-                                <a href="/Ticket/Delete/@ticket.TicketId" style="text-decoration:none; color:indianred"
-                                   onclick="return confirm('Delete ticket with ID @ticket.TicketId?')">
-                                    <i class="bi bi-trash3"></i>
+                            <td style="text-align:center">
+                                <a href="/Ticket/UpdateTicket/@ticket.TicketId"
+                                   style="text-decoration:none; color:steelblue"
+                                   onclick="return confirm('Edit product " @ticket.Description?"')">
+                                    <i class="bi bi-pencil"></i>
                                 </a>
                             </td>
                         }
