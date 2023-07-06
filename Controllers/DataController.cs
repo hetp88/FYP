@@ -6,17 +6,23 @@ namespace FYP.Controllers
     {
         public IActionResult StatusData()
         {
-            return View();
+            ViewData["Chart"] = "bar";
+            ViewData["Title"] = "Completed Tickets Percentage (%)";
+            ViewData["ShowLegend"] = "true";
+            return View("DataCollected");
         }
         public IActionResult Priority()
         {
-            return View();
+            return View("DataCollected");
         }
         public IActionResult Category()
         {
+            return View("DataCollected");
+        }
+        public IActionResult DataCollected()
+        {
             return View();
         }
-
     }
     
 }

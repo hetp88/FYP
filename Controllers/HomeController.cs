@@ -5,6 +5,8 @@ using Dapper;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Collections.Generic;
 
 
 namespace FYP.Controllers
@@ -41,19 +43,29 @@ namespace FYP.Controllers
         {
             return View();
         }
+        [HttpPost]
         public IActionResult Editor(News news)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                string query = @"UPDATE News SET news_u = @NewsU WHERE news_id = @NewsID";
-
                 connection.Open();
-                connection.Execute(query, new { NewsU = news.newsU, NewsID = news.newsID });
-
-                // Perform any additional logic or redirection as needed
-
-                return RedirectToAction("Index");
+                News News = new News
+                {
+                    newsU = news.newsU,
+                };
+                string queryU = $"UPDATE News SET news_u = @newsU WHERE news_id = 1";
+                if (connection.Execute(queryU, news) == 1)
+                {
+                    ViewData["Message"] = "Updated successfully.";
+                }
+                else
+                {
+                    ViewData["Message"] = "Unsuccessful update. Do try again.";
+                }
             }
+            // Perform any additional logic or redirection as needed
+
+            return RedirectToAction("Index");
         }
     }
 }
