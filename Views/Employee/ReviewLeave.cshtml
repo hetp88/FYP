@@ -30,6 +30,10 @@
         <div>
             <strong>Reason:</strong> @Model.Reason
         </div>
+        <div>
+            <strong>Proof Provided:</strong>
+            <a href="@Url.Action("DownloadProof", "Employee", new { leaveId = Model.LeaveId })">Download PDF</a>
+        </div>
 
         <hr>
 
@@ -40,13 +44,12 @@
                 <label for="IsApproved">Review:</label>
                 <select class="form-control" id="IsApproved" name="IsApproved" required>
                     <option value="">Select review status</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
-
 </body>
 </html>

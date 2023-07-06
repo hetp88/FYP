@@ -124,127 +124,138 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult ApplyLeave(EmployeeSchedule leave)
         {
-            //int nextLeaveId = GetNextLeaveId();
-            int leaveid = 0;
-            int eid = 0;
-
-            string currentemp = Environment.UserName;
+            int leaveId;
 
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
+                // Find the maximum leave_id from the database
+                string maxIdQuery = @"SELECT MAX(leave_id) FROM leave";
                 connection.Open();
+                var maxId = connection.QuerySingleOrDefault<int?>(maxIdQuery);
+                leaveId = maxId.HasValue ? maxId.Value + 1 : 1;
 
-                string idquery = $"SELECT MAX(leave_id) FROM leave";
-                string empquery = $"SELECT employee_id AS EmployeeId FROM employee WHERE name='{currentemp}'";
+                // Retrieve the logged-in employee's ID
+                int employeeId = GetLoggedInEmployeeId();
 
-                List<int> id = connection.Query<int>(idquery).AsList();
-                foreach (int lid in id)
-                {
-                    leaveid = lid;
-                }
+                // Store the leave request in the database
+                string insertQuery = @"
+            INSERT INTO leave (leave_id, employee_id, startDate, end_date AS EndDate, reason, proof_provided, is_approved)
+            VALUES (@LeaveId, @EmployeeId, @StartDate, @EndDate, @Reason, @ProofProvided, 'pending');";
 
-                List<int> emp = connection.Query<int>(empquery).AsList();
-                foreach (int empid in emp)
-                {
-                    eid = empid;
-                }
-
-                EmployeeSchedule newLeave = new EmployeeSchedule
-                {
-                    EmployeeId = eid,
-                    LeaveId = leaveid + 1,
-                    StartDate = leave.StartDate,
-                    EndDate = leave.EndDate,
-                    Reason = leave.Reason,
-                    ProofProvided = leave.ProofProvided,
-                    IsApproved = "pending"
-                };
-
-                string insertQuery = @"INSERT INTO leave (employee_id, leave_id, startDate, end_date, reason, proof_provided, is_approved) 
-                                        VALUES (@EmployeeId, @LeaveId, @StartDate, @EndDate, @Reason, @ProofProvided, @IsApproved)";
-
-                if (connection.Execute(insertQuery, newLeave) == 1)
-                {
-                    TempData["Message"] = "Leave applied successfully";
-                    TempData["MsgType"] = "success";
-                }
-                else
-                {
-                    TempData["Message"] = "Failed to apply leave";
-                    TempData["MsgType"] = "danger";
-                }
+                connection.Execute(insertQuery, new { LeaveId = leaveId, EmployeeId = employeeId, leave.StartDate, leave.EndDate, leave.Reason, leave.ProofProvided });
             }
 
-            return RedirectToAction("Schedule", "Employee");
+            if (leaveId > 0)
+            {
+                // Redirect to the LeaveRequests page
+                return RedirectToAction("LeaveRequests");
+            }
+            else
+            {
+                // Handle error scenario
+                return View("Error");
+            }
         }
+
+        private int GetLoggedInEmployeeId()
+        {
+            // Retrieve the employee ID from the logged-in user's claims
+            var claimsIdentity = (ClaimsIdentity)HttpContext.User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            int employeeId = int.Parse(claim.Value);
+
+            return employeeId;
+        }
+
 
 
 
         public IActionResult LeaveRequests()
         {
-            List<EmployeeSchedule> LeaveRequests = new List<EmployeeSchedule>();
-
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
+                // Retrieve all leave requests
+                string query = @"
+            SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved, l.proof_provided
+            FROM leave l
+            INNER JOIN employee e ON e.employee_id = l.employee_id;";
+
                 connection.Open();
 
-                string query = @"SELECT * FROM leave";
+                List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query).ToList();
 
-                LeaveRequests = connection.Query<EmployeeSchedule>(query).ToList();
+                return View(leaveRequests);
             }
-
-            return View(LeaveRequests);
         }
 
 
-        [HttpGet]
         public IActionResult ReviewLeave(int leaveId)
         {
-            EmployeeSchedule leave = null;
-
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
+                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date as EndDate, l.reason, l.is_approved, l.proof_provided
+                FROM leave l
+                INNER JOIN employee e ON e.employee_id = l.employee_id
+                WHERE l.leave_id = @LeaveId;";
+
                 connection.Open();
 
-                string query = "SELECT * FROM leave WHERE leave_id = @LeaveId";
+                EmployeeSchedule leaveRequest = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId });
 
-                leave = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId });
-            }
-
-            if (leave == null)
-            {
-                TempData["Message"] = "Leave not found";
-                TempData["MsgType"] = "danger";
-
-                return RedirectToAction("LeaveRequests");
-            }
-
-            return View(leave);
-        }
-
-        [HttpPost]
-        public IActionResult ReviewLeave(EmployeeSchedule leave)
-        {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-            {
-                connection.Open();
-
-                string updateQuery = @"UPDATE leave SET is_approved = @IsApproved WHERE leave_id = @LeaveId";
-
-                if (connection.Execute(updateQuery, leave) == 1)
+                if (leaveRequest != null)
                 {
-                    TempData["Message"] = "Leave reviewed successfully";
-                    TempData["MsgType"] = "success";
-                }
-                else
-                {
-                    TempData["Message"] = "Failed to review leave";
-                    TempData["MsgType"] = "danger";
+                    return View(leaveRequest);
                 }
             }
 
             return RedirectToAction("LeaveRequests");
         }
+
+        [HttpPost]
+        public IActionResult ReviewLeave(EmployeeSchedule leaveRequest)
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                string updateQuery = @"UPDATE leave
+                                      SET is_approved = @IsApproved
+                                      WHERE leave_id = @LeaveId;";
+
+                connection.Open();
+
+                connection.Execute(updateQuery, leaveRequest);
+            }
+
+            return RedirectToAction("LeaveRequests");
+        }
+
+
+        public IActionResult DownloadProof(int leaveId)
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                string query = "SELECT proof_provided FROM [leave] WHERE leave_id = @LeaveId;";
+                connection.Open();
+                string proofProvided = connection.QuerySingleOrDefault<string>(query, new { LeaveId = leaveId });
+
+                if (!string.IsNullOrEmpty(proofProvided))
+                {
+                    byte[] pdfBytes = Convert.FromBase64String(proofProvided);
+                    return File(pdfBytes, "application/pdf");
+                }
+            }
+
+            return NotFound();
+        }
+
+
+
+
+
+
+
+
+
+
 
         //for admin to add?
         public IActionResult NewEmployee()

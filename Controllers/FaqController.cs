@@ -83,42 +83,7 @@ namespace FYP.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult CreateFAQ(FAQ faq)
-        //{
-        //    int faqid = 0;
-        //    using (SqlConnection connection = new SqlConnection(_connectionString))
-        //    {
-        //        string idQuery = @"SELECT MAX(faq_id) FROM FAQ";
-        //        connection.Open();
-
-        //        faqid = connection.QuerySingleOrDefault<int>(idQuery);
-
-
-        //        FAQ newFaq = new FAQ
-        //        {
-        //            FaqId = faqid,
-        //            Category = faq.Category,
-        //            Question = faq.Question,
-        //            Solution = faq.Solution,
-        //        };
-
-        //        string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @Category, @Question, @Solution)";
-
-        //        if (connection.Execute(query, newFaq) == 1)
-        //        {
-        //            TempData["Message"] = "FAQ published successfully";
-        //            TempData["MsgType"] = "success";
-        //        }
-        //        else
-        //        {
-        //            TempData["Message"] = "FAQ published failed";
-        //            TempData["MsgType"] = "danger";
-        //        }
-        //    }
-        //    // Redirect to the index homepage
-        //    return RedirectToAction("Details", "FAQ");
-        //}
+        
         [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
@@ -156,35 +121,7 @@ namespace FYP.Controllers
             return RedirectToAction("Details", "FAQ");
         }
 
-        //public IActionResult Delete(int faqId)
-        //{
-        //    using (SqlConnection connection = new SqlConnection(_connectionString))
-        //    {
-        //        connection.Open();
-        //        using (var transaction = connection.BeginTransaction())
-        //        {
-        //            try
-        //            {
-        //                // Delete the FAQ with the specified ID
-        //                string deleteQuery = "DELETE FROM FAQ WHERE faq_id = @FaqId";
-        //                connection.Execute(deleteQuery, new { FaqId = faqId }, transaction);
-
-        //                // Update the remaining FAQ IDs in the database
-        //                string updateQuery = "UPDATE FAQ SET faq_id = faq_id - 1 WHERE faq_id > @FaqId";
-        //                connection.Execute(updateQuery, new { FaqId = faqId }, transaction);
-
-        //                transaction.Commit();
-
-        //                return RedirectToAction("Details");
-        //            }
-        //            catch
-        //            {
-        //                transaction.Rollback();
-        //                throw;
-        //            }
-        //        }
-        //    }
-        //}
+        
 
         public IActionResult Delete(int faqId)
         {

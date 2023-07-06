@@ -20,7 +20,7 @@ namespace FYP.Models
         public string Reason { get; set; } = null!;
 
         [Required(ErrorMessage = "Upload proof")]
-        public bool ProofProvided { get; set; }
+        public string ProofProvided { get; set; }
 
         public string IsApproved { get; set; } = null!;
     }
