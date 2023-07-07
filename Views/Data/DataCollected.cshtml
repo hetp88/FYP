@@ -1,87 +1,122 @@
 @model List<FYP.Models.Ticket>
-@{
-    Layout = "_Ticket";
-}
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ticket Data Collection</title>
+    <script>
+    function showMessage() {
+        var confirmation = confirm("Leave page?");
+
+        if (confirmation) {
+            window.location.href = "/Home/Index";
+        } else {
+            // User chose to cancel will just get back to the form
+        }
+    }
+</script>
+    <style>
+        body{
+            background-color: white;
+        } 
+    </style>
+    <title>Data Collected</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <canvas id="ticketChart"></canvas>
+    <button onclick="showMessage()">Back</button>
+    <h2>Status</h2>
+    <canvas id="statusChart"></canvas>
+
+    <h2>Priority</h2>
+    <canvas id="priorityChart"></canvas>
+
+    <h2>Category</h2>
+    <canvas id="categoryChart"></canvas>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Table data
-            var ticketData = [
-                {
-                    ticket_id: 1,
-                    username: 'william',
-                    userid: 2387,
-                    description: 'laptop blue screen out of a sudden',
-                    category_id: 2,
-                    status_id: 2,
-                    datetime: '2023-03-08',
-                    priority_id: 2,
-                    employee_id: 124,
-                    devices_involved: 'laptop',
-                    additional_details: null
-                },
-                {
-                    ticket_id: 2,
-                    username: 'joan',
-                    userid: 20124812,
-                    description: 'network unstable',
-                    category_id: 3,
-                    status_id: 1,
-                    datetime: '2023-01-18',
-                    priority_id: 3,
-                    employee_id: 10057,
-                    devices_involved: null,
-                    additional_details: null
-                }
-            ];
+        var statusData = {
+            labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Status))),
+            datasets: [{
+                label: 'Status',
+                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Status))),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ]
+            }]
+        };
 
-            // Extract priority IDs and their frequencies
-            var priorityFrequencies = ticketData.reduce(function (acc, ticket) {
-                var priorityId = ticket.priority_id;
-                if (acc.hasOwnProperty(priorityId)) {
-                    acc[priorityId]++;
-                } else {
-                    acc[priorityId] = 1;
-                }
-                return acc;
-            }, {});
+        var priorityData = {
+            labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Priority))),
+            datasets: [{
+                label: 'Priority',
+                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Priority))),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ]
+            }]
+        };
 
-            // Convert frequencies object to arrays for labels and data
-            var priorityLabels = Object.keys(priorityFrequencies);
-            var priorityCounts = Object.values(priorityFrequencies);
+        var categoryData = {
+            labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Category))),
+            datasets: [{
+                label: 'Category',
+                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Category))),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ]
+            }]
+        };
 
-            // Render bar chart
-            var ticketChart = new Chart(document.getElementById('ticketChart'), {
-                type: 'bar',
-                data: {
-                    labels: priorityLabels,
-                    datasets: [{
-                        label: 'Priority Count',
-                        data: priorityCounts,
-                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            stepSize: 1
-                        }
+        var statusCtx = document.getElementById('statusChart').getContext('2d');
+        var statusChart = new Chart(statusCtx, {
+            type: 'bar',
+            data: statusData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
+        });
 
+        var priorityCtx = document.getElementById('priorityChart').getContext('2d');
+        var priorityChart = new Chart(priorityCtx, {
+            type: 'bar',
+            data: priorityData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        var categoryChart = new Chart(categoryCtx, {
+            type: 'pie',
+            data: categoryData,
+            options: {
+                responsive: true,
+            }
         });
     </script>
 </body>
