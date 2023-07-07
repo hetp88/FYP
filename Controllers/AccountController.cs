@@ -222,21 +222,70 @@ public class AccountController : Controller
     }
 
     //[Authorize(Roles = "helpdesk agent, support engineer, administrator")]
-    public IActionResult Users()
+    public IActionResult Users(string searchUserID, string searchRole, string searchName, string searchSchool, string searchEmail, string searchPhone, string searchLastLogin)
     {
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
             string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo, u.last_login 
-                           FROM users u
-                           INNER JOIN roles r ON r.roles_id = u.roles_id;";
+                       FROM users u
+                       INNER JOIN roles r ON r.roles_id = u.roles_id";
+
+            StringBuilder whereClause = new StringBuilder();
+
+            // Build the WHERE clause based on the provided search values
+            if (!string.IsNullOrEmpty(searchUserID))
+            {
+                whereClause.Append("u.userid = @SearchUserID AND ");
+            }
+            if (!string.IsNullOrEmpty(searchRole))
+            {
+                whereClause.Append("r.roles_type = @SearchRole AND ");
+            }
+            if (!string.IsNullOrEmpty(searchName))
+            {
+                whereClause.Append("u.username = @SearchName AND ");
+            }
+            if (!string.IsNullOrEmpty(searchSchool))
+            {
+                whereClause.Append("u.school = @SearchSchool AND ");
+            }
+            if (!string.IsNullOrEmpty(searchEmail))
+            {
+                whereClause.Append("u.email = @SearchEmail AND ");
+            }
+            if (!string.IsNullOrEmpty(searchPhone))
+            {
+                whereClause.Append("u.phone_no = @SearchPhone AND ");
+            }
+            if (!string.IsNullOrEmpty(searchLastLogin))
+            {
+                whereClause.Append("u.last_login = @SearchLastLogin AND ");
+            }
+
+            // Remove the trailing "AND" from the WHERE clause
+            if (whereClause.Length > 0)
+            {
+                whereClause.Remove(whereClause.Length - 5, 5); // Remove the last " AND "
+                query += " WHERE " + whereClause.ToString();
+            }
 
             connection.Open();
 
-            List<Users> users = connection.Query<Users>(query).ToList();
+            List<Users> users = connection.Query<Users>(query, new
+            {
+                SearchUserID = searchUserID,
+                SearchRole = searchRole,
+                SearchName = searchName,
+                SearchSchool = searchSchool,
+                SearchEmail = searchEmail,
+                SearchPhone = searchPhone,
+                SearchLastLogin = searchLastLogin
+            }).ToList();
 
             return View(users);
         }
     }
+
     [AllowAnonymous]
     public IActionResult Policy()
     {

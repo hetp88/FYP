@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.ComponentModel.DataAnnotations;
+using ZXing.PDF417;
 
 namespace FYP.Models
 {
@@ -20,7 +22,7 @@ namespace FYP.Models
         public string Reason { get; set; } = null!;
 
         [Required(ErrorMessage = "Upload proof")]
-        public string ProofProvided { get; set; }
+        public IFormFile ProofProvided { get; set; }
 
         public string IsApproved { get; set; } = null!;
     }

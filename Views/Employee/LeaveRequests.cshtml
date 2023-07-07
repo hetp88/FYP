@@ -1,4 +1,5 @@
 ﻿@model List<FYP.Models.EmployeeSchedule>
+
 @{
     Layout = "_Ticket";
 }
@@ -20,10 +21,48 @@
         }
     </style>
 
+    <script>
+        window.onload = function () {
+            document.getElementById("employeeId").value = "";
+            document.getElementById("startDate").value = "";
+            document.getElementById("endDate").value = "";
+            document.getElementById("reason").value = "";
+        };
+
+        function searchLeaveRequests() {
+            var employeeId = document.getElementById("employeeId").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
+            var reason = document.getElementById("reason").value;
+
+            // Redirect to the SearchLeaveRequests action with the provided search parameters
+            window.location.href = "/Employee/SearchLeaveRequests?employeeId=" + employeeId
+                + "&startDate=" + startDate + "&endDate=" + endDate + "&reason=" + reason;
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Leave Requests</h1>
+
+        <div class="row">
+            <div class="col">
+                <input type="text" class="form-control" id="employeeId" placeholder="Enter employee ID">
+            </div>
+            <div class="col">
+                <input type="date" class="form-control" id="startDate">
+            </div>
+            <div class="col">
+                <input type="date" class="form-control" id="endDate">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" id="reason" placeholder="Enter reason">
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" onclick="searchLeaveRequests()">Search</button>
+            </div>
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
