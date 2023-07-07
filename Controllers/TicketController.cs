@@ -225,7 +225,7 @@ namespace FYP.Controllers
                     return View(ticket);
                 }
             }
-            return RedirectToAction("ViewTicet");
+            return RedirectToAction("ViewTicket");
         }
 
         [HttpPost]
