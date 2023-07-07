@@ -50,6 +50,16 @@
             font-weight: bold;
         }
     </style>
+    <script>
+        window.onload = function () {
+            document.getElementsByName("ticketIdQuery")[0].value = "";
+            document.getElementsByName("ticketTypeQuery")[0].value = "";
+            document.getElementsByName("statusQuery")[0].value = "";
+            document.getElementsByName("priorityQuery")[0].value = "";
+            document.getElementsByName("resolutionQuery")[0].value = "";
+            document.getElementsByName("employeeQuery")[0].value = "";
+        };
+    </script>
 </head>
 <body>
     <div class="container">
@@ -62,10 +72,10 @@
             </div>
             <div>
                 <input type="text" name="ticketTypeQuery" placeholder="Ticket Type" />
-            </div>         
+            </div>
             <div>
                 <input type="text" name="statusQuery" placeholder="Status" />
-            </div>           
+            </div>
             <div>
                 <input type="text" name="priorityQuery" placeholder="Priority" />
             </div>

@@ -1,4 +1,5 @@
 ﻿@model List<FYP.Models.Users>
+
 @{
     Layout = "_Ticket";
 }
@@ -6,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tickets </title>
+    <title>Tickets</title>
     <style>
         .container {
             margin-top: 40px;
@@ -14,13 +15,38 @@
             background: #FFFFFF;
         }
     </style>
+    <script>
+        window.onload = function () {
+            document.getElementsByName("userId")[0].value = "";
+            document.getElementsByName("role")[0].value = "";
+            document.getElementsByName("username")[0].value = "";
+            document.getElementsByName("school")[0].value = "";
+            document.getElementsByName("email")[0].value = "";
+            document.getElementsByName("phoneNo")[0].value = "";
+            document.getElementsByName("last_login")[0].value = "";
+        };
+    </script>
 </head>
 <body>
     <div class="container">
+        <form method="get" action="/Account/Users">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="userId" placeholder="User ID" aria-label="User ID">
+                <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
+                <input type="text" class="form-control" name="username" placeholder="Name" aria-label="Name">
+                <input type="text" class="form-control" name="school" placeholder="School" aria-label="School">
+                <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
+                <input type="text" class="form-control" name="phoneNo" placeholder="Phone Number" aria-label="Phone Number">
+                <input type="text" class="form-control" name="last_login" placeholder="Last Login" aria-label="Last Login">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
 
         @if (Model == null || Model.Count == 0)
         {
-            <p class="no-tickets-message">No employee found.</p>
+            <p class="no-tickets-message">No employees found.</p>
         }
         else
         {
@@ -34,16 +60,16 @@
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Last Login</th>
                 </tr>
-                @foreach (var users in Model)
+                @foreach (var user in Model)
                 {
                     <tr>
-                        <td style="text-align:center">@users.userId</td>
-                        <td style="text-align:center">@users.role</td>
-                        <td style="text-align:center">@users.username</td>
-                        <td style="text-align:center">@users.school</td>
-                        <td style="text-align:center">@users.email</td>
-                        <td style="text-align:center">@users.phoneNo</td>
-                        <td style="text-align:center">@users.last_login</td>
+                        <td style="text-align:center">@user.userId</td>
+                        <td style="text-align:center">@user.role</td>
+                        <td style="text-align:center">@user.username</td>
+                        <td style="text-align:center">@user.school</td>
+                        <td style="text-align:center">@user.email</td>
+                        <td style="text-align:center">@user.phoneNo</td>
+                        <td style="text-align:center">@user.last_login</td>
                     </tr>
                 }
             </table>
