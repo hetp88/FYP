@@ -1,5 +1,7 @@
-﻿@model FYP.Models.Ticket;
-
+﻿@model FYP.Models.Ticket
+@{
+    Layout = "_Ticket";
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,12 +52,6 @@
         </div>
         <div>
             <p>
-                <label>Ticket ID: </label>
-                <span>@Model.TicketId</span>
-            </p>
-        </div>
-        <div>
-            <p>
                 <label>DateTime: </label>
                 <span>@Model.DateTime</span>
             </p>
@@ -68,8 +64,8 @@
         </div>
         <div>
             <p>
-                <label>Employee: </label>
-                <span>@Model.EmployeeName</span>
+                <label>Employee Name: </label>
+                <span>@Model.EmployeeName (@Model.Employee)</span>
             </p>
         </div>
         <div>
@@ -88,19 +84,11 @@
         <h2>Escalate Ticket</h2>
         <form method="post" action="/Ticket/EscalateTicket">
             <div class="form-group">
-                <label for="status">Status:</label>
-                <select class="form-control" id="status" required>
-                    <option value="">Select status update</option>
-                    <option value="pending">Pending</option>
-                    <option value="logged">Logged</option>
-                    <option value="on hold">On hold</option>
-                    <option value="solved">Solved</option>
-                    <option value="closed">Closed</option>
-                </select>
+                <label for="escalate_reason">Escalate Reason:</label>
+                <textarea id="escalate_reason" class="form-control" name="escalate_reason" required></textarea>
             </div>
-            <button></button>
+            <button type="submit" class="btn btn-primary">Escalate</button>
         </form>
     </div>
 </body>
 </html>
-
