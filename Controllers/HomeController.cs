@@ -48,20 +48,10 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                connection.Open();
-                News News = new News
-                {
-                    newsU = news.newsU,
-                };
+
                 string queryU = $"UPDATE News SET news_u = @newsU WHERE news_id = 1";
-                if (connection.Execute(queryU, news) == 1)
-                {
-                    ViewData["Message"] = "Updated successfully.";
-                }
-                else
-                {
-                    ViewData["Message"] = "Unsuccessful update. Do try again.";
-                }
+                connection.Open();
+                connection.Execute(queryU, news);
             }
             // Perform any additional logic or redirection as needed
 
