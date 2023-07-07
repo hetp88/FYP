@@ -185,40 +185,21 @@ namespace FYP.Controllers
             return RedirectToAction("ViewTicket", "Ticket");
         }
 
-        //public IActionResult EscalateTicketDetail()
-        //{
-        //    using (SqlConnection connection = new SqlConnection(_connectionString))
-        //    {
-        //        string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
-        //                            t.datetime, t.priority, t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution 
-        //                            FROM ticket t 
-        //                            INNER JOIN users u ON u.userid = t.userid 
-        //                            INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-        //                            INNER JOIN employee e ON t.employee_id = e.employee_id;";
-
-        //        connection.Open();
-
-        //        List<Ticket> ticket = connection.Query<Ticket>(query).ToList();
-
-        //        return View(ticket);
-        //    }
-        //}
-
         public IActionResult EscalateTicket(int tid)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string tquery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, " + 
-                                $"t.datetime, t.priority, t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution " + 
-                                $"FROM ticket t " +
-                                $"INNER JOIN users u ON u.userid = t.userid " +
-                                $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
-                                $"INNER JOIN employee e ON t.employee_id = e.employee_id " +
-                                $"WHERE t.ticket_id = '{tid}';";
+                string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
+                                    t.datetime, t.priority, t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution 
+                                    FROM ticket t 
+                                    INNER JOIN users u ON u.userid = t.userid 
+                                    INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                                    INNER JOIN employee e ON t.employee_id = e.employee_id 
+                                    WHERE t.ticket_id = @TicketId;";
 
                 connection.Open();
 
-                Ticket ticket = connection.QueryFirstOrDefault<Ticket>(tquery);
+                Ticket ticket = connection.QueryFirstOrDefault<Ticket>(tquery, new {TicketId = tid});
 
                 if (ticket != null)
                 {
@@ -255,13 +236,15 @@ namespace FYP.Controllers
                 {
                     TicketId = ticket.TicketId,
                     Employee = emid[emp],
+                    Escalate_Reason = ticket.Escalate_Reason,
                 };
 
-                string update = @"UPDATE INTO Ticket SET escalation_SE = @Employee, escalation_reason = @Escalate_Reason WHERE ticket_id = @TicketId";
+                string update = @"UPDATE Ticket SET escalation_SE = @Employee, escalate_reason = @Escalate_Reason WHERE ticket_id = @TicketId";
 
                 string empticket = $"SELECT tickets FROM employee WHERE employee_id = '{emid[emp]}'";
 
                 List<int> eticket = connection.Query<int>(empticket).AsList();
+                
                 foreach (int id in eticket)
                 {
                     assignedticket = id + 1;
