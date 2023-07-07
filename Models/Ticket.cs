@@ -40,5 +40,7 @@ namespace FYP.Models
         public string? Additional_Details { get; set; } = null;
 
         public string Resolution { get; set; } = null!;
+
+        public string? Escalate_Reason { get; set; } = null;
     }
 }
