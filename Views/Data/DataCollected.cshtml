@@ -3,65 +3,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
-    function showMessage() {
-        var confirmation = confirm("Leave page?");
-
-        if (confirmation) {
-            window.location.href = "/Home/Index";
-        } else {
-            // User chose to cancel will just get back to the form
-        }
-    }
-</script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body{
+            background-color: black;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
             background-color: white;
-        } 
+        }
+
+        .chart-container {
+            width: 50%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        
+
+        .button {
+            margin-top: 10px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
     </style>
     <title>Data Collected</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <button onclick="showMessage()">Back</button>
-    <h2>Status</h2>
-    <canvas id="statusChart"></canvas>
+    <button class="button" onclick="showMessage()">Back</button>
+    <div class="container">
+        <h1 id="monthHeading">Reports for the month of: </h1>
+    </div>
+    <div class="container">
+    <div class="chart-container">
+        <h2>Status</h2>
+        <canvas id="statusChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Priority</h2>
+        <canvas id="priorityChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Category</h2>
+        <canvas id="categoryChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Ticket Type</h2>
+        <canvas id="typeChart"></canvas>
+    </div>
+</div>
 
-    <h2>Priority</h2>
-    <canvas id="priorityChart"></canvas>
-
-    <h2>Category</h2>
-    <canvas id="categoryChart"></canvas>
 
     <script>
         var statusData = {
-            labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Status))),
+            labels: ['Pending', 'Logged', 'On Hold', 'Solved', 'Closed'],
             datasets: [{
                 label: 'Status',
-                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Status))),
+                data: [
+        @Model.Where(ticket => ticket.Status == "pending").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "submitted").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "on hold").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "solved").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "closed").Sum(ticket => ticket.StatusCount)
+                                    ],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)'
+                    'rgba(53, 50, 193, 0.8)',
+                    'rgba(193, 50, 190, 0.8)',
+                    'rgba(193, 50, 68, 0.8)',
+                    'rgba(142, 193, 50, 0.8)',
+                    'rgba(28, 34, 33, 0.8)',
+                    'rgba(86, 185, 46, 0.8)'
                 ]
             }]
         };
 
         var priorityData = {
-            labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Priority))),
+            labels: ['Low', 'Medium', 'High', 'Critical'],
             datasets: [{
                 label: 'Priority',
-                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Priority))),
+                data: [
+        @Model.Where(ticket => ticket.Priority == "low").Sum(ticket => ticket.PriorityCount),
+        @Model.Where(ticket => ticket.Priority == "medium").Sum(ticket => ticket.PriorityCount),
+        @Model.Where(ticket => ticket.Priority == "high").Sum(ticket => ticket.PriorityCount),
+        @Model.Where(ticket => ticket.Priority == "critical").Sum(ticket => ticket.PriorityCount),
+
+                ],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)'
+                    'rgba(0, 0, 0, 0.8)',
+                    'rgba(0, 0, 0, 0.8)',
+                    'rgba(0, 0, 0, 0.8)',
+                    'rgba(0, 0, 0, 0.8)',
                 ]
             }]
         };
@@ -70,7 +115,7 @@
             labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Category))),
             datasets: [{
                 label: 'Category',
-                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Category))),
+                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.CategoryCount))),
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.6)',
                     'rgba(54, 162, 235, 0.6)',
@@ -81,18 +126,30 @@
                 ]
             }]
         };
+        var typeData = {
+            labels: ['Request', 'problem', 'incident'],
+            datasets: [{
+                label: 'Type',
+                data: [
+        @Model.Where(ticket => ticket.Type == "request").Sum(ticket => ticket.TypeCount),
+        @Model.Where(ticket => ticket.Type == "problem").Sum(ticket => ticket.TypeCount),
+        @Model.Where(ticket => ticket.Type == "incident").Sum(ticket => ticket.TypeCount),
+                ],
+                backgroundColor: [
+                    'rgba(78, 61, 88, 0.8)',
+                    'rgba(80, 22, 115, 0.8)',
+                    'rgba(192, 107, 243, 0.8)',
+                ]
+            }]
+        }
 
+        @*============ To display the values extracted from above to the diagrams [Render Charts] ============*@
         var statusCtx = document.getElementById('statusChart').getContext('2d');
         var statusChart = new Chart(statusCtx, {
-            type: 'bar',
+            type: 'bar', 
             data: statusData,
             options: {
                 responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
             }
         });
 
@@ -102,22 +159,47 @@
             data: priorityData,
             options: {
                 responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
             }
         });
 
         var categoryCtx = document.getElementById('categoryChart').getContext('2d');
         var categoryChart = new Chart(categoryCtx, {
-            type: 'pie',
+            type: 'bar',
             data: categoryData,
             options: {
                 responsive: true,
             }
         });
+        var typeCtx = document.getElementById('typeChart').getContext('2d'); 
+        var typeChart = new Chart(typeCtx, {
+            type: 'pie',
+            data: typeData,
+            options: {
+                reponsive: true,
+            } 
+        });
+
+
+        function showMessage() {
+            var confirmation = confirm("Leave page?");
+
+            if (confirmation) {
+                window.location.href = "/Home/Index";
+            } else {
+                // User chose to cancel, will just get back to the form
+            }
+        }
+        function getCurrentMonth() {
+            var date = new Date();
+            var month = date.toLocaleString('default', { month: 'long' });
+            return month;
+        }
+
+        var currentMonth = getCurrentMonth();
+        var h1Element = document.getElementById("monthHeading");
+        h1Element.textContent = "Reports for the month of: " + currentMonth;
+
     </script>
 </body>
 </html>
+

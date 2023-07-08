@@ -5,7 +5,7 @@ namespace FYP.Models
     public class Ticket
     {
         public int TicketId { get; set; }
-        
+
         [RegularExpression("(\\d{8}|\\d{4})", ErrorMessage = "either 4 or 8 digits only")]
         public int UserId { get; set; }
 
@@ -42,5 +42,15 @@ namespace FYP.Models
         public string Resolution { get; set; } = null!;
 
         public string? Escalate_Reason { get; set; } = null;
+
+        public int? Escalate_SE { get; set; }
+
+        //For Data Collection
+        public int StatusCount { get; set; }
+
+        public int PriorityCount { get; set; }
+
+        public int CategoryCount { get; set; }
+        public int TypeCount { get; set; }
     }
 }
