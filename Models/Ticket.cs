@@ -42,5 +42,13 @@ namespace FYP.Models
         public string Resolution { get; set; } = null!;
 
         public string? Escalate_Reason { get; set; } = null;
+
+        public int? Escalate_SE { get; set; }
+
+        public int StatusCount { get; set; }
+
+        public int PriorityCount { get; set; }
+
+        public int CategoryCount { get; set; }
     }
 }

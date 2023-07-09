@@ -15,22 +15,21 @@ namespace FYP.Controllers
     {
         private readonly string _connectionString;
 
-        public TicketController(IConfiguration configuration)
+        private readonly IHttpContextAccessor contextAccessor;
+
+        public TicketController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
+            contextAccessor = httpContextAccessor;
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
         public IActionResult UserTicket()
         {
             //GET CURRENT USER ID
+            int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
-                                       t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution
-                                FROM ticket t
-                                INNER JOIN users u ON u.userid = t.userid
-                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON t.employee_id = e.employee_id;";
+                string query = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution FROM ticket t INNER JOIN users u ON u.userid = t.userid INNER JOIN ticket_categories tc ON tc.category_id = t.category_id INNER JOIN employee e ON t.employee_id = e.employee_id  WHERE t.userid='{currentuser}'";
 
                 connection.Open();
                 List<Ticket> tickets = connection.Query<Ticket>(query).AsList();
@@ -185,25 +184,27 @@ namespace FYP.Controllers
             return RedirectToAction("ViewTicket", "Ticket");
         }
 
-        public IActionResult EscalateTicket(int tid)
+        public IActionResult EscalateTicket(int ticketid)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
-                                    t.datetime, t.priority, t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution 
-                                    FROM ticket t 
-                                    INNER JOIN users u ON u.userid = t.userid 
-                                    INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                    INNER JOIN employee e ON t.employee_id = e.employee_id 
-                                    WHERE t.ticket_id = @TicketId;";
+                string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority,
+                                         t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution
+                                FROM ticket t 
+                                INNER JOIN users u ON u.userid = t.userid 
+                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                                INNER JOIN employee e ON t.employee_id = e.employee_id
+                                WHERE t.ticket_id = @TicketId;";
 
                 connection.Open();
 
-                Ticket ticket = connection.QueryFirstOrDefault<Ticket>(tquery, new {TicketId = tid});
+                //Ticket leaveRequest = connection.QueryFirstOrDefault<Ticekt>(query, new { LeaveId = leaveId });
 
-                if (ticket != null)
+                Ticket tickets = connection.QueryFirstOrDefault<Ticket>(tquery, new { TicketId = ticketid });
+
+                if (tickets != null)
                 {
-                    return View(ticket);
+                    return View(tickets);
                 }
             }
             return RedirectToAction("ViewTicket");
@@ -221,9 +222,9 @@ namespace FYP.Controllers
                                     FROM employee e
                                     LEFT JOIN [leave] l ON e.employee_id = l.employee_id
                                     WHERE e.roles_id = 4
-                                      AND (e.tickets IS NULL OR e.tickets < 5)
-                                      AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
-                                      AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
+                                        AND (e.tickets IS NULL OR e.tickets < 5)
+                                        AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
+                                        AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
   	                                    OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
                                         OR l.employee_id IS NULL)";
 
@@ -262,27 +263,138 @@ namespace FYP.Controllers
             return RedirectToAction("ViewTicket", "Ticket");
         }
 
-            public IActionResult UpdateTicket()
+        public IActionResult UpdateTicket(int ticketid)
         {
-            return View();
+            Ticket tickets = new Ticket();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority,
+                                         t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE
+                                FROM ticket t 
+                                INNER JOIN users u ON u.userid = t.userid 
+                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                                INNER JOIN employee e ON t.employee_id = e.employee_id
+                                WHERE t.ticket_id = @TicketId;";
+
+                connection.Open();
+
+                tickets = connection.QueryFirstOrDefault<Ticket>(tquery, new { TicketId = ticketid });
+
+                if (tickets != null)
+                {
+                    return View(tickets);
+                }
+            }
+            return View(tickets);
         }
 
         [HttpPost]
-        public IActionResult UpdateTicket(int tid, Ticket ticket)
+        public IActionResult UpdateTicket(Ticket ticket)
         {
+            int HAassigned = 0;
+            int SEassigned = 0;
+            int HAclosed = 0;
+            int SEclosed = 0;
+
+            int executeboth = 0;
+            int executeone = 0;
+
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
 
                 Ticket supdate = new Ticket
                 {
+                    TicketId = ticket.TicketId,
                     Status = ticket.Status,
                     Resolution = ticket.Resolution,
                 };
+                //update ticket status, resolution
+                string updateticket = @"UPDATE INTO Ticket SET status = @Status, resolution = @Resolution WHERE ticket_id = @TicketId";
 
-                string update = $"UPDATE INTO Ticket SET status = @Status, resolution = @Resolution WHERE ticket_id = {tid}";
+                //updating the number of assigned and closed tickets
+                //assignedHAticket --> to minus of 1 from current number of tickets assgined for helpdesk agent if status is updated to 'closed'
+                string assignedHAticket = $"SELECT tickets FROM employee WHERE employee_id = '{ticket.Employee}'";
 
-                if (connection.Execute(update, supdate) == 1)
+                //closedHAticket --> to add 1 from current number of tickets closed for helpdesk agent if status is updated to 'closed'
+                string closedHAticket = $"SELECT closed_tickets FROM employee WHERE employee_id = '{ticket.Employee}'";
+
+                //assignedSEticket --> to minus of 1 from current number of tickets escalated/assigned for support engineer if status is updated to 'closed'
+                string assignedSEticket = $"SELECT tickets" +
+                                          $"FROM employee e " +
+                                          $"INNER JOIN ticket t ON t.employee_id = e.employee_id " +
+                                          $"WHERE e.employee_id = '{ticket.Escalate_SE}'";
+
+                //closedSEticket --> to add 1 from current number of tickets closed for support engineer if status is updated to 'closed'
+                string closedSEticket = @$"SELECT closed_tickets" +
+                                          $"FROM employee e " +
+                                          $"INNER JOIN ticket t ON t.employee_id = e.employee_id " +
+                                          $"WHERE e.employee_id = '{ticket.Escalate_SE}'";
+
+                if (ticket.Status.Equals("closed") && ticket.Escalate_Reason != "-")
+                {
+                    List<int> HAassignedticket = connection.Query<int>(assignedHAticket).AsList();
+                    foreach (int id in HAassignedticket)
+                    {
+                        HAassigned = id - 1;
+                    }
+
+                    List<int> SEassignedticket = connection.Query<int>(assignedSEticket).AsList();
+                    foreach (int id in SEassignedticket)
+                    {
+                        SEassigned = id - 1;
+                    }
+
+                    List<int> HAclosedticket = connection.Query<int>(closedHAticket).AsList();
+                    foreach (int id in HAclosedticket)
+                    {
+                        HAclosed = id + 1;
+                    }
+
+                    List<int> SEclosedticket = connection.Query<int>(closedSEticket).AsList();
+                    foreach (int id in SEclosedticket)
+                    {
+                        SEclosed = id + 1;
+                    }
+
+                    string updateHA = $"UPDATE employee SET tickets = '{HAassigned}', closed_tickets = '{HAclosed}' WHERE employee_id = '{ticket.Employee}'";
+
+                    string updateSE = $"UPDATE employee e " +
+                                      $"INNER JOIN ticket t ON t.employee_id = e.employee_id " +
+                                      $"SET e.tickets = '{SEassigned}', e.closed_tickets = '{SEclosed}'  " +
+                                      $"WHERE employee_id = '{ticket.Escalate_SE}'";
+
+                    executeboth = connection.Execute(updateHA) + connection.Execute(updateSE);
+                }
+
+                else if (ticket.Status.Equals("closed") && ticket.Escalate_Reason == "-")
+                {
+                    List<int> HAassignedticket = connection.Query<int>(assignedHAticket).AsList();
+                    foreach (int id in HAassignedticket)
+                    {
+                        HAassigned = id - 1;
+                    }
+
+                    List<int> HAclosedticket = connection.Query<int>(closedHAticket).AsList();
+                    foreach (int id in HAclosedticket)
+                    {
+                        HAclosed = id + 1;
+                    }
+
+                    string updateHA = $"UPDATE employee SET tickets = '{HAassigned}', closed_tickets = '{HAclosed}' WHERE employee_id = '{ticket.Employee}'";
+                    executeone = connection.Execute(updateHA);
+                }
+
+                //db execute
+                if (connection.Execute(updateticket, supdate) == 1 && executeboth == 2)
+                {
+                    ViewData["Message"] = "Updated successfully.";
+                }
+                else if (connection.Execute(updateticket, supdate) == 1 && executeone == 1)
+                {
+                    ViewData["Message"] = "Updated successfully.";
+                }
+                else if (connection.Execute(updateticket, supdate) == 1)
                 {
                     ViewData["Message"] = "Updated successfully.";
                 }
@@ -290,9 +402,21 @@ namespace FYP.Controllers
                 {
                     ViewData["Message"] = "Unsuccessful update. Do try again.";
                 }
-
             }
             return RedirectToAction("ViewTicket", "Ticket");
+        }
+
+        public IActionResult ToDoTicket()
+        {
+            int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+
+                string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution FROM ticket t INNER JOIN users u ON u.userid = t.userid INNER JOIN ticket_categories tc ON tc.category_id = t.category_id INNER JOIN employee e ON t.employee_id = e.employee_id  WHERE t.employee_id='{currentuser}'";
+                connection.Open();
+                List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
+                return View(tickets);
+            }
         }
 
         public IActionResult DataCollected()

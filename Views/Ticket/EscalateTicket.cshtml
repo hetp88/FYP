@@ -1,4 +1,4 @@
-﻿@model FYP.Models.Ticket
+﻿@model Ticket
 @{
     Layout = "_Ticket";
 }
@@ -14,6 +14,7 @@
 <body>
     <div class="container">
         <h1>Ticket Details</h1>
+
         <div>
             <p>
                 <label>Ticket ID: </label>
@@ -83,7 +84,7 @@
         
         <hr>
 
-        <h2>Escalate Ticket</h2>
+        <h2>Reason To Escalate Ticket</h2>
         <form method="post" action="/Ticket/EscalateTicket">
             <div class="form-group mb-3">
                 <label for="escalate_reason">Escalate Reason:</label>

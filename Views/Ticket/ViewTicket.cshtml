@@ -108,12 +108,13 @@
                     <th>Resolution</th>
                     <th>Employee In-Charge</th>
                     <th>Escalate Reason</th>
+                    <th>Escalate In-Charge</th>
                     @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                     {
                         <th>Update</th>
                     }
 
-                    @if (User.IsInRole("helpdesk agent"))
+                    @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent"))
                     {
                         <th>Escalate</th>
                     }
@@ -135,13 +136,13 @@
                         <td>@ticket.Resolution</td>
                         <td>@ticket.EmployeeName</td>
                         <td>@ticket.Escalate_Reason</td>
+                        <td>@ticket.Escalate_SE</td>
 
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                         {
                             <td>
-                                <a href="/Ticket/UpdateTicket/@ticket.TicketId"
-                                   style="text-decoration:none; color:steelblue"
-                                   onclick="return confirm('Edit product " @ticket.Description?"')">
+                                <a href="/Ticket/UpdateTicket/@ticket.TicketId" style="text-decoration:none; color:steelblue"
+                                   onclick="return confirm('Delete FAQ with ID @ticket.Description?')">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             </td>
@@ -150,9 +151,8 @@
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent"))
                         {
                             <td>
-                                <a href="/Ticket/EscalateTicket/@ticket.TicketId"
-                                   style="text-decoration:none; color:steelblue"
-                                   onclick="return confirm('Edit product " @ticket.Description?"')">
+                                <a href="/Ticket/EscalateTicket/@ticket.TicketId" style="text-decoration:none; color:steelblue"
+                                   onclick="return confirm('Delete FAQ with ID @ticket.TicketId?')">
                                     <i class="bi bi-exclamation-triangle"></i>
                                 </a>
                             </td>
