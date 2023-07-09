@@ -9,26 +9,30 @@
         * {
             box-sizing: border-box;
         }
-        body{
+
+        body {
             background-color: black;
+            margin: 0;
+            padding: 20px;
         }
+
         .container {
             display: flex;
             flex-wrap: wrap;
             background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
         }
 
         .chart-container {
             width: 50%;
-            padding: 10px;
+            padding: 20px;
             box-sizing: border-box;
         }
 
-        
-
         .button {
-            margin-top: 10px;
-            background-color: #4CAF50;
+            background-color: dodgerblue;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -38,55 +42,84 @@
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
+            margin-bottom: 10px;
         }
 
+        input[type="date"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        h1, h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+        }
     </style>
     <title>Data Collected</title>
 </head>
 <body>
     <button class="button" onclick="showMessage()">Back</button>
+
     <div class="container">
-        <h1 id="monthHeading">Reports for the month of: </h1>
+    <div>
+        <label for="startDate" style="display: block; margin-bottom: 5px;">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" style="margin-bottom: 10px;">
     </div>
-    <div class="container">
-    <div class="chart-container">
-        <h2>Status</h2>
-        <canvas id="statusChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <h2>Priority</h2>
-        <canvas id="priorityChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <h2>Category</h2>
-        <canvas id="categoryChart"></canvas>
-    </div>
-    <div class="chart-container">
-        <h2>Ticket Type</h2>
-        <canvas id="typeChart"></canvas>
+    <div>
+        <label for="endDate" style="display: block; margin-bottom: 5px;">End Date:</label>
+        <input type="date" id="endDate" name="endDate" style="margin-bottom: 10px;">
     </div>
 </div>
+    <button class="button" onclick="applyDateRange()">Apply</button>
 
+    <div class="container">
+        <div class="chart-container">
+            <h2>Status</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Priority</h2>
+            <canvas id="priorityChart"></canvas>
+        </div>
+    </div>
+    <div class="container">
+        <div class="chart-container">
+            <h2>Category</h2>
+            <canvas id="categoryChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <h2>Ticket Type</h2>
+            <canvas id="typeChart"></canvas>
+        </div>
+    </div>
+    </div>
 
     <script>
         var statusData = {
-            labels: ['Pending', 'Logged', 'On Hold', 'Solved', 'Closed'],
+            labels: ['Pending', 'Logged', 'in progress', 'waiting','Resolved', 'Closed'],
             datasets: [{
                 label: 'Status',
                 data: [
         @Model.Where(ticket => ticket.Status == "pending").Sum(ticket => ticket.StatusCount),
-        @Model.Where(ticket => ticket.Status == "submitted").Sum(ticket => ticket.StatusCount),
-        @Model.Where(ticket => ticket.Status == "on hold").Sum(ticket => ticket.StatusCount),
-        @Model.Where(ticket => ticket.Status == "solved").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "logged").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "in progress").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "waiting").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "resolved").Sum(ticket => ticket.StatusCount),
         @Model.Where(ticket => ticket.Status == "closed").Sum(ticket => ticket.StatusCount)
                                     ],
                 backgroundColor: [
-                    'rgba(53, 50, 193, 0.8)',
-                    'rgba(193, 50, 190, 0.8)',
-                    'rgba(193, 50, 68, 0.8)',
-                    'rgba(142, 193, 50, 0.8)',
-                    'rgba(28, 34, 33, 0.8)',
-                    'rgba(86, 185, 46, 0.8)'
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
                 ]
             }]
         };
@@ -103,29 +136,33 @@
 
                 ],
                 backgroundColor: [
-                    'rgba(0, 0, 0, 0.8)',
-                    'rgba(0, 0, 0, 0.8)',
-                    'rgba(0, 0, 0, 0.8)',
-                    'rgba(0, 0, 0, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
                 ]
             }]
         };
 
         var categoryData = {
-            labels: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.Category))),
+            labels: ['Software','Hardware','Network','Access Portal'],
             datasets: [{
                 label: 'Category',
-                data: @Html.Raw(Json.Serialize(Model.Select(ticket => ticket.CategoryCount))),
+                data: [
+        @Model.Where(ticket => ticket.category_id == 1).Sum(ticket => ticket.CategoryCount),
+        @Model.Where(ticket => ticket.category_id == 2).Sum(ticket => ticket.CategoryCount),
+        @Model.Where(ticket => ticket.category_id == 3).Sum(ticket => ticket.CategoryCount),
+        @Model.Where(ticket => ticket.category_id == 4).Sum(ticket => ticket.CategoryCount),
+                ],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)'
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
                 ]
             }]
         };
+
         var typeData = {
             labels: ['Request', 'problem', 'incident'],
             datasets: [{
@@ -170,16 +207,17 @@
                 responsive: true,
             }
         });
+
         var typeCtx = document.getElementById('typeChart').getContext('2d'); 
         var typeChart = new Chart(typeCtx, {
-            type: 'pie',
+            type: 'bar',
             data: typeData,
             options: {
                 reponsive: true,
             } 
         });
 
-
+        //Confirm Exit Page
         function showMessage() {
             var confirmation = confirm("Leave page?");
 
@@ -189,15 +227,16 @@
                 // User chose to cancel, will just get back to the form
             }
         }
-        function getCurrentMonth() {
-            var date = new Date();
-            var month = date.toLocaleString('default', { month: 'long' });
-            return month;
-        }
 
-        var currentMonth = getCurrentMonth();
-        var h1Element = document.getElementById("monthHeading");
-        h1Element.textContent = "Reports for the month of: " + currentMonth;
+        //Functions User input for the date range
+        function applyDateRange() {
+            var startDateInput = document.getElementById("startDate");
+            var endDateInput = document.getElementById("endDate");
+            var startDate = startDateInput.value;
+            var endDate = endDateInput.value;
+
+            window.location.href = "/Data/DataCollected?startDate=" + startDate + "&endDate=" + endDate;
+        }
 
     </script>
 </body>

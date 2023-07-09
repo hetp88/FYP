@@ -52,5 +52,6 @@ namespace FYP.Models
 
         public int CategoryCount { get; set; }
         public int TypeCount { get; set; }
+        public int category_id { get; set; }
     }
 }

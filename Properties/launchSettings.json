@@ -18,7 +18,7 @@
       }
     },
     "IIS Express": {
-      "launchUrl": "Home/Index",
+      "launchUrl": "Data/DataCollected",
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
