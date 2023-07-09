@@ -22,6 +22,8 @@ namespace FYP.Models
         [Required(ErrorMessage = "Please select status")]
         public string Status { get; set; } = null!;
 
+        public string newStatus { get; set; } = null!;
+
         //[Required(ErrorMessage = "Please select date")]
         [DataType(DataType.Date)]
         public DateTime DateTime { get; set; }
@@ -39,7 +41,7 @@ namespace FYP.Models
 
         public string? Additional_Details { get; set; } = null;
 
-        public string Resolution { get; set; } = null!;
+        public string? Resolution { get; set; } = null;
 
         public string? Escalate_Reason { get; set; } = null;
 
@@ -51,6 +53,8 @@ namespace FYP.Models
         public int PriorityCount { get; set; }
 
         public int CategoryCount { get; set; }
+
         public int TypeCount { get; set; }
+        public int category_id { get; set; }
     }
 }

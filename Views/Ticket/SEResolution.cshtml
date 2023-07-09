@@ -1,7 +1,8 @@
-﻿@model FYP.Models.Ticket
+﻿@model Ticket;
 @{
     Layout = "_Ticket";
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,6 @@
 <body>
     <div class="container">
         <h1>Ticket Details</h1>
-
         <div>
             <p>
                 <label>Ticket ID: </label>
@@ -47,7 +47,7 @@
         </div>
         <div>
             <p>
-                <label>Status: </label>
+                <label>Current Status: </label>
                 <span>@Model.Status</span>
             </p>
         </div>
@@ -78,22 +78,69 @@
         <div>
             <p>
                 <label>Additional Details: </label>
-                <span>@Model.Additional_Details</span>
+                @if (@Model.Additional_Details == null)
+                {
+                    <span>-</span>
+                }
+                else
+                {
+                    <span>@Model.Additional_Details</span>
+                }
             </p>
         </div>
-        
-        <hr>
+        <div>
+            <p>
+                <label>Escalate In-Charge: </label>
+                @if (@Model.Escalate_SE == null)
+                {
+                    <span>-</span>
+                }
+                else
+                {
+                    <span>@Model.Escalate_SE</span>
+                }
+            </p>
+        </div>
+        <div>
+            <p>
+                <label>Escalate Reason: </label>
+                @if (@Model.Escalate_Reason == null)
+                {
+                    <span>-</span>
+                }
+                else
+                {
+                    <span>@Model.Escalate_Reason</span>
+                }
+            </p>
+        </div>
 
-        <h2>Reason To Escalate Ticket</h2>
-        <form method="post" action="/Ticket/EscalateTicket">
+        <hr />
+
+        <h2>Update Ticket</h2>
+
+        <form method="post" action="/Ticket/HAUpdateTicket">
+
+            <input type="hidden" name="TicketId" value="@Model.TicketId">
+
             <div class="form-group mb-3">
-                <label for="escalate_reason">Escalate Reason:</label>
-                <textarea id="escalate_reason" class="form-control" name="escalate_reason" required></textarea>
+                <label for="newStatus">New Status:</label>
+                <select class="form-control" id="newStatus" name="newStatus" required>
+                    <option value="resolved">Resolved</option>
+                </select>
             </div>
+
+            <div class="form-group mb-3">
+                <label for="Resolution">Resolution:</label>
+                <label for="Resolution">(if above status selection is not solved, kindly input - or leave it blank below)</label>
+                <textarea id="Resolution" class="form-control" name="Resolution" required></textarea>
+            </div>
+
             <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Escalate</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </div>
         </form>
     </div>
 </body>
 </html>
+

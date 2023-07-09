@@ -1,4 +1,7 @@
-﻿@model FYP.Models.Ticket;
+﻿@model Ticket;
+@{
+    Layout = "_Ticket";
+}
 
 <!DOCTYPE html>
 <html>
@@ -12,9 +15,6 @@
 <body>
     <div class="container">
         <h1>Ticket Details</h1>
-        <div class="container">
-            <h1>Ticket Details</h1>
-
             <div>
                 <p>
                     <label>Ticket ID: </label>
@@ -47,7 +47,7 @@
             </div>
             <div>
                 <p>
-                    <label>Status: </label>
+                    <label>Current Status: </label>
                     <span>@Model.Status</span>
                 </p>
             </div>
@@ -78,25 +78,73 @@
             <div>
                 <p>
                     <label>Additional Details: </label>
-                    <span>@Model.Additional_Details</span>
+                    @if (@Model.Additional_Details == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Additional_Details</span>
+                    }
                 </p>
             </div>
-         </div>
+            <div>
+                <p>
+                    <label>Escalate In-Charge: </label>
+                    @if (@Model.Escalate_SE == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Escalate_SE</span>
+                    }
+                </p>
+            </div>
+             <div>
+                <p>
+                    <label>Escalate Reason: </label>
+                    @if (@Model.Escalate_Reason == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Escalate_Reason</span>
+                    }
+                </p>
+            </div>
         
-        <h2>Escalate Ticket</h2>
-        <form method="post" action="/Ticket/EscalateTicket">
-            <div class="form-group">
-                <label for="status">Status:</label>
-                <select class="form-control" id="status" required>
+        <hr />
+
+        <h2>Update Ticket</h2>
+
+        <form method="post" action="/Ticket/HAUpdateTicket">
+           
+            <input type="hidden" name="TicketId" value="@Model.TicketId">
+
+            <div class="form-group mb-3">
+                <label for="newStatus">New Status:</label>
+                <select class="form-control" id="newStatus" name="newStatus" required>
                     <option value="">Select status update</option>
                     <option value="pending">Pending</option>
                     <option value="logged">Logged</option>
-                    <option value="on hold">On hold</option>
-                    <option value="solved">Solved</option>
+                    <option value="in progress">In Progess</option>
+                    <option value="waiting">Waiting for Resolution</option>
+                    <option value="resolved">Resolved</option>
                     <option value="closed">Closed</option>
                 </select>
             </div>
-            <button></button>
+
+            <div class="form-group mb-3">
+                <label for="Resolution">Resolution:</label>
+                <label for="Resolution">(if above status selection is not solved, kindly input - or leave it blank below)</label>
+                <textarea id="Resolution" class="form-control" name="Resolution"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
         </form>
     </div>
 </body>

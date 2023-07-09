@@ -132,27 +132,63 @@
                         <td>@ticket.DateTime</td>
                         <td>@ticket.Priority</td>
                         <td>@ticket.DevicesInvolved</td>
-                        <td>@ticket.Additional_Details</td>
-                        <td>@ticket.Resolution</td>
+
+                        @if (@ticket.Additional_Details == null)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@ticket.Additional_Details</td>
+                        }
+
+                        @if (@ticket.Resolution == null)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@ticket.Resolution</td>
+                        }
+
                         <td>@ticket.EmployeeName</td>
-                        <td>@ticket.Escalate_Reason</td>
+
+                        @if (@ticket.Escalate_Reason == null)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@ticket.Escalate_Reason</td>
+                        }
+
                         <td>@ticket.Escalate_SE</td>
 
-                        @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed")
                         {
                             <td>
-                                <a href="/Ticket/UpdateTicket/@ticket.TicketId" style="text-decoration:none; color:steelblue"
-                                   onclick="return confirm('Delete FAQ with ID @ticket.Description?')">
+                                <a href=@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = ticket.TicketId })
+                                   onclick="return confirm('Update Ticket: @ticket.Description?')">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             </td>
                         }
 
-                        @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent"))
+                        @if (User.IsInRole("support engineer") && ticket.Status != "closed")
                         {
                             <td>
-                                <a href="/Ticket/EscalateTicket/@ticket.TicketId" style="text-decoration:none; color:steelblue"
-                                   onclick="return confirm('Delete FAQ with ID @ticket.TicketId?')">
+                                <a href=@Url.Action("SEResolution", "Ticket", new { TicketId = ticket.TicketId })
+                                   onclick="return confirm('Update Ticket: @ticket.Description?')">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        }
+
+                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed")
+                        {
+                            <td>
+                                <a href=@Url.Action("EscalateTicket", "Ticket", new { TicketId = ticket.TicketId }) 
+                                   onclick="return confirm('Escalate Ticket (ID): @ticket.TicketId?')">
                                     <i class="bi bi-exclamation-triangle"></i>
                                 </a>
                             </td>
