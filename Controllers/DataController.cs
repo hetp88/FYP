@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 
 namespace FYP.Controllers
@@ -17,34 +18,53 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult DataCollected()
+        
+        //Fix the Error SQL Date time overflow
+        private DateTime AdjustDate(DateTime date)
         {
-            List<Ticket> tickets = GetTicketsFromDatabase();
+            //Set the minimum value {Must be between 1/1/1753 12:00:00 AM and 12/31/9999 11:59:59 PM.}
+            if (date < SqlDateTime.MinValue.Value)
+                date = SqlDateTime.MinValue.Value;
 
+            if (date > SqlDateTime.MaxValue.Value)
+                date = SqlDateTime.MaxValue.Value;
+
+            return date;
+        }
+
+        public IActionResult DataCollected(DateTime startDate, DateTime endDate)
+        {
+            //Set the start Date and end Date which will be inputed by user
+            startDate = AdjustDate(startDate);
+            endDate = AdjustDate(endDate);
+
+            List<Ticket> tickets = GetTicketsFromDatabase(startDate, endDate);
             return View(tickets);
         }
+
         private string GetCurrentMonth()
         {
             string currentMonth = DateTime.Now.ToString("MMMM");
             return currentMonth;
         }
-        private List<Ticket> GetTicketsFromDatabase()
+        private List<Ticket> GetTicketsFromDatabase(DateTime startDate, DateTime endDate)
         {
             List<Ticket> tickets = new List<Ticket>();
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                DateTime now = DateTime.Now;
-                int currentMonth = now.Month;
+                
 
                 connection.Open();
 
                 //Query to only take data from the current month we are in.
-                string query = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution FROM ticket t INNER JOIN users u ON u.userid = t.userid INNER JOIN ticket_categories tc ON tc.category_id = t.category_id INNER JOIN employee e ON t.employee_id = e.employee_id WHERE MONTH(t.datetime)='{currentMonth}'";
+                string query = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, t.category_id, tc.category , t.status, t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution FROM ticket t INNER JOIN users u ON u.userid = t.userid INNER JOIN ticket_categories tc ON tc.category_id = t.category_id INNER JOIN employee e ON t.employee_id = e.employee_id WHERE t.datetime >= @StartDate AND t.datetime <= @EndDate";
 
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
+                    command.Parameters.AddWithValue("@StartDate", startDate);
+                    command.Parameters.AddWithValue("@EndDate", endDate);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -53,7 +73,7 @@ namespace FYP.Controllers
                             ticket.UserId = (int)reader["userid"];
                             ticket.Type = (string)reader["type"];
                             ticket.Description = (string)reader["description"];
-                            ticket.Category = (string)reader["category"];
+                            ticket.category_id = (int)reader["category_id"];
                             ticket.Status = (string)reader["status"];
                             ticket.DateTime = (DateTime)reader["datetime"];
                             ticket.Priority = (string)reader["priority"];
@@ -67,11 +87,15 @@ namespace FYP.Controllers
                     }
                 }
             }
+
+
                //Adding up the counts for charts
             counts(tickets);
 
             return tickets;
         }
+
+
 
         private void counts(List<Ticket> tickets)
         {

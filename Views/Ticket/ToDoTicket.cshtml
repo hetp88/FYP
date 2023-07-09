@@ -1,4 +1,5 @@
 ﻿@model List<FYP.Models.Ticket>
+
 @{
     Layout = "_Ticket";
 }
@@ -6,54 +7,95 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Tickets</title>
     <style>
-        body {
-            background-color: #E8E3DF;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        p {
-            line-height: 1.5;
-        }
-
-        .table {
-            width: 100%;
             margin-top: 20px;
-            border-collapse: collapse;
+            background: #FFFFFF;
+            padding: 20px;
+            width: auto;
         }
 
-            .table th, .table td {
-                border-bottom: 1px solid black;
-                padding: 8px;
+        .search-form {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+            .search-form input[type="text"],
+            .search-form select {
+                padding: 5px;
+                width: 185px;
             }
+
+        table {
+            width: auto;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
 
         .no-tickets-message {
             text-align: center;
-            margin-top: 20px;
-            font-style: italic;
+            font-weight: bold;
         }
     </style>
+    <script>
+        window.onload = function () {
+            document.getElementsByName("ticketIdQuery")[0].value = "";
+            document.getElementsByName("ticketTypeQuery")[0].value = "";
+            document.getElementsByName("statusQuery")[0].value = "";
+            document.getElementsByName("priorityQuery")[0].value = "";
+            document.getElementsByName("resolutionQuery")[0].value = "";
+            document.getElementsByName("employeeQuery")[0].value = "";
+        };
+    </script>
 </head>
 <body>
     <div class="container">
+        <form method="get" action="/Ticket/SearchTicket" class="search-form">
+            <div>
+                <input type="text" name="ticketIdQuery" placeholder="Ticket ID" />
+            </div>
+            <div>
+                <input type="text" name="userIdQuery" placeholder="User ID" />
+            </div>
+            <div>
+                <input type="text" name="ticketTypeQuery" placeholder="Ticket Type" />
+            </div>
+            <div>
+                <input type="text" name="statusQuery" placeholder="Status" />
+            </div>
+            <div>
+                <input type="text" name="priorityQuery" placeholder="Priority" />
+            </div>
+            <div>
+                <input type="text" name="employeeQuery" placeholder="Employee In-Charge" />
+            </div>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
 
         @if (Model == null || Model.Count == 0)
         {
-            <p class="no-tickets-message">No tickets found.</p>
+            <p class="no-tickets-message">No tickets available.</p>
         }
         else
         {
-            <p>Tickets: </p>
-            <table class="table">
+            <table>
                 <tr>
+                    <th>Ticket ID</th>
                     <th>User ID</th>
                     <th>Ticket Type</th>
                     <th>Description</th>
@@ -64,10 +106,23 @@
                     <th>Devices Involved</th>
                     <th>Additional Details</th>
                     <th>Resolution</th>
+                    <th>Employee In-Charge</th>
+                    <th>Escalate Reason</th>
+                    @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+                    {
+                        <th>Update</th>
+                    }
+
+                    @if (User.IsInRole("helpdesk agent"))
+                    {
+                        <th>Escalate</th>
+                    }
                 </tr>
+
                 @foreach (var ticket in Model)
                 {
                     <tr>
+                        <td>@ticket.TicketId</td>
                         <td>@ticket.UserId</td>
                         <td>@ticket.Type</td>
                         <td>@ticket.Description</td>
@@ -78,6 +133,30 @@
                         <td>@ticket.DevicesInvolved</td>
                         <td>@ticket.Additional_Details</td>
                         <td>@ticket.Resolution</td>
+                        <td>@ticket.EmployeeName</td>
+                        <td>@ticket.Escalate_Reason</td>
+
+                        @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+                        {
+                            <td>
+                                <a href="/Ticket/UpdateTicket/@ticket.TicketId"
+                       style="text-decoration:none; color:steelblue"
+                       onclick="return confirm('Edit product " @ticket.Description?"')">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        }
+
+                        @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent"))
+                        {
+                            <td>
+                                <a href="/Ticket/EscalateTicket/@ticket.TicketId"
+                       style="text-decoration:none; color:steelblue"
+                       onclick="return confirm('Edit product " @ticket.Description?"')">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                </a>
+                            </td>
+                        }
                     </tr>
                 }
             </table>
