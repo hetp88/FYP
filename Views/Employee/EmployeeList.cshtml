@@ -14,6 +14,16 @@
             width: auto;
             background: #FFFFFF;
         }
+
+        .btn-primary {
+            background-color: #28a745; /* Green color */
+            border-color: #28a745; /* Green color */
+        }
+
+            .btn-primary:hover {
+                background-color: #218838; /* Darker shade of green */
+                border-color: #218838; /* Darker shade of green */
+            }
     </style>
     <script>
         window.onload = function () {
@@ -21,9 +31,9 @@
             document.getElementsByName("role")[0].value = "";
             document.getElementsByName("name")[0].value = "";
             document.getElementsByName("email")[0].value = "";
-            document.getElementsByName("Phone_no")[0].value = "";
-            document.getElementsByName("no_tickets")[0].value = "";
-            document.getElementsByName("closed_tickets")[0].value = "";
+            document.getElementsByName("phoneNumber")[0].value = "";
+            document.getElementsByName("numTickets")[0].value = "";
+            document.getElementsByName("numclosed_tickets")[0].value = "";
         };
     </script>
 </head>
@@ -35,9 +45,9 @@
                 <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
                 <input type="text" class="form-control" name="name" placeholder="Name" aria-label="Name">
                 <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
-                <input type="text" class="form-control" name="Phone_no" placeholder="Phone Number" aria-label="Phone Number">
-                <input type="text" class="form-control" name="no_tickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
-                <input type="text" class="form-control" name="closed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
+                <input type="text" class="form-control" name="phoneNumber" placeholder="Phone Number" aria-label="Phone Number">
+                <input type="text" class="form-control" name="numTickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
+                <input type="text" class="form-control" name="numclosed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
@@ -59,6 +69,7 @@
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Number of Tickets Assigned</th>
                     <th style="text-align:center">Number of Tickets Closed</th>
+                    
                 </tr>
                 @foreach (var employee in Model)
                 {
@@ -70,6 +81,9 @@
                         <td style="text-align:center">@employee.Phone_no</td>
                         <td style="text-align:center">@employee.no_tickets</td>
                         <td style="text-align:center">@employee.closed_tickets</td>
+                        <td style="text-align:center">
+                            
+                        </td>
                     </tr>
                 }
             </table>

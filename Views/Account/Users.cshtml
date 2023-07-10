@@ -14,16 +14,26 @@
             width: auto;
             background: #FFFFFF;
         }
+
+        .btn-primary {
+            background-color: #28a745; /* Green color */
+            border-color: #28a745; /* Green color */
+        }
+
+            .btn-primary:hover {
+                background-color: #218838; /* Darker shade of green */
+                border-color: #218838; /* Darker shade of green */
+            }
     </style>
     <script>
         window.onload = function () {
-            document.getElementsByName("userId")[0].value = "";
-            document.getElementsByName("role")[0].value = "";
-            document.getElementsByName("username")[0].value = "";
-            document.getElementsByName("school")[0].value = "";
-            document.getElementsByName("email")[0].value = "";
-            document.getElementsByName("phoneNo")[0].value = "";
-            document.getElementsByName("last_login")[0].value = "";
+            document.getElementsByName("searchUserId")[0].value = "";
+            document.getElementsByName("searchRole")[0].value = "";
+            document.getElementsByName("searchName")[0].value = "";
+            document.getElementsByName("searchSchool")[0].value = "";
+            document.getElementsByName("searchEmail")[0].value = "";
+            document.getElementsByName("searchPhone")[0].value = "";
+            document.getElementsByName("searchLastLogin")[0].value = "";
         };
     </script>
 </head>
@@ -31,13 +41,13 @@
     <div class="container">
         <form method="get" action="/Account/Users">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" name="userId" placeholder="User ID" aria-label="User ID">
-                <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
-                <input type="text" class="form-control" name="username" placeholder="Name" aria-label="Name">
-                <input type="text" class="form-control" name="school" placeholder="School" aria-label="School">
-                <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
-                <input type="text" class="form-control" name="phoneNo" placeholder="Phone Number" aria-label="Phone Number">
-                <input type="text" class="form-control" name="last_login" placeholder="Last Login" aria-label="Last Login">
+                <input type="text" class="form-control" name="searchUserId" placeholder="User ID" aria-label="User ID">
+                <input type="text" class="form-control" name="searchRole" placeholder="Role" aria-label="Role">
+                <input type="text" class="form-control" name="searchName" placeholder="Name" aria-label="Name">
+                <input type="text" class="form-control" name="searchSchool" placeholder="School" aria-label="School">
+                <input type="text" class="form-control" name="searchEmail" placeholder="Email" aria-label="Email">
+                <input type="text" class="form-control" name="searchPhone" placeholder="Phone Number" aria-label="Phone Number">
+                <input type="date" class="form-control" name="searchLastLogin" placeholder="Last Login" aria-label="Last Login">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
@@ -69,7 +79,7 @@
                         <td style="text-align:center">@user.school</td>
                         <td style="text-align:center">@user.email</td>
                         <td style="text-align:center">@user.phoneNo</td>
-                        <td style="text-align:center">@user.last_login</td>
+                        <td style="text-align:center">@user.last_login.ToLongDateString()</td>
                     </tr>
                 }
             </table>
