@@ -236,7 +236,7 @@ WHERE r.roles_type = 'administrator'";
     {
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
-            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo, u.last_login 
+            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo, u.last_login AS Last_login
                        FROM users u
                        INNER JOIN roles r ON r.roles_id = u.roles_id";
 

@@ -53,15 +53,15 @@ namespace FYP.Controllers
                 connection.Open();
 
                 string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
-                         FROM employee e
-                         INNER JOIN roles r ON r.roles_id = e.roles_id
-                         WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
-                            AND (@Role IS NULL OR r.roles_type LIKE @Role)
-                            AND (@Name IS NULL OR e.name LIKE @Name)
-                            AND (@Email IS NULL OR e.email LIKE @Email)
-                            AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
-                            AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
-                            AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)";
+                 FROM employee e
+                 INNER JOIN roles r ON r.roles_id = e.roles_id
+                 WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
+                    AND (@Role IS NULL OR r.roles_type LIKE @Role)
+                    AND (@Name IS NULL OR e.name LIKE @Name)
+                    AND (@Email IS NULL OR e.email LIKE @Email)
+                    AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
+                    AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
+                    AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)";
 
                 List<Employee> employees = connection.Query<Employee>(query, new
                 {
@@ -78,31 +78,36 @@ namespace FYP.Controllers
             }
         }
 
-        public IActionResult SearchLeaveRequests(string employeeId, DateTime? startDate, DateTime? endDate, string reason)
+
+        public IActionResult SearchLeaveRequests(string employeeId, DateTime? startDate, DateTime? endDate, string reason, string status)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved, l.proof_provided
-                         FROM leave l
-                         INNER JOIN employee e ON e.employee_id = l.employee_id
-                         WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
-                            AND (@StartDate IS NULL OR l.startDate >= @StartDate)
-                            AND (@EndDate IS NULL OR l.end_date <= @EndDate)
-                            AND (@Reason IS NULL OR l.reason LIKE @Reason);";
+                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+                 FROM leave l
+                 INNER JOIN employee e ON e.employee_id = l.employee_id
+                 WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
+                    AND (@StartDate IS NULL OR l.startDate >= @StartDate)
+                    AND (@EndDate IS NULL OR l.end_date <= @EndDate)
+                    AND (@Reason IS NULL OR l.reason LIKE @Reason)
+                    AND (@Status IS NULL OR l.is_approved = @Status);";
 
                 List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query, new
                 {
                     EmployeeId = string.IsNullOrEmpty(employeeId) ? null : "%" + employeeId + "%",
                     StartDate = startDate,
                     EndDate = endDate,
-                    Reason = string.IsNullOrEmpty(reason) ? null : "%" + reason + "%"
+                    Reason = string.IsNullOrEmpty(reason) ? null : "%" + reason + "%",
+                    Status = string.IsNullOrEmpty(status) ? null : status
                 }).ToList();
 
                 return View("LeaveRequests", leaveRequests);
             }
         }
+
+
 
 
 
@@ -255,7 +260,7 @@ namespace FYP.Controllers
                 // Store the leave request in the database
                 string insertQuery = @"
             INSERT INTO leave (leave_id, employee_id, startDate, end_date, reason, proof_provided, is_approved)
-            VALUES (@LeaveId, @EmployeeId, @StartDate, @EndDate, @Reason, @ProofProvided, 'pending');";
+            VALUES (@LeaveId, @EmployeeId, @StartDate, @EndDate, @Reason, @ProofProvided, 'Pending');";
 
                 connection.Execute(insertQuery, new
                 {
@@ -322,7 +327,7 @@ namespace FYP.Controllers
             {
                 // Retrieve all leave requests
                 string query = @"
-            SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved, l.proof_provided
+            SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
             FROM leave l
             INNER JOIN employee e ON e.employee_id = l.employee_id;";
 
@@ -375,23 +380,7 @@ namespace FYP.Controllers
         }
 
 
-        //public IActionResult DownloadProof(int leaveId)
-        //{
-        //    using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-        //    {
-        //        string query = "SELECT proof_provided FROM [leave] WHERE leave_id = @LeaveId;";
-        //        connection.Open();
-        //        string proofProvided = connection.QuerySingleOrDefault<string>(query, new { LeaveId = leaveId });
-
-        //        if (!string.IsNullOrEmpty(proofProvided))
-        //        {
-        //            byte[] pdfBytes = Convert.FromBase64String(proofProvided);
-        //            return File(pdfBytes, "application/pdf");
-        //        }
-        //    }
-
-        //    return NotFound();
-        //}
+        
 
 
         //for admin to add?

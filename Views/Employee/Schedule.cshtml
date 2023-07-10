@@ -30,13 +30,13 @@
         }
 
         .leave-event {
-            background-color: #FFCCCC;
-            border-color: #FF6666;
+            background-color: sandybrown;
+            border-color: sandybrown;
         }
 
         .current-day {
-            background-color: #000;
-            color: #FFF;
+            background-color: beige !important;
+            color: #000 !important;
         }
 
         .fc-content .fc-title {
@@ -58,6 +58,11 @@
                 // Add your other calendar options here
 
                 events: @Html.Raw(Json.Serialize(ViewBag.LeaveEvents)),
+
+                viewRender: function (view, element) {
+                    var currentDate = moment().format('YYYY-MM-DD');
+                    $("td[data-date='" + currentDate + "']").addClass('current-day');
+                },
 
                 eventRender: function (event, element) {
                     // Highlight the start date and end date of the leave event
