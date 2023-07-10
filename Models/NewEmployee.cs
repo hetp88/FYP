@@ -6,6 +6,7 @@ namespace FYP.Models
     {
         public int Employee_id { get; set; }
 
+        [Required(ErrorMessage = "Please enter Name")]
         public string Name { get; set; } = null!;
 
         //[Required(ErrorMessage = "Please enter Password")]
@@ -20,10 +21,10 @@ namespace FYP.Models
         public int Phone_no { get; set; }
 
         [Required(ErrorMessage = "Please enter Email")]
-        [RegularExpression("(\\d{3}@tickethelper.com|\\d{5}@tickethelper.com|\\d{6}@tickethelper.com)", ErrorMessage = "Invalid Email")]
+        [RegularExpression("(\\d{3}@oulook.com|\\d{5}@oulook.com|\\d{6}@oulook.com)", ErrorMessage = "Invalid Email")]
         public string Email { get; set; } = null!;
-        
-        public int Tickets { get; set; } 
+
+        public int Tickets { get; set; }
 
         public DateTime? Last_login { get; set; }
 

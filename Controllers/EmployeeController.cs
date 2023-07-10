@@ -13,6 +13,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Security.Claims;
 using System.Collections;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Runtime.InteropServices;
 
 namespace FYP.Controllers
 {
@@ -297,7 +298,7 @@ namespace FYP.Controllers
 
             return NotFound();
         }
-        
+
 
 
 
@@ -416,14 +417,15 @@ namespace FYP.Controllers
                 int EmpID = int.Parse(numbers);
                 int totalDigits = EmpID.ToString().Length;
 
-                using (var connection = new SqlConnection(GetConnectionString()))
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
                     connection.Open();
+
                     NewEmployee helpdesk_agent = new NewEmployee
                     {
                         Employee_id = EmpID,
                         Roles_id = 3,
-                        EmpPw = "helpdeskagent"+EmpID.ToString(),
+                        EmpPw = "helpdeskagent" + EmpID,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -436,7 +438,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         Roles_id = 4,
-                        EmpPw = "supporteng" + EmpID.ToString(),
+                        EmpPw = "supporteng" + EmpID,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -449,7 +451,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         Roles_id = 5,
-                        EmpPw = "admin" + EmpID.ToString(),
+                        EmpPw = "admin" + EmpID,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -461,8 +463,8 @@ namespace FYP.Controllers
                     if (totalDigits == 3)
                     {
 
-                        string insertQuery1 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
+                        string insertQuery1 = @"INSERT INTO employee(employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @Roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
                         if (connection.Execute(insertQuery1, helpdesk_agent) == 1)
                         {
@@ -478,12 +480,12 @@ namespace FYP.Controllers
 
                     else if (totalDigits == 5)
                     {
-                        string insertQuery2 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
+                        string insertQuery2 = @"INSERT INTO employee(employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @Roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
-                        if (connection.Execute(insertQuery2, admin) == 1)
+                        if (connection.Execute(insertQuery2, support_eng) == 1)
                         {
-                            TempData["Message"] = "Admin registered successfully";
+                            TempData["Message"] = "Support Engineer registered successfully";
                             TempData["MsgType"] = "success";
                         }
                         else
@@ -493,14 +495,15 @@ namespace FYP.Controllers
                         }
                     }
 
+
                     else if (totalDigits == 6)
                     {
-                        string insertQuery3 = @"INSERT INTO employee (employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
-                                            VALUES (@Employee_id, @roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
+                        string insertQuery3 = @"INSERT INTO employee(employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
+                                            VALUES (@Employee_id, @Roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
 
-                        if (connection.Execute(insertQuery3, support_eng) == 1)
+                        if (connection.Execute(insertQuery3, admin) == 1)
                         {
-                            TempData["Message"] = "Support Engineer registered successfully";
+                            TempData["Message"] = "Admin registered successfully";
                             TempData["MsgType"] = "success";
                         }
                         else

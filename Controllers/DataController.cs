@@ -18,7 +18,26 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        
+        public IActionResult DataCollected(DateTime startDate, DateTime endDate)
+        {
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            {
+                //Set the start Date and end Date which will be inputed by user
+                startDate = AdjustDate(startDate);
+                endDate = AdjustDate(endDate);
+
+                List<Ticket> tickets = GetTicketsFromDatabase(startDate, endDate);
+                return View(tickets);
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
+        }
+
+
         //Fix the Error SQL Date time overflow
         private DateTime AdjustDate(DateTime date)
         {
@@ -32,21 +51,7 @@ namespace FYP.Controllers
             return date;
         }
 
-        public IActionResult DataCollected(DateTime startDate, DateTime endDate)
-        {
-            //Set the start Date and end Date which will be inputed by user
-            startDate = AdjustDate(startDate);
-            endDate = AdjustDate(endDate);
 
-            List<Ticket> tickets = GetTicketsFromDatabase(startDate, endDate);
-            return View(tickets);
-        }
-
-        private string GetCurrentMonth()
-        {
-            string currentMonth = DateTime.Now.ToString("MMMM");
-            return currentMonth;
-        }
         private List<Ticket> GetTicketsFromDatabase(DateTime startDate, DateTime endDate)
         {
             List<Ticket> tickets = new List<Ticket>();
@@ -87,8 +92,6 @@ namespace FYP.Controllers
                     }
                 }
             }
-
-
                //Adding up the counts for charts
             counts(tickets);
 

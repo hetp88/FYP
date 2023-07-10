@@ -44,6 +44,16 @@ public class AccountController : Controller
     private const string ForgetPW_SQ =
         @"SELECT password FROM Users WHERE userid = @UserID AND email = @Email";
 
+
+    private const string SR = @"";
+    private const string UR = @"";
+    private const string ER = @"";
+    private const string SE = @"";
+    private const string AD = @"SELECT e.employee_id, e.employee_pw, r.roles_type 
+FROM employee e 
+INNER JOIN roles r ON r.roles_id = e.roles_id
+WHERE r.roles_type = 'administrator'";
+
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor contextAccessor;
 
@@ -61,6 +71,12 @@ public class AccountController : Controller
     public IActionResult Login()
     {
         return View();
+    }
+    [AllowAnonymous]
+    public IActionResult Register()
+    {
+        return View();
+
     }
 
     [AllowAnonymous]
@@ -128,12 +144,7 @@ public class AccountController : Controller
         return View();
     }
 
-    [AllowAnonymous]
-    public IActionResult Register()
-    {
-        return View("Register");
 
-    }
 
     [AllowAnonymous]
     [HttpPost]
@@ -221,7 +232,6 @@ public class AccountController : Controller
         return RedirectToAction("Login", "Account");
     }
 
-    //[Authorize(Roles = "helpdesk agent, support engineer, administrator")]
     public IActionResult Users(string searchUserID, string searchRole, string searchName, string searchSchool, string searchEmail, string searchPhone, string searchLastLogin)
     {
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
