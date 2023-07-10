@@ -406,6 +406,7 @@ namespace FYP.Controllers
                 int EmpID = int.Parse(numbers);
                 int totalDigits = EmpID.ToString().Length;
 
+
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
                     connection.Open();
@@ -414,7 +415,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         Roles_id = 3,
-                        EmpPw = "helpdeskagent" + EmpID,
+                        EmpPw = newEmp.EmpPw,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -427,7 +428,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         Roles_id = 4,
-                        EmpPw = "supporteng" + EmpID,
+                        EmpPw = newEmp.EmpPw,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -440,7 +441,7 @@ namespace FYP.Controllers
                     {
                         Employee_id = EmpID,
                         Roles_id = 5,
-                        EmpPw = "admin" + EmpID,
+                        EmpPw = newEmp.EmpPw,
                         Name = newEmp.Name,
                         Email = newEmp.Email,
                         Phone_no = newEmp.Phone_no,
@@ -459,6 +460,7 @@ namespace FYP.Controllers
                         {
                             TempData["Message"] = "Helpdesk Agent registered successfully";
                             TempData["MsgType"] = "success";
+                            return RedirectToAction("NewEmployee");
                         }
                         else
                         {
@@ -476,6 +478,7 @@ namespace FYP.Controllers
                         {
                             TempData["Message"] = "Support Engineer registered successfully";
                             TempData["MsgType"] = "success";
+                            return RedirectToAction("NewEmployee");
                         }
                         else
                         {
@@ -494,6 +497,7 @@ namespace FYP.Controllers
                         {
                             TempData["Message"] = "Admin registered successfully";
                             TempData["MsgType"] = "success";
+                            return RedirectToAction("NewEmployee");
                         }
                         else
                         {

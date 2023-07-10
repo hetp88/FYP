@@ -45,14 +45,6 @@ public class AccountController : Controller
         @"SELECT password FROM Users WHERE userid = @UserID AND email = @Email";
 
 
-    private const string SR = @"";
-    private const string UR = @"";
-    private const string ER = @"";
-    private const string SE = @"";
-    private const string AD = @"SELECT e.employee_id, e.employee_pw, r.roles_type 
-FROM employee e 
-INNER JOIN roles r ON r.roles_id = e.roles_id
-WHERE r.roles_type = 'administrator'";
 
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor contextAccessor;
@@ -234,65 +226,73 @@ WHERE r.roles_type = 'administrator'";
 
     public IActionResult Users(string searchUserID, string searchRole, string searchName, string searchSchool, string searchEmail, string searchPhone, string searchLastLogin)
     {
-        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
         {
-            string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo, u.last_login AS Last_login
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                string query = @"SELECT u.userid, u.username, r.roles_type AS Role, u.school, u.email, u.phone_no AS phoneNo, u.last_login AS Last_login
                        FROM users u
                        INNER JOIN roles r ON r.roles_id = u.roles_id";
 
-            StringBuilder whereClause = new StringBuilder();
+                StringBuilder whereClause = new StringBuilder();
 
-            // Build the WHERE clause based on the provided search values
-            if (!string.IsNullOrEmpty(searchUserID))
-            {
-                whereClause.Append("u.userid = @SearchUserID AND ");
-            }
-            if (!string.IsNullOrEmpty(searchRole))
-            {
-                whereClause.Append("r.roles_type = @SearchRole AND ");
-            }
-            if (!string.IsNullOrEmpty(searchName))
-            {
-                whereClause.Append("u.username = @SearchName AND ");
-            }
-            if (!string.IsNullOrEmpty(searchSchool))
-            {
-                whereClause.Append("u.school = @SearchSchool AND ");
-            }
-            if (!string.IsNullOrEmpty(searchEmail))
-            {
-                whereClause.Append("u.email = @SearchEmail AND ");
-            }
-            if (!string.IsNullOrEmpty(searchPhone))
-            {
-                whereClause.Append("u.phone_no = @SearchPhone AND ");
-            }
-            if (!string.IsNullOrEmpty(searchLastLogin))
-            {
-                whereClause.Append("u.last_login = @SearchLastLogin AND ");
-            }
+                // Build the WHERE clause based on the provided search values
+                if (!string.IsNullOrEmpty(searchUserID))
+                {
+                    whereClause.Append("u.userid = @SearchUserID AND ");
+                }
+                if (!string.IsNullOrEmpty(searchRole))
+                {
+                    whereClause.Append("r.roles_type = @SearchRole AND ");
+                }
+                if (!string.IsNullOrEmpty(searchName))
+                {
+                    whereClause.Append("u.username = @SearchName AND ");
+                }
+                if (!string.IsNullOrEmpty(searchSchool))
+                {
+                    whereClause.Append("u.school = @SearchSchool AND ");
+                }
+                if (!string.IsNullOrEmpty(searchEmail))
+                {
+                    whereClause.Append("u.email = @SearchEmail AND ");
+                }
+                if (!string.IsNullOrEmpty(searchPhone))
+                {
+                    whereClause.Append("u.phone_no = @SearchPhone AND ");
+                }
+                if (!string.IsNullOrEmpty(searchLastLogin))
+                {
+                    whereClause.Append("u.last_login = @SearchLastLogin AND ");
+                }
 
-            // Remove the trailing "AND" from the WHERE clause
-            if (whereClause.Length > 0)
-            {
-                whereClause.Remove(whereClause.Length - 5, 5); // Remove the last " AND "
-                query += " WHERE " + whereClause.ToString();
+                // Remove the trailing "AND" from the WHERE clause
+                if (whereClause.Length > 0)
+                {
+                    whereClause.Remove(whereClause.Length - 5, 5); // Remove the last " AND "
+                    query += " WHERE " + whereClause.ToString();
+                }
+
+                connection.Open();
+
+                List<Users> users = connection.Query<Users>(query, new
+                {
+                    SearchUserID = searchUserID,
+                    SearchRole = searchRole,
+                    SearchName = searchName,
+                    SearchSchool = searchSchool,
+                    SearchEmail = searchEmail,
+                    SearchPhone = searchPhone,
+                    SearchLastLogin = searchLastLogin
+                }).ToList();
+
+                return View(users);
             }
-
-            connection.Open();
-
-            List<Users> users = connection.Query<Users>(query, new
-            {
-                SearchUserID = searchUserID,
-                SearchRole = searchRole,
-                SearchName = searchName,
-                SearchSchool = searchSchool,
-                SearchEmail = searchEmail,
-                SearchPhone = searchPhone,
-                SearchLastLogin = searchLastLogin
-            }).ToList();
-
-            return View(users);
+        }
+        else
+        {
+            // Unauthorized actions for other roles
+            return View("Forbidden");
         }
     }
 
@@ -313,31 +313,49 @@ WHERE r.roles_type = 'administrator'";
 
     public IActionResult Profile()
     {
-        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
-        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        if (User.IsInRole("student") || User.IsInRole("staff"))
         {
-            string query = $"SELECT userid, email, phone_no AS phoneNo, username, school FROM users WHERE userid='{currentuser}'";
-            
+            int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                string query = $"SELECT userid, email, phone_no AS phoneNo, username, school FROM users WHERE userid='{currentuser}'";
 
-            connection.Open();
-            List<Users> u = connection.Query<Users>(query).AsList();
-            //Console.WriteLine(currentuser);
-            return View(u);
+
+                connection.Open();
+                List<Users> u = connection.Query<Users>(query).AsList();
+                //Console.WriteLine(currentuser);
+                return View(u);
+            }
+        }
+        else
+        {
+            // Unauthorized actions for other roles
+            return View("Forbidden");
         }
     }
-    [Authorize(Roles = "helpdesk agent,support engineer, administrator")]
+
+
     public IActionResult EmpProfile()
     {
-        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
-        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
         {
-            string query2 = $"SELECT employee_id AS EmployeeId, email, phone_no AS Phone_no, name FROM employee WHERE employee_id='{currentuser}'";
+            int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                string query2 = $"SELECT employee_id AS EmployeeId, email, phone_no AS Phone_no, name FROM employee WHERE employee_id='{currentuser}'";
 
-            connection.Open();
-            List<Employee> f = connection.Query<Employee>(query2).AsList();
-            //Console.WriteLine(currentuser);
-            return View(f);
+                connection.Open();
+                List<Employee> f = connection.Query<Employee>(query2).AsList();
+                //Console.WriteLine(currentuser);
+                return View(f);
+            }
         }
+        else
+        {
+            // Unauthorized actions for other roles
+            return View("Forbidden");
+        }
+    
     }
 
     [Authorize(Roles = "student, staff")]
