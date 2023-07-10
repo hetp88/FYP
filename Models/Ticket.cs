@@ -45,7 +45,7 @@ namespace FYP.Models
 
         public string? Escalate_Reason { get; set; } = null;
 
-        public int? Escalate_SE { get; set; }
+        public int Escalate_SE { get; set; }
 
         //For Data Collection
         public int StatusCount { get; set; }

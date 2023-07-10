@@ -1,4 +1,5 @@
 @model List<FYP.Models.Ticket>
+@using Microsoft.AspNetCore.Http
 
 @{
     Layout = "_Ticket";
@@ -62,6 +63,7 @@
     </script>
 </head>
 <body>
+
     <div class="container">
         <form method="get" action="/Ticket/SearchTicket" class="search-form">
             <div>
@@ -133,7 +135,7 @@
                         <td>@ticket.Priority</td>
                         <td>@ticket.DevicesInvolved</td>
 
-                        @if (@ticket.Additional_Details == null)
+                        @if (ticket.Additional_Details == null)
                         {
                             <td>-</td>
                         }
@@ -153,7 +155,7 @@
 
                         <td>@ticket.EmployeeName</td>
 
-                        @if (@ticket.Escalate_Reason == null)
+                        @if (ticket.Escalate_Reason == null)
                         {
                             <td>-</td>
                         }
@@ -162,7 +164,14 @@
                             <td>@ticket.Escalate_Reason</td>
                         }
 
-                        <td>@ticket.Escalate_SE</td>
+                        @if (ticket.Escalate_SE == 0)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@ticket.Escalate_SE</td>
+                        }
 
                         @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed")
                         {
@@ -184,7 +193,7 @@
                             </td>
                         }
 
-                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed")
+                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Escalate_SE == 0)
                         {
                             <td>
                                 <a href=@Url.Action("EscalateTicket", "Ticket", new { TicketId = ticket.TicketId }) 
