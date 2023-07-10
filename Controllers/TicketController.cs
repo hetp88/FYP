@@ -8,6 +8,7 @@ using Dapper;
 using System.Security.Cryptography;
 using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using XAct.Users;
 
 namespace FYP.Controllers
 {
@@ -153,7 +154,6 @@ namespace FYP.Controllers
                     Escalate_Reason = null,
                 };
 
-                //Console.WriteLine(empid[emp]);
                 int eid = empid[emp];
 
                 string empticket = $"SELECT tickets FROM employee WHERE employee_id = '{eid}'";
@@ -171,6 +171,18 @@ namespace FYP.Controllers
 
                 if (connection.Execute(query, newTicket) == 1 && connection.Execute(update) == 1)
                 {
+                    string link = "";
+
+                    string template = "Hi {0}, \n\r" +
+                                  "We have received your {1} ticket. \n\r" +
+                                  "Your ticket id is <b>{2}</b> and the description of the ticket is <b>{3}</b>. \n\r" +
+                                  "We will get back you as soon as possible. Status of ticket can be checked when you login \n\r" + 
+                                  "RP IT HelpDesk";
+                   
+                    string title = "Ticket Submitted Successful";
+
+                    string message = String.Format(template, newTicket.UserId, newTicket.Type, newTicket.TicketId, newTicket.Description);
+
                     ViewData["Message"] = "Ticket submitted successfully";
                     ViewData["MsgType"] = "success";
                 }
