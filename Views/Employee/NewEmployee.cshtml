@@ -1,5 +1,7 @@
 ﻿@model FYP.Models.NewEmployee
-
+@{
+    Layout = "_Ticket";
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -40,6 +42,7 @@
             flex: 1;
             width: 450px; /* Adjust the width as needed */
             height: auto; /* Remove fixed height */
+            margin-top: -100px; /* Add negative margin-top to shift the card up */
         }
 
         .form-group {
@@ -68,6 +71,16 @@
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 border-color: #FFFFFF;
                 outline: 0;
+            }
+
+        .btn-primary {
+            background-color: #28a745; /* Green color */
+            border-color: #28a745; /* Green color */
+        }
+
+            .btn-primary:hover {
+                background-color: #218838; /* Darker shade of green */
+                border-color: #218838; /* Darker shade of green */
             }
     </style>
 </head>

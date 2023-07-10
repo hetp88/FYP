@@ -12,13 +12,28 @@
 
     <style>
         /* Add your custom styles here */
+        
+
         .container {
             margin-top: 30px;
+            width: auto;
+            background: #FFFFFF;
         }
 
         .table {
             margin-bottom: 30px;
         }
+
+        .btn-primary {
+            background-color: #28a745; /* Green color */
+            border-color: #28a745; /* Green color */
+        }
+
+            .btn-primary:hover {
+                background-color: #218838; /* Darker shade of green */
+                border-color: #218838; /* Darker shade of green */
+            }
+        
     </style>
 
     <script>
@@ -27,6 +42,7 @@
             document.getElementById("startDate").value = "";
             document.getElementById("endDate").value = "";
             document.getElementById("reason").value = "";
+            document.getElementById("status").value = "";
         };
 
         function searchLeaveRequests() {
@@ -34,16 +50,18 @@
             var startDate = document.getElementById("startDate").value;
             var endDate = document.getElementById("endDate").value;
             var reason = document.getElementById("reason").value;
+            var status = document.getElementById("status").value;
 
             // Redirect to the SearchLeaveRequests action with the provided search parameters
             window.location.href = "/Employee/SearchLeaveRequests?employeeId=" + employeeId
-                + "&startDate=" + startDate + "&endDate=" + endDate + "&reason=" + reason;
+                + "&startDate=" + startDate + "&endDate=" + endDate + "&reason=" + reason + "&status=" + status;
         }
     </script>
+
 </head>
 <body>
     <div class="container">
-        <h1>Leave Requests</h1>
+        <h1>Leave</h1>
 
         <div class="row">
             <div class="col">
@@ -59,6 +77,14 @@
                 <input type="text" class="form-control" id="reason" placeholder="Enter reason">
             </div>
             <div class="col">
+                <select id="status" name="status" class="form-control">
+                    <option value="">Select a status</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Pending">Pending</option>
+                </select>
+            </div>
+            <div class="col">
                 <button class="btn btn-primary" onclick="searchLeaveRequests()">Search</button>
             </div>
         </div>
@@ -70,6 +96,7 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Reason</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -81,6 +108,7 @@
                         <td>@leave.StartDate.ToShortDateString()</td>
                         <td>@leave.EndDate.ToShortDateString()</td>
                         <td>@leave.Reason</td>
+                        <td>@leave.IsApproved</td>
                         <td>
                             <a href="@Url.Action("ReviewLeave", "Employee", new { leaveId = leave.LeaveId })" class="btn btn-primary">Review</a>
                         </td>
