@@ -3,19 +3,10 @@
 
 <h2>Forget Password</h2>
 
-@if (ViewBag.VerificationCodeSent != null && ViewBag.VerificationCodeSent)
-{
-    <p>Verification code has been sent to your email address.</p>
-}
-else if (ViewBag.VerificationCodeSent != null && !ViewBag.VerificationCodeSent)
-{
-    <p>Failed to send the verification code. Please try again later.</p>
-}
-
-<form method="post" asp-action="ForgetPw">
+<form asp-controller="Account" asp-action="ForgetPw" method="post">
     <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email">Email:</label>
         <input type="email" class="form-control" id="email" name="Email" required>
     </div>
-    <button type="submit" class="btn btn-primary">Send Verification Code</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
