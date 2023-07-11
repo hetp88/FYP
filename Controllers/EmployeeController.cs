@@ -85,14 +85,15 @@ namespace FYP.Controllers
             {
                 connection.Open();
 
-                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
-                 FROM leave l
-                 INNER JOIN employee e ON e.employee_id = l.employee_id
-                 WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
-                    AND (@StartDate IS NULL OR l.startDate >= @StartDate)
-                    AND (@EndDate IS NULL OR l.end_date <= @EndDate)
-                    AND (@Reason IS NULL OR l.reason LIKE @Reason)
-                    AND (@Status IS NULL OR l.is_approved = @Status);";
+                string query = @"
+        SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate AS StartDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+        FROM leave l
+        INNER JOIN employee e ON e.employee_id = l.employee_id
+        WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
+            AND (@StartDate IS NULL OR l.startDate = @StartDate)
+            AND (@EndDate IS NULL OR l.end_date = @EndDate)
+            AND (@Reason IS NULL OR l.reason LIKE @Reason)
+            AND (@Status IS NULL OR l.is_approved = @Status);";
 
                 List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query, new
                 {
@@ -106,6 +107,8 @@ namespace FYP.Controllers
                 return View("LeaveRequests", leaveRequests);
             }
         }
+
+
 
 
 
@@ -304,10 +307,6 @@ namespace FYP.Controllers
             return NotFound();
         }
 
-
-
-
-
         private int GetLoggedInEmployeeId()
         {
             // Retrieve the employee ID from the logged-in user's claims
@@ -318,16 +317,13 @@ namespace FYP.Controllers
             return employeeId;
         }
 
-
-
-
         public IActionResult LeaveRequests()
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 // Retrieve all leave requests
                 string query = @"
-            SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+            SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate AS StartDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
             FROM leave l
             INNER JOIN employee e ON e.employee_id = l.employee_id;";
 
