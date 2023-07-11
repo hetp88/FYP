@@ -33,7 +33,7 @@
             document.getElementsByName("searchSchool")[0].value = "";
             document.getElementsByName("searchEmail")[0].value = "";
             document.getElementsByName("searchPhone")[0].value = "";
-            document.getElementsByName("searchLastLogin")[0].value = "";
+            
         };
     </script>
 </head>
@@ -47,7 +47,7 @@
                 <input type="text" class="form-control" name="searchSchool" placeholder="School" aria-label="School">
                 <input type="text" class="form-control" name="searchEmail" placeholder="Email" aria-label="Email">
                 <input type="text" class="form-control" name="searchPhone" placeholder="Phone Number" aria-label="Phone Number">
-                <input type="date" class="form-control" name="searchLastLogin" placeholder="Last Login" aria-label="Last Login">
+                
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
@@ -68,7 +68,7 @@
                     <th style="text-align:center">School</th>
                     <th style="text-align:center">Email</th>
                     <th style="text-align:center">Phone Number</th>
-                    <th style="text-align:center">Last Login</th>
+                    
                 </tr>
                 @foreach (var user in Model)
                 {
@@ -79,7 +79,7 @@
                         <td style="text-align:center">@user.school</td>
                         <td style="text-align:center">@user.email</td>
                         <td style="text-align:center">@user.phoneNo</td>
-                        <td style="text-align:center">@user.last_login.ToLongDateString()</td>
+                        
                     </tr>
                 }
             </table>

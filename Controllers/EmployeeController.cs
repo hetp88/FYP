@@ -105,7 +105,7 @@ namespace FYP.Controllers
                 {
                     connection.Open();
 
-                    string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
                  FROM leave l
                  INNER JOIN employee e ON e.employee_id = l.employee_id
                  WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
@@ -133,6 +133,10 @@ namespace FYP.Controllers
             }
             
         }
+
+
+
+
 
         public IActionResult Schedule()
         {
@@ -360,10 +364,6 @@ namespace FYP.Controllers
             
         }
 
-
-
-
-
         private int GetLoggedInEmployeeId()
         {
             // Retrieve the employee ID from the logged-in user's claims
@@ -374,17 +374,12 @@ namespace FYP.Controllers
             return employeeId;
         }
 
-
-
-
         public IActionResult LeaveRequests()
         {
-            if (User.IsInRole("administrator"))
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-                {
-                    // Retrieve all leave requests
-                    string query = @"
+                // Retrieve all leave requests
+                string query = @"
             SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
             FROM leave l
             INNER JOIN employee e ON e.employee_id = l.employee_id;";
