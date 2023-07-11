@@ -25,38 +25,47 @@ namespace FYP.Controllers
         
         public IActionResult Details(string faqIdQuery, string questionQuery, string solutionQuery, string categoryQuery)
         {
-            List<FAQ> faqs = new List<FAQ>();
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff"))
             {
-                string selectQuery = @"SELECT f.faq_id AS FaqId, tc.category, f.question, f.solution 
+                List<FAQ> faqs = new List<FAQ>();
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    string selectQuery = @"SELECT f.faq_id AS FaqId, tc.category, f.question, f.solution 
                                FROM FAQ f
                                INNER JOIN ticket_categories tc ON tc.category_id = f.category_id
                                WHERE (@FaqIdQuery IS NULL OR f.faq_id = @FaqIdQuery)
                                    AND (@QuestionQuery IS NULL OR f.question LIKE '%' + @QuestionQuery + '%')
                                    AND (@SolutionQuery IS NULL OR f.solution LIKE '%' + @SolutionQuery + '%')
                                    AND (@CategoryQuery IS NULL OR tc.category_id = @CategoryQuery)
-                                   AND f.faq_id > 0";    
+                                   AND f.faq_id > 0";
 
 
-                // Retrieve the category ID based on the selected category name
-                int categoryId = 0;
-                if (!string.IsNullOrEmpty(categoryQuery))
-                {
-                    string categoryIdQuery = "SELECT category_id FROM ticket_categories WHERE category = @Category";
-                    categoryId = connection.QuerySingleOrDefault<int>(categoryIdQuery, new { Category = categoryQuery });
+                    // Retrieve the category ID based on the selected category name
+                    int categoryId = 0;
+                    if (!string.IsNullOrEmpty(categoryQuery))
+                    {
+                        string categoryIdQuery = "SELECT category_id FROM ticket_categories WHERE category = @Category";
+                        categoryId = connection.QuerySingleOrDefault<int>(categoryIdQuery, new { Category = categoryQuery });
+                    }
+
+                    connection.Open();
+                    faqs = connection.Query<FAQ>(selectQuery, new
+                    {
+                        FaqIdQuery = string.IsNullOrEmpty(faqIdQuery) ? null : faqIdQuery,
+                        QuestionQuery = string.IsNullOrEmpty(questionQuery) ? null : questionQuery,
+                        SolutionQuery = string.IsNullOrEmpty(solutionQuery) ? null : solutionQuery,
+                        CategoryQuery = string.IsNullOrEmpty(categoryQuery) ? null : categoryQuery
+                    }).AsList();
                 }
 
-                connection.Open();
-                faqs = connection.Query<FAQ>(selectQuery, new
-                {
-                    FaqIdQuery = string.IsNullOrEmpty(faqIdQuery) ? null : faqIdQuery,
-                    QuestionQuery = string.IsNullOrEmpty(questionQuery) ? null : questionQuery,
-                    SolutionQuery = string.IsNullOrEmpty(solutionQuery) ? null : solutionQuery,
-                    CategoryQuery = string.IsNullOrEmpty(categoryQuery) ? null : categoryQuery
-                }).AsList();
+                return View(faqs);
             }
-
-            return View(faqs);
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
 
 
@@ -80,45 +89,62 @@ namespace FYP.Controllers
 
         public IActionResult CreateFAQ()
         {
-            return View();
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            {
+                return View();
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
         }
 
         
         [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
-            int faqid = 0;
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
             {
-                string idQuery = @"SELECT MAX(faq_id) FROM FAQ";
-                connection.Open();
-
-                var maxId = connection.QuerySingleOrDefault<int?>(idQuery);
-                faqid = maxId.HasValue ? maxId.Value + 1 : 1;
-
-                FAQ newFaq = new FAQ
+                int faqid = 0;
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    FaqId = faqid,
-                    Category = faq.Category,
-                    Question = faq.Question,
-                    Solution = faq.Solution,
-                };
+                    string idQuery = @"SELECT MAX(faq_id) FROM FAQ";
+                    connection.Open();
 
-                string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @Category, @Question, @Solution)";
+                    var maxId = connection.QuerySingleOrDefault<int?>(idQuery);
+                    faqid = maxId.HasValue ? maxId.Value + 1 : 1;
 
-                if (connection.Execute(query, newFaq) == 1)
-                {
-                    TempData["Message"] = "FAQ published successfully";
-                    TempData["MsgType"] = "success";
+                    FAQ newFaq = new FAQ
+                    {
+                        FaqId = faqid,
+                        Category = faq.Category,
+                        Question = faq.Question,
+                        Solution = faq.Solution,
+                    };
+
+                    string query = @"INSERT INTO FAQ (faq_id, category_id, question, solution) VALUES (@FaqId, @Category, @Question, @Solution)";
+
+                    if (connection.Execute(query, newFaq) == 1)
+                    {
+                        TempData["Message"] = "FAQ published successfully";
+                        TempData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["Message"] = "FAQ published failed";
+                        TempData["MsgType"] = "danger";
+                    }
                 }
-                else
-                {
-                    TempData["Message"] = "FAQ published failed";
-                    TempData["MsgType"] = "danger";
-                }
+                // Redirect to the index homepage
+                return RedirectToAction("Details", "FAQ");
             }
-            // Redirect to the index homepage
-            return RedirectToAction("Details", "FAQ");
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
 
         

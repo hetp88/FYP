@@ -27,17 +27,26 @@ namespace FYP.Controllers
         }
 
         
-        //[Authorize(Roles = "student, staff")]
+ 
         public IActionResult Index()
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
             {
-                string query = @"SELECT news_id AS newsID , news_u AS newsU FROM News";
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    string query = @"SELECT news_id AS newsID , news_u AS newsU FROM News";
 
-                connection.Open();
-                List<News> newsu = connection.Query<News>(query).AsList();
-                return View(newsu);
+                    connection.Open();
+                    List<News> newsu = connection.Query<News>(query).AsList();
+                    return View(newsu);
+                }
             }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
         public IActionResult Editor()
         {
