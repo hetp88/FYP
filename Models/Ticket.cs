@@ -9,6 +9,10 @@ namespace FYP.Models
         [RegularExpression("(\\d{8}|\\d{4})", ErrorMessage = "either 4 or 8 digits only")]
         public int UserId { get; set; }
 
+        public string Email { get; set; } = null!;
+
+        public string Username { get; set; } = null!;
+
         [Required(ErrorMessage = "Please select ticket type")]
         public string Type { get; set; } = null!;
 

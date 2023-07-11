@@ -183,7 +183,7 @@
                             <td>@ticket.Escalate_SE</td>
                         }
 
-                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed")
+                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Employee == ViewBag.Current)
                         {
                             <td>
                                 <a href=@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = ticket.TicketId })
@@ -192,8 +192,12 @@
                                 </a>
                             </td>
                         }
+                        else
+                        {
+                            <td></td>
+                        }
 
-                        @if (User.IsInRole("support engineer") && ticket.Status != "closed")
+                        @if (User.IsInRole("support engineer") && ticket.Status != "closed" && ticket.Escalate_SE == ViewBag.Current)
                         {
                             <td>
                                 <a href=@Url.Action("SEResolution", "Ticket", new { TicketId = ticket.TicketId })
@@ -202,8 +206,12 @@
                                 </a>
                             </td>
                         }
+                        else
+                        {
+                            <td></td>
+                        }
 
-                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Escalate_SE == 0)
+                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Escalate_SE == 0 && ticket.Employee == ViewBag.Current)
                         {
                             <td>
                                 <a href=@Url.Action("EscalateTicket", "Ticket", new { TicketId = ticket.TicketId }) 
@@ -211,6 +219,10 @@
                                     <i class="bi bi-exclamation-triangle"></i>
                                 </a>
                             </td>
+                        }
+                        else
+                        {
+                            <td></td>
                         }
                     </tr>
                 }

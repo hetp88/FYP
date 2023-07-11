@@ -47,13 +47,12 @@ namespace FYP.Controllers
         public IActionResult ViewTicket()
         {
             int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
-
             // Retrieve ticket data from the database
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
-                                       t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
+                                       t.datetime, t.priority, e.name AS EmployeeName, t.employee_id AS Employee, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
                                 FROM ticket t
                                 INNER JOIN users u ON u.userid = t.userid
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
@@ -62,6 +61,7 @@ namespace FYP.Controllers
                 connection.Open();
                 List<Ticket> tickets = connection.Query<Ticket>(query).AsList();
                 ViewBag.Current = currentuser;
+                //Console.WriteLine(ViewBag.Current);
                 return View(tickets);
             }
         }
@@ -111,6 +111,8 @@ namespace FYP.Controllers
             Random generate = new Random();
             int assignedticket = 0;
             DateTime created = DateTime.Now;
+            string user_email = "";
+            string user_name = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -152,6 +154,7 @@ namespace FYP.Controllers
                     Additional_Details = ticket.Additional_Details,
                     Resolution = null,
                     Escalate_Reason = null,
+                    Escalate_SE = 0,
                 };
 
                 int eid = empid[emp];
@@ -164,27 +167,54 @@ namespace FYP.Controllers
                     assignedticket = id + 1;
                 }
 
-                string query = @"INSERT INTO ticket (ticket_id, userid, type, description, category_id, status, datetime, priority, employee_id, devices_involved, additional_details, resolution, escalate_reason) 
-                                    VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, @DateTime, @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution, @Escalate_Reason)";
+                string query = @"INSERT INTO ticket (ticket_id, userid, type, description, category_id, status, datetime, priority, employee_id, devices_involved, additional_details, resolution, escalate_reason, escalation_SE) 
+                                    VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, @DateTime, @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution, @Escalate_Reason, @Escalate_SE)";
 
                 string update = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{eid}'";
 
+                string getUserinfo = $"SELECT u.username, u.email " +
+                                     $"FROM users u " +
+                                     $"INNER JOIN ticket t ON t.userid = u.userid " +
+                                     $"WHERE u.userid = '{newTicket.UserId}'";
+
+                List<Ticket> userinfo = connection.Query<Ticket>(getUserinfo).AsList();
+                foreach (Ticket info in userinfo)
+                {
+                    user_name = info.Username;
+                    user_email = info.Email;
+                }
+
                 if (connection.Execute(query, newTicket) == 1 && connection.Execute(update) == 1)
                 {
-                    string link = "";
+                    string link = "https://localhost:44397/Account/Login";
 
-                    string template = "Hi {0}, \n\r" +
-                                  "We have received your {1} ticket. \n\r" +
-                                  "Your ticket id is <b>{2}</b> and the description of the ticket is <b>{3}</b>. \n\r" +
-                                  "We will get back you as soon as possible. Status of ticket can be checked when you login \n\r" + 
-                                  "RP IT HelpDesk";
-                   
+                    string template = "Hello {0}, " +
+                                      "<br>" +
+                                      "<br>We have received your {1} ticket. " +
+                                      "<br>" +
+                                      "<br>Ticket id: <b>{2}</b>" +
+                                      "<br>Description of ticket is <b>{3}</b>. " +
+                                      "<br>" +
+                                      "<br>Status of ticket can be checked when you login to " + link +
+                                      "<br>We will get back you as soon as possible. " +
+                                      "<br>" +
+                                      "<br>Thank you, " +
+                                      "<br>RP IT HelpDesk";
+
                     string title = "Ticket Submitted Successful";
 
-                    string message = String.Format(template, newTicket.UserId, newTicket.Type, newTicket.TicketId, newTicket.Description);
+                    string message = String.Format(template, user_name, newTicket.Type, newTicket.TicketId, newTicket.Description);
 
-                    ViewData["Message"] = "Ticket submitted successfully";
-                    ViewData["MsgType"] = "success";
+                    if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                    {
+                        ViewData["Message"] = "Ticket submitted successfully";
+                        ViewData["MsgType"] = "success";
+                    }
+                    else
+                    {
+                        ViewData["Message"] = result;
+                        ViewData["MsgType"] = "warning";
+                    }
                 }
                 else
                 {
@@ -310,6 +340,8 @@ namespace FYP.Controllers
             int SEclosed = 0;
 
             string updateticket = "";
+            string user_name = "";
+            string user_email = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -318,7 +350,9 @@ namespace FYP.Controllers
                 Ticket tupdate = new Ticket()
                 {
                     TicketId = tickets.TicketId,
+                    UserId = tickets.UserId,
                     Employee = tickets.Employee,
+                    Description = tickets.Description,
                     Escalate_SE = tickets.Escalate_SE,
                     newStatus = tickets.newStatus,
                     Resolution = tickets.Resolution,
@@ -379,13 +413,52 @@ namespace FYP.Controllers
 
                 string updateHA = $"UPDATE employee SET tickets = '{HAassigned}', closed_tickets = '{HAclosed}' WHERE employee_id = '{tupdate.Employee}'";
 
+                string getUserinfo = $"SELECT u.username, u.email " +
+                                     $"FROM users u " +
+                                     $"INNER JOIN ticket t ON t.userid = u.userid " +
+                                     $"WHERE u.userid = '{tupdate.UserId}'";
+
+                List<Ticket> userinfo = connection.Query<Ticket>(getUserinfo).AsList();
+                foreach (Ticket info in userinfo)
+                {
+                    user_name = info.Username;
+                    user_email = info.Email;
+                }
+
                 //
                 if (tupdate.newStatus == "closed" && tupdate.Escalate_SE == 0)
                 {
 
                     if (connection.Execute(updateticket, tupdate) == 1 && connection.Execute(updateHA) == 1)
                     {
-                        ViewData["Message"] = "Updated successfully.";
+                        string link = "https://localhost:44397/Account/Login";
+
+                        string template = "Hello {0}, " +
+                                          "<br>" +
+                                          "<br>We have closed your {1} ticket. " +
+                                          "<br>" +
+                                          "<br>Ticket id: <b>{2}</b>" +
+                                          "<br>Description of ticket is <b>{3}</b>. " +
+                                          "<br>" +
+                                          "<br>Resolution of ticket can be checked when you login to " + link +
+                                          "<br>Thank you for your patience. " +
+                                          "<br>" +
+                                          "<br>Regards, " +
+                                          "<br>RP IT HelpDesk";
+
+                        string title = "Ticket Closed";
+
+                        string message = String.Format(template, user_name, tupdate.Type, tupdate.TicketId, tupdate.Description);
+
+                        if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                        {
+                            ViewData["Message"] = "Updated successfully.";
+                        }
+                        else
+                        {
+                            ViewData["Message"] = result;
+                            ViewData["MsgType"] = "warning";
+                        }
                     }
                     else
                     {
@@ -404,7 +477,34 @@ namespace FYP.Controllers
 
                     if (connection.Execute(updateticket, tupdate) == 1 && connection.Execute(updateHA) == 1 && connection.Execute(updateSE) == 1)
                     {
-                        ViewData["Message"] = "Updated successfully.";
+                        string link = "https://localhost:44397/Account/Login";
+
+                        string template = "Hello {0}, " +
+                                          "<br>" +
+                                          "<br>We have closed your {1} ticket. " +
+                                          "<br>" +
+                                          "<br>Ticket id: <b>{2}</b>" +
+                                          "<br>Description of ticket is <b>{3}</b>. " +
+                                          "<br>" +
+                                          "<br>Resolution of ticket can be checked when you login to " + link +
+                                          "<br>Thank you for your patience. " +
+                                          "<br>" +
+                                          "<br>Regards, " +
+                                          "<br>RP IT HelpDesk";
+
+                        string title = "Ticket Closed";
+
+                        string message = String.Format(template, user_name, tupdate.Type, tupdate.TicketId, tupdate.Description);
+
+                        if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                        {
+                            ViewData["Message"] = "Updated successfully.";
+                        }
+                        else
+                        {
+                            ViewData["Message"] = result;
+                            ViewData["MsgType"] = "warning";
+                        }
                     }
                     else
                     {
