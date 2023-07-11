@@ -30,7 +30,7 @@ namespace FYP.Controllers
  
         public IActionResult Index()
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff")) 
             {
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
@@ -50,7 +50,7 @@ namespace FYP.Controllers
         }
         public IActionResult Editor()
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff"))
+            if (User.IsInRole("administrator") )
             {
                 return View();
             }
