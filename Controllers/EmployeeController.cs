@@ -33,7 +33,9 @@ namespace FYP.Controllers
 
         public IActionResult EmployeeList()
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("administrator"))
+            {
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
                 FROM employee e
@@ -45,14 +47,23 @@ namespace FYP.Controllers
 
                 return View(employees);
             }
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
         public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets)
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("administrator"))
             {
-                connection.Open();
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    connection.Open();
 
-                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
+                    string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
                  FROM employee e
                  INNER JOIN roles r ON r.roles_id = e.roles_id
                  WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
@@ -63,29 +74,38 @@ namespace FYP.Controllers
                     AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
                     AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)";
 
-                List<Employee> employees = connection.Query<Employee>(query, new
-                {
-                    EmployeeId = string.IsNullOrEmpty(employeeId) ? null : "%" + employeeId + "%",
-                    Role = string.IsNullOrEmpty(role) ? null : "%" + role + "%",
-                    Name = string.IsNullOrEmpty(name) ? null : "%" + name + "%",
-                    Email = string.IsNullOrEmpty(email) ? null : "%" + email + "%",
-                    Phone_no = string.IsNullOrEmpty(phoneNumber) ? null : "%" + phoneNumber + "%",
-                    no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%",
-                    closed_tickets = string.IsNullOrEmpty(numclosed_tickets) ? null : "%" + numclosed_tickets + "%"
-                }).ToList();
+                    List<Employee> employees = connection.Query<Employee>(query, new
+                    {
+                        EmployeeId = string.IsNullOrEmpty(employeeId) ? null : "%" + employeeId + "%",
+                        Role = string.IsNullOrEmpty(role) ? null : "%" + role + "%",
+                        Name = string.IsNullOrEmpty(name) ? null : "%" + name + "%",
+                        Email = string.IsNullOrEmpty(email) ? null : "%" + email + "%",
+                        Phone_no = string.IsNullOrEmpty(phoneNumber) ? null : "%" + phoneNumber + "%",
+                        no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%",
+                        closed_tickets = string.IsNullOrEmpty(numclosed_tickets) ? null : "%" + numclosed_tickets + "%"
+                    }).ToList();
 
-                return View("EmployeeList", employees);
+                    return View("EmployeeList", employees);
+                }
             }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
 
 
         public IActionResult SearchLeaveRequests(string employeeId, DateTime? startDate, DateTime? endDate, string reason, string status)
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("administrator"))
             {
-                connection.Open();
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    connection.Open();
 
-                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+                    string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
                  FROM leave l
                  INNER JOIN employee e ON e.employee_id = l.employee_id
                  WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
@@ -94,74 +114,85 @@ namespace FYP.Controllers
                     AND (@Reason IS NULL OR l.reason LIKE @Reason)
                     AND (@Status IS NULL OR l.is_approved = @Status);";
 
-                List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query, new
-                {
-                    EmployeeId = string.IsNullOrEmpty(employeeId) ? null : "%" + employeeId + "%",
-                    StartDate = startDate,
-                    EndDate = endDate,
-                    Reason = string.IsNullOrEmpty(reason) ? null : "%" + reason + "%",
-                    Status = string.IsNullOrEmpty(status) ? null : status
-                }).ToList();
+                    List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query, new
+                    {
+                        EmployeeId = string.IsNullOrEmpty(employeeId) ? null : "%" + employeeId + "%",
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        Reason = string.IsNullOrEmpty(reason) ? null : "%" + reason + "%",
+                        Status = string.IsNullOrEmpty(status) ? null : status
+                    }).ToList();
 
-                return View("LeaveRequests", leaveRequests);
+                    return View("LeaveRequests", leaveRequests);
+                }
             }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
-
-
-
-
-
 
         public IActionResult Schedule()
         {
-            // Check if the logged-in user is an admin
-            bool isAdmin = User.IsInRole("administrator");
-
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
             {
-                string query;
-                if (isAdmin)
+                bool isAdmin = User.IsInRole("administrator");
+
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    // Retrieve all leave events for admin users
-                    query = @"SELECT l.startDate, l.end_date AS EndDate, e.employee_id AS EmployeeId
+                    string query;
+                    if (isAdmin)
+                    {
+                        // Retrieve all leave events for admin users
+                        query = @"SELECT l.startDate, l.end_date AS EndDate, e.employee_id AS EmployeeId
                       FROM leave l
                       INNER JOIN employee e ON e.employee_id = l.employee_id
                       WHERE l.is_approved = 'approved';";
-                }
-                else
-                {
-                    // Retrieve leave events for the logged-in staff member only
-                    int employeeId = GetLoggedInEmployeeId();
-                    query = @"SELECT l.startDate, l.end_date AS EndDate, e.employee_id AS EmployeeId
+                    }
+                    else
+                    {
+                        // Retrieve leave events for the logged-in staff member only
+                        int employeeId = GetLoggedInEmployeeId();
+                        query = @"SELECT l.startDate, l.end_date AS EndDate, e.employee_id AS EmployeeId
                       FROM leave l
                       INNER JOIN employee e ON e.employee_id = l.employee_id
                       WHERE l.is_approved = 'approved' AND e.employee_id = @EmployeeId;";
+                    }
+
+                    connection.Open();
+
+                    List<EmployeeSchedule> leaveEvents;
+                    if (isAdmin)
+                    {
+                        leaveEvents = connection.Query<EmployeeSchedule>(query).ToList();
+                    }
+                    else
+                    {
+                        leaveEvents = connection.Query<EmployeeSchedule>(query, new { EmployeeId = GetLoggedInEmployeeId() }).ToList();
+                    }
+
+                    // Format the leave events for FullCalendar
+                    var formattedEvents = leaveEvents.Select(e => new
+                    {
+                        title = e.EmployeeId,
+                        start = e.StartDate.ToString("yyyy-MM-dd"),
+                        end = e.EndDate.AddDays(1).ToString("yyyy-MM-dd") // Add 1 day to include the end date in the event
+                    });
+
+                    ViewBag.LeaveEvents = formattedEvents;
+
+                    return View();
                 }
-
-                connection.Open();
-
-                List<EmployeeSchedule> leaveEvents;
-                if (isAdmin)
-                {
-                    leaveEvents = connection.Query<EmployeeSchedule>(query).ToList();
-                }
-                else
-                {
-                    leaveEvents = connection.Query<EmployeeSchedule>(query, new { EmployeeId = GetLoggedInEmployeeId() }).ToList();
-                }
-
-                // Format the leave events for FullCalendar
-                var formattedEvents = leaveEvents.Select(e => new
-                {
-                    title = e.EmployeeId,
-                    start = e.StartDate.ToString("yyyy-MM-dd"),
-                    end = e.EndDate.AddDays(1).ToString("yyyy-MM-dd") // Add 1 day to include the end date in the event
-                });
-
-                ViewBag.LeaveEvents = formattedEvents;
-
-                return View();
             }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            // Check if the logged-in user is an admin
+            
         }
 
 
@@ -186,11 +217,18 @@ namespace FYP.Controllers
 
         public IActionResult ApplyLeave()
         {
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            {
+                return View();
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
             //int nextLeaveId = GetNextLeaveId();
 
             //ViewBag.NextLeaveId = nextLeaveId;
-
-            return View();
         }
 
         //[HttpPost]
@@ -232,76 +270,94 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult ApplyLeave(EmployeeSchedule leave)
         {
-            int leaveId;
-
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
             {
-                // Find the maximum leave_id from the database
-                string maxIdQuery = @"SELECT MAX(leave_id) FROM leave";
-                connection.Open();
-                var maxId = connection.QuerySingleOrDefault<int?>(maxIdQuery);
-                leaveId = maxId.HasValue ? maxId.Value + 1 : 1;
+                int leaveId;
 
-                // Retrieve the logged-in employee's ID
-                int employeeId = GetLoggedInEmployeeId();
-
-                // Convert the proof provided to a byte array
-                byte[] proofBytes;
-
-                using (var memoryStream = new MemoryStream())
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    leave.ProofProvided.CopyTo(memoryStream);
-                    proofBytes = memoryStream.ToArray();
-                }
+                    // Find the maximum leave_id from the database
+                    string maxIdQuery = @"SELECT MAX(leave_id) FROM leave";
+                    connection.Open();
+                    var maxId = connection.QuerySingleOrDefault<int?>(maxIdQuery);
+                    leaveId = maxId.HasValue ? maxId.Value + 1 : 1;
 
-                // Store the proof as a base64-encoded string
-                string proof = Convert.ToBase64String(proofBytes);
+                    // Retrieve the logged-in employee's ID
+                    int employeeId = GetLoggedInEmployeeId();
 
-                // Store the leave request in the database
-                string insertQuery = @"
+                    // Convert the proof provided to a byte array
+                    byte[] proofBytes;
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        leave.ProofProvided.CopyTo(memoryStream);
+                        proofBytes = memoryStream.ToArray();
+                    }
+
+                    // Store the proof as a base64-encoded string
+                    string proof = Convert.ToBase64String(proofBytes);
+
+                    // Store the leave request in the database
+                    string insertQuery = @"
             INSERT INTO leave (leave_id, employee_id, startDate, end_date, reason, proof_provided, is_approved)
             VALUES (@LeaveId, @EmployeeId, @StartDate, @EndDate, @Reason, @ProofProvided, 'Pending');";
 
-                connection.Execute(insertQuery, new
-                {
-                    LeaveId = leaveId,
-                    EmployeeId = employeeId,
-                    leave.StartDate,
-                    leave.EndDate,
-                    leave.Reason,
-                    ProofProvided = proof
-                });
-            }
+                    connection.Execute(insertQuery, new
+                    {
+                        LeaveId = leaveId,
+                        EmployeeId = employeeId,
+                        leave.StartDate,
+                        leave.EndDate,
+                        leave.Reason,
+                        ProofProvided = proof
+                    });
+                }
 
-            if (leaveId > 0)
-            {
-                // Redirect to the LeaveRequests page
-                return RedirectToAction("LeaveRequests");
+                if (leaveId > 0)
+                {
+                    // Redirect to the LeaveRequests page
+                    return RedirectToAction("LeaveRequests");
+                }
+                else
+                {
+                    // Handle error scenario
+                    return View("Error");
+                }
             }
             else
             {
-                // Handle error scenario
-                return View("Error");
+                // Unauthorized actions for other roles
+                return View("Forbidden");
             }
+           
         }
 
         // DownloadProof action method
         public IActionResult DownloadProof(int leaveId)
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("administrator"))
             {
-                string query = "SELECT proof_provided FROM [leave] WHERE leave_id = @LeaveId;";
-                connection.Open();
-                string proofProvided = connection.QuerySingleOrDefault<string>(query, new { LeaveId = leaveId });
-
-                if (!string.IsNullOrEmpty(proofProvided))
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    byte[] proofBytes = Convert.FromBase64String(proofProvided);
-                    return File(proofBytes, "application/pdf");
-                }
-            }
+                    string query = "SELECT proof_provided FROM [leave] WHERE leave_id = @LeaveId;";
+                    connection.Open();
+                    string proofProvided = connection.QuerySingleOrDefault<string>(query, new { LeaveId = leaveId });
 
-            return NotFound();
+                    if (!string.IsNullOrEmpty(proofProvided))
+                    {
+                        byte[] proofBytes = Convert.FromBase64String(proofProvided);
+                        return File(proofBytes, "application/pdf");
+                    }
+                }
+
+                return NotFound();
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
 
 
@@ -323,43 +379,61 @@ namespace FYP.Controllers
 
         public IActionResult LeaveRequests()
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("administrator"))
             {
-                // Retrieve all leave requests
-                string query = @"
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    // Retrieve all leave requests
+                    string query = @"
             SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
             FROM leave l
             INNER JOIN employee e ON e.employee_id = l.employee_id;";
 
-                connection.Open();
+                    connection.Open();
 
-                List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query).ToList();
+                    List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query).ToList();
 
-                return View(leaveRequests);
+                    return View(leaveRequests);
+                }
             }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
 
 
         public IActionResult ReviewLeave(int leaveId)
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            if (User.IsInRole("administrator"))
             {
-                string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date as EndDate, l.reason, l.is_approved, l.proof_provided
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date as EndDate, l.reason, l.is_approved, l.proof_provided
                 FROM leave l
                 INNER JOIN employee e ON e.employee_id = l.employee_id
                 WHERE l.leave_id = @LeaveId;";
 
-                connection.Open();
+                    connection.Open();
 
-                EmployeeSchedule leaveRequest = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId });
+                    EmployeeSchedule leaveRequest = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId });
 
-                if (leaveRequest != null)
-                {
-                    return View(leaveRequest);
+                    if (leaveRequest != null)
+                    {
+                        return View(leaveRequest);
+                    }
                 }
-            }
 
-            return RedirectToAction("LeaveRequests");
+                return RedirectToAction("LeaveRequests");
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+            
         }
 
         [HttpPost]
@@ -386,7 +460,15 @@ namespace FYP.Controllers
         //for admin to add?
         public IActionResult NewEmployee()
         {
-            return View();
+            if (User.IsInRole("administrator"))
+            {
+                return View();
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
         }
 
         [HttpPost]
