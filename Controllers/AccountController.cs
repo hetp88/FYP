@@ -456,7 +456,6 @@ public class AccountController : Controller
         return View();
     }
 
-    // POST: Handle the change password form submission
     [HttpPost]
     public IActionResult ChangePassword(string email, Newpw pw)
     {
