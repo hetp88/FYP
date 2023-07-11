@@ -49,5 +49,9 @@ public static class EmailUtl
         return success;
     }
 
-}
+        internal static bool SendEmail(string email, string message, out string result)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

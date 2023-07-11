@@ -1,65 +1,21 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <title>Forgot Password</title>
-    <style>
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+﻿@model ForgetPw
 
-            .container h2 {
-                text-align: center;
-            }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+<h2>Forget Password</h2>
 
-            .form-group label {
-                display: block;
-                margin-bottom: 5px;
-            }
+@if (ViewBag.VerificationCodeSent != null && ViewBag.VerificationCodeSent)
+{
+    <p>Verification code has been sent to your email address.</p>
+}
+else if (ViewBag.VerificationCodeSent != null && !ViewBag.VerificationCodeSent)
+{
+    <p>Failed to send the verification code. Please try again later.</p>
+}
 
-            .form-group input {
-                width: 100%;
-                padding: 5px;
-                font-size: 16px;
-                border-radius: 3px;
-                border: 1px solid #ccc;
-            }
-
-            .form-group button {
-                width: 100%;
-                padding: 10px;
-                font-size: 16px;
-                background-color: blue;
-                color: white;
-                border: none;
-                border-radius: 3px;
-                cursor: pointer;
-            }
-
-                .form-group button:hover {
-                    background-color: lightblue;
-                }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Forgot Password</h2>
-        <form>
-            <div class="form-group">
-                <label for="email">Email address:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <button type="submit">Reset Password</button>
-            </div>
-        </form>
+<form method="post" asp-action="ForgetPw">
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="Email" required>
     </div>
-</body>
-</html>
+    <button type="submit" class="btn btn-primary">Send Verification Code</button>
+</form>

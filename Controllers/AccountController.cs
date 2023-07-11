@@ -306,10 +306,6 @@ public class AccountController : Controller
     {
         return View();
     }
-    public IActionResult ForgetPw()
-    {
-        return View();
-    }
 
     public IActionResult Profile()
     {
@@ -368,6 +364,59 @@ public class AccountController : Controller
         else
         {
             return RedirectToAction("");
+        }
+    }
+
+    public IActionResult ForgetPw()
+    {
+        return View();
+    }
+    [HttpPost]
+    public IActionResult ForgetPw(ForgetPw npw)
+    {
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            ForgetPw pwu = new ForgetPw()
+            {
+                Email = npw.Email,
+            };
+
+            Random random = new Random();
+            int code = random.Next(100000, 999999);
+
+            string ce = $"SELECT email FROM users WHERE email = '{pwu.Email}'";
+            using (SqlCommand command = new SqlCommand(ce, connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        string recipientEmail = pwu.Email;
+                        string subject = "Verification Code";
+                        string message = $"Your verification code is: {code}";
+
+                        string error;
+                        if (EmailUtl.SendEmail(recipientEmail, subject, message, out error))
+                        {
+                            // Email sent successfully
+                            ViewBag.VerificationCodeSent = true;
+                        }
+                        else
+                        {
+                            // Handle email sending error
+                            ViewBag.VerificationCodeSent = false;
+                        }
+                    }
+                    else
+                    {
+                        // Email not found in the database, handle accordingly
+                        ViewBag.VerificationCodeSent = false;
+                    }
+                }
+            }
+
+            return View();
         }
     }
 
