@@ -50,7 +50,15 @@ namespace FYP.Controllers
         }
         public IActionResult Editor()
         {
-            return View();
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff"))
+            {
+                return View();
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
         }
         [HttpPost]
         public IActionResult Editor(News news)
