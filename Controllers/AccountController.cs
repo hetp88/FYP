@@ -392,25 +392,24 @@ public class AccountController : Controller
                 {
                     if (reader.Read())
                     {
-                        string recipientEmail = pwu.Email;
+                        string user = pwu.Email;
                         string subject = "Verification Code";
                         string message = $"Your verification code is: {code}";
-
                         string error;
-                        if (EmailUtl.SendEmail(recipientEmail, subject, message, out error))
+
+
+                        if (EmailUtl.SendEmail(user, subject, message, out error))
                         {
-                            // Email sent successfully
                             ViewBag.VerificationCodeSent = true;
                         }
                         else
                         {
-                            // Handle email sending error
+
                             ViewBag.VerificationCodeSent = false;
                         }
                     }
                     else
                     {
-                        // Email not found in the database, handle accordingly
                         ViewBag.VerificationCodeSent = false;
                     }
                 }
