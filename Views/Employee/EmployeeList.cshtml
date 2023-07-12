@@ -24,6 +24,15 @@
                 background-color: #218838; /* Darker shade of green */
                 border-color: #218838; /* Darker shade of green */
             }
+
+        .update-icon {
+            cursor: pointer;
+        }
+
+        .cute-icon {
+            font-size: 24px;
+            color: pink;
+        }
     </style>
     <script>
         window.onload = function () {
@@ -81,8 +90,8 @@
                         <td style="text-align:center">@employee.Phone_no</td>
                         <td style="text-align:center">@employee.no_tickets</td>
                         <td style="text-align:center">@employee.closed_tickets</td>
-                        <td style="text-align:center">
-                            
+                        <td style="text-align: center">
+                            <i class="update-icon" onclick="updateEmployee(@employee.EmployeeId)">&#9998;</i>
                         </td>
                     </tr>
                 }

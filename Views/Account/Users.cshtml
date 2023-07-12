@@ -68,7 +68,7 @@
                     <th style="text-align:center">School</th>
                     <th style="text-align:center">Email</th>
                     <th style="text-align:center">Phone Number</th>
-                    
+                    <th style="text-align:center">Last Login</th>
                 </tr>
                 @foreach (var user in Model)
                 {
@@ -79,7 +79,7 @@
                         <td style="text-align:center">@user.school</td>
                         <td style="text-align:center">@user.email</td>
                         <td style="text-align:center">@user.phoneNo</td>
-                        
+                        <td style="text-align:center">@user.last_login.ToLongDateString()</td>
                     </tr>
                 }
             </table>

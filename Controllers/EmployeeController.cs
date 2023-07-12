@@ -46,6 +46,9 @@ namespace FYP.Controllers
                 return View(employees);
             }
         }
+        
+
+
         public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
