@@ -1,7 +1,5 @@
 @model List<FYP.Models.Ticket>
-@{
-    Layout = "_Ticket";
-}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,6 +74,7 @@
     <title>Data Collected</title>
 </head>
 <body>
+    <a href="javascript:history.back()" class="back-button">Back</a>
     <div class="container">
     <div>
         <label for="startDate" style="display: block; margin-bottom: 5px;">Start Date:</label>
@@ -107,7 +106,6 @@
             <h2>Ticket Type</h2>
             <canvas id="typeChart"></canvas>
         </div>
-    </div>
     </div>
 
     <script>
@@ -183,9 +181,9 @@
         @Model.Where(ticket => ticket.Type == "incident").Sum(ticket => ticket.TypeCount),
                 ],
                 backgroundColor: [
-                    'rgba(78, 61, 88, 0.8)',
-                    'rgba(80, 22, 115, 0.8)',
-                    'rgba(192, 107, 243, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
+                    'rgba(39, 202, 245, 0.8)',
                 ]
             }]
         }

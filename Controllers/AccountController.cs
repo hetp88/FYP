@@ -352,21 +352,97 @@ public class AccountController : Controller
             // Unauthorized actions for other roles
             return View("Forbidden");
         }
-    
     }
-
-    [Authorize(Roles = "student, staff")]
     public IActionResult EditProfile()
     {
-        if (!ModelState.IsValid)
+        return View();
+    }
+    public IActionResult EditProfile2()
+    {
+        return View();
+    }
+    public IActionResult UpdatePassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult EditProfile(NewUser ur)
+    {
+        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
-            return View("EditProfile");
-        }
-        else
-        {
-            return RedirectToAction("");
+            connection.Open();
+            NewUser eur = new NewUser()
+            {
+                PhoneNo = ur.PhoneNo,
+            };
+            string updatephone = $"UPDATE users SET phone_no = @PhoneNo WHERE userid = '{currentuser}'";
+
+            if (connection.Execute(updatephone, eur) == 1)
+            {
+                ViewData["Message"] = "Updated successfully.";
+                return RedirectToAction("Profile");
+            }
+            else
+            {
+                ViewData["Message"] = "Unsuccessful update. Do try again.";
+                return RedirectToAction("EditProfile");
+            }
         }
     }
+    [HttpPost]
+    public IActionResult EditProfile2(NewEmployee eu)
+    {
+        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            NewEmployee eut = new NewEmployee()
+            {
+                Phone_no = eu.Phone_no,
+            };
+            string updatephoneE = $"UPDATE employee SET phone_no = @Phone_no WHERE employee_id = '{currentuser}'";
+
+            if (connection.Execute(updatephoneE, eut) == 1)
+            {
+                ViewData["Message"] = "Updated successfully.";
+                return RedirectToAction("EmpProfile");
+            }
+            else
+            {
+                ViewData["Message"] = "Unsuccessful update. Do try again.";
+                return RedirectToAction("EditProfile");
+            }
+        }
+    }
+
+    [HttpPost]
+    public IActionResult UpdatePassword(ChangePasswordViewModel np)
+    {
+        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            ChangePasswordViewModel pl = new ChangePasswordViewModel()
+            {
+                ConfirmPassword = np.ConfirmPassword,
+            };
+            string updatepwE = $"UPDATE employee SET employee_pw = HASHBYTES('SHA1', @ConfirmPassword) WHERE employee_id = '{currentuser}'";
+            if (connection.Execute(updatepwE, pl) == 1)
+            {
+                ViewData["Message"] = "Updated successfully.";
+                return RedirectToAction("EmpProfile");
+            }
+            else
+            {
+                ViewData["Message"] = "Unsuccessful update. Do try again.";
+                return RedirectToAction("EditProfile");
+            }
+        }
+    }
+    //========================================================================================//
+
     [HttpGet]
     public IActionResult ForgetPw()
     {
@@ -401,9 +477,10 @@ public class AccountController : Controller
 
                         if (EmailUtl.SendEmail(user, subject, message, out error))
                         {
-                            //Store verification code in session
+                            // Store verification code in session
                             HttpContext.Session.SetInt32("VerificationCode", code);
-                            return RedirectToAction("VerifyCode");
+                            HttpContext.Session.SetString("UserEmail", user); // Store user email in session
+                            return RedirectToAction("VerifyCode", new { email = user });
                         }
                         else
                         {
@@ -435,55 +512,74 @@ public class AccountController : Controller
     {
         // Retrieve the stored verification code from session
         int? storedCode = HttpContext.Session.GetInt32("VerificationCode");
+        string userEmail = HttpContext.Session.GetString("UserEmail"); // Retrieve user email from session
 
-        if (storedCode.HasValue && code == storedCode)
+        if (storedCode.HasValue && code == storedCode && userEmail == email)
         {
-            // Code is correct, redirect to the change password form
-            return RedirectToAction("ChangePassword", new { email = email });
+            // Code is correct, store the user email in TempData and redirect to the change password action
+            TempData["UserEmail"] = userEmail;
+            return RedirectToAction("ChangePassword");
         }
         else
         {
             TempData["Message"] = "Verification Incorrect";
             TempData["MsgType"] = "danger";
-            return RedirectToAction("VerifyCode");
+            return RedirectToAction("VerifyCode", new { email = email });
             // Code is incorrect, handle the error
         }
     }
 
     [HttpGet]
-    public IActionResult ChangePassword(string email)
+    public IActionResult ChangePassword()
     {
+        string userEmail = TempData["UserEmail"] as string;
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            // Handle the case when the userEmail is not available
+            return RedirectToAction("ChangePassword");
+        }
+
+        ViewData["UserEmail"] = userEmail;
         return View();
     }
 
     [HttpPost]
-    public IActionResult ChangePassword(string email, Newpw pw)
+    public IActionResult ChangePassword(ChangePasswordViewModel viewModel)
     {
-        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        if (ModelState.IsValid)
         {
-            connection.Open();
-            Newpw newpw = new Newpw()
-            {
-                cfmpw = pw.cfmpw,
+            string userEmail = ViewData["UserEmail"] as string;
 
-            };
-
-            string query = $"UPDATE users SET user_pw = HASHBYTES('SHA1', @cfmpw) WHERE email = '{email}';";
-            if (connection.Execute(query, newpw) == 1)
+            if (string.IsNullOrEmpty(userEmail))
             {
-                ViewData["Message"] = "Updated successfully.";
-                return RedirectToAction("Login");
-            }
-            else
-            {
-                ViewData["Message"] = "Unsuccessful update. Do try again.";
+                // Handle the case when the userEmail is not available
                 return RedirectToAction("ChangePassword");
             }
+
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+                var parameters = new { email = userEmail, cfmpw = viewModel.NewPassword };
+                string query = $"UPDATE users SET user_pw = HASHBYTES('SHA1', @cfmpw) WHERE email = @email;";
+
+                if (connection.Execute(query, parameters) == 1)
+                {
+                    ViewData["Message"] = "Updated successfully.";
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    ViewData["Message"] = "Unsuccessful update. Please try again.";
+                    return RedirectToAction("ChangePassword");
+                }
+            }
         }
+
+        return View(viewModel);
     }
 
 
-    
+
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {

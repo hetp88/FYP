@@ -76,10 +76,7 @@
             </p>
             <p style="text-align:center">
                 <label>Phone Number:  </label>
-                <span class="bi bi-pencil-square" data-toggle="tooltip">
-                    @users.phoneNo <a class="nav-link" asp-controller="Account" asp-action="EditProfile">
-                </a>
-                </span> 
+                <label>Phone Number:</label> @users.phoneNo <a href="/Account/EditProfile" class="bi bi-pencil-square" data-toggle="tooltip" style="color: black"></a>
             </p>
             <p style ="text-align:center">
                 <label>Name: </label>
@@ -92,9 +89,7 @@
         }
 
         <div class="btn-container">
-            <button type="button" class="btn btn-primary btn-block"  asp-controller="Travel"
-               asp-action="Update"
-               >Edit Profile</button>
+            <button class="button" onclick="location.href='/Account/EditProfile'">Change Password</button>
         </div>
     </div>
 </body>

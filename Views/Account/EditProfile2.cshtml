@@ -1,4 +1,4 @@
-﻿@model NewUser
+﻿@model NewEmployee
 
 @{
     Layout = "_Ticket";
@@ -46,23 +46,24 @@
             transition: background-color 0.3s;
         }
 
-        .container .btn:hover {
-            background-color: #45a049;
-        }
+            .container .btn:hover {
+                background-color: #45a049;
+            }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>User Profile</h1>
-        <form method="post" action="/Account/EditProfile">
+        <form method="post" action="/Account/EditProfile2">
             <div>
-                <label for="PhoneNo" class="form-label">New Phone number</label>
-                <textarea id="PhoneNo" name="PhoneNo" class="form-control"></textarea>
+                <label for="Phone_no" class="form-label">New Phone number</label>
+                <textarea id="Phone_no" name="Phone_no" class="form-control"></textarea>
             </div>
-
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 </body>
 </html>
 
+
+              
