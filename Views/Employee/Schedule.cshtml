@@ -27,6 +27,7 @@
             margin: 40px auto;
             background-color: #FFF;
             border-radius: 4px;
+            margin-top: -70px; /* Adjust the value to shift the calendar up */
         }
 
         .leave-event {
@@ -50,11 +51,21 @@
             font-size: 0.9em;
             color: black;
         }
+
+        .create-event {
+            display: inline-block;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .create-event-icon {
+            vertical-align: middle;
+        }
     </style>
 
     <script>
         $(document).ready(function () {
-            $('#calendar').fullCalendar({
+            var calendar = $('#calendar').fullCalendar({
                 // Add your other calendar options here
 
                 events: @Html.Raw(Json.Serialize(ViewBag.LeaveEvents)),
@@ -83,7 +94,15 @@
 
                 eventAfterRender: function (event, element) {
                     $('[data-toggle="tooltip"]').tooltip();
-                }
+                },
+
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'createEventButton'
+                },
+
+                
             });
 
             function getLeaveInfo(event) {
@@ -97,7 +116,6 @@
 
                 return leaveInfo;
             }
-
         });
     </script>
 </head>
