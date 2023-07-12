@@ -147,13 +147,13 @@ namespace FYP.Controllers
                     string idQuery = @"SELECT MAX(ticket_id) FROM ticket";
 
                     string empquery = @"SELECT e.employee_id
-                                    FROM employee e
-                                    LEFT JOIN [leave] l ON e.employee_id = l.employee_id
-                                    WHERE e.roles_id = 3
-                                      AND (e.tickets IS NULL OR e.tickets < 5)
-                                      AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
-                                      AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
-  	                                    OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
+                                        FROM employee e
+                                        LEFT JOIN leave l ON e.employee_id = l.employee_id
+                                        WHERE e.roles_id = 3
+                                        AND (e.tickets IS NULL OR e.tickets < 5)
+                                        AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
+                                        OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
+                                        AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
                                         OR l.employee_id IS NULL)";
 
                     connection.Open();
@@ -299,9 +299,9 @@ namespace FYP.Controllers
                                     LEFT JOIN leave l ON e.employee_id = l.employee_id
                                     WHERE e.roles_id = 4
                                         AND (e.tickets IS NULL OR e.tickets < 5)
-                                        AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
                                         AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
   	                                    OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
+                                        AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
                                         OR l.employee_id IS NULL)";
 
                 List<int> emid = connection.Query<int>(equery).AsList();
