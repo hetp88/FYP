@@ -1,0 +1,13 @@
+﻿
+@{
+    string email = ViewBag.Email;
+}
+
+<form asp-controller="Account" asp-action="VerifyCode" method="post">
+    <div class="form-group">
+        <label for="code">Verification Code:</label>
+        <input type="text" class="form-control" id="code" name="Code" required>
+    </div>
+    <input type="hidden" name="Email" value="@email">
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

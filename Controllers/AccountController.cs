@@ -101,6 +101,7 @@ public class AccountController : Controller
                     UserID = account.UserID, 
                 };
 
+
                 if (account.UserID.ToString().Length == 4 || account.UserID.ToString().Length == 8)
                 {
                     connection.Execute(LASTLOGIN_SQ, u); //update the last login timestamp of the user
@@ -306,10 +307,6 @@ public class AccountController : Controller
     {
         return View();
     }
-    public IActionResult ForgetPw()
-    {
-        return View();
-    }
 
     public IActionResult Profile()
     {
@@ -370,6 +367,123 @@ public class AccountController : Controller
             return RedirectToAction("");
         }
     }
+    [HttpGet]
+    public IActionResult ForgetPw()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult ForgetPw(ForgetPw npw)
+    {
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            ForgetPw pwu = new ForgetPw()
+            {
+                Email = npw.Email,
+            };
+
+            Random random = new Random();
+            int code = random.Next(100000, 999999);
+
+            string ce = $"SELECT email FROM users WHERE email = '{pwu.Email}'";
+            using (SqlCommand command = new SqlCommand(ce, connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        string user = pwu.Email;
+                        string subject = "Verification Code";
+                        string message = $"Your verification code is: {code}";
+                        string error;
+
+                        if (EmailUtl.SendEmail(user, subject, message, out error))
+                        {
+                            //Store verification code in session
+                            HttpContext.Session.SetInt32("VerificationCode", code);
+                            return RedirectToAction("VerifyCode");
+                        }
+                        else
+                        {
+                            TempData["Message"] = "Email not sent";
+                            TempData["MsgType"] = "danger";
+                            return RedirectToAction("ForgetPw");
+                        }
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Email Not Found";
+                        TempData["MsgType"] = "danger";
+                        return RedirectToAction("ForgetPw");
+                    }
+                }
+            }
+        }
+    }
+
+    [HttpGet]
+    public IActionResult VerifyCode(string email)
+    {
+        ViewBag.Email = email;
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult VerifyCode(int code, string email)
+    {
+        // Retrieve the stored verification code from session
+        int? storedCode = HttpContext.Session.GetInt32("VerificationCode");
+
+        if (storedCode.HasValue && code == storedCode)
+        {
+            // Code is correct, redirect to the change password form
+            return RedirectToAction("ChangePassword", new { email = email });
+        }
+        else
+        {
+            TempData["Message"] = "Verification Incorrect";
+            TempData["MsgType"] = "danger";
+            return RedirectToAction("VerifyCode");
+            // Code is incorrect, handle the error
+        }
+    }
+
+    [HttpGet]
+    public IActionResult ChangePassword(string email)
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult ChangePassword(string email, Newpw pw)
+    {
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            Newpw newpw = new Newpw()
+            {
+                cfmpw = pw.cfmpw,
+
+            };
+
+            string query = $"UPDATE users SET user_pw = HASHBYTES('SHA1', @cfmpw) WHERE email = '{email}';";
+            if (connection.Execute(query, newpw) == 1)
+            {
+                ViewData["Message"] = "Updated successfully.";
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                ViewData["Message"] = "Unsuccessful update. Do try again.";
+                return RedirectToAction("ChangePassword");
+            }
+        }
+    }
+
+
+    
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
