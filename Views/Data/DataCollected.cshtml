@@ -115,9 +115,9 @@
                 label: 'Status',
                 data: [
         @Model.Where(ticket => ticket.Status == "pending").Sum(ticket => ticket.StatusCount),
-        @Model.Where(ticket => ticket.Status == "logged").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "submitted").Sum(ticket => ticket.StatusCount),
         @Model.Where(ticket => ticket.Status == "in progress").Sum(ticket => ticket.StatusCount),
-        @Model.Where(ticket => ticket.Status == "waiting").Sum(ticket => ticket.StatusCount),
+        @Model.Where(ticket => ticket.Status == "waiting for resolution").Sum(ticket => ticket.StatusCount),
         @Model.Where(ticket => ticket.Status == "resolved").Sum(ticket => ticket.StatusCount),
         @Model.Where(ticket => ticket.Status == "closed").Sum(ticket => ticket.StatusCount)
                                     ],

@@ -14,4 +14,7 @@ public class ChangePasswordViewModel
     [DataType(DataType.Password)]
     [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; } = null!;
+    [RegularExpression("\\d{8}", ErrorMessage = "8 numbers only")]
+    public int PhoneNumber { get; set; }
+    public int User { get; set; } 
 }

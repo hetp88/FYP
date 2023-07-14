@@ -1,4 +1,4 @@
-﻿@model List<FYP.Models.Users> 
+﻿@model List<FYP.Models.Users>
 @inject IHttpContextAccessor contextAccessor
 @{
     Layout = "_Ticket";
@@ -14,84 +14,87 @@
         }
 
         .container {
-            width: 980px;
+            width: 600px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #5555
+            background-color: #555;
+            color: #fff;
         }
 
         h1 {
-            color: #FFFFFF;
-        }
-
-        p {
-            /*text-align: center;
-            color: #FFFFFF;*/
-            padding: 5px;
-            /*font-size: 110%*/
+            text-align: center;
         }
 
         label {
-            display: block;
+            font-weight: bold;
             margin-bottom: 5px;
-            text-align: center;
-            color: lightcyan;
-            padding: 5px;
-            font-size: 120%
         }
 
-        span {
-            text-align: center;
-            color: #FFFFFF;
-            padding: 10px;
-            font-size: 120%;
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .container .btn {
-            display: inline-block;
-            justify-content: center;
+        li {
+            margin-bottom: 5px;
+        }
+
+        .btn-container {
+            text-align: center;
             margin-top: 10px;
+        }
+
+        .button {
+            display: inline-block;
             padding: 8px 16px;
             border-radius: 4px;
+            background-color: #337ab7;
             color: #fff;
             text-decoration: none;
             transition: background-color 0.3s;
+            cursor: pointer;
+            border: none;
         }
+
+            .button:hover {
+                background-color: #23527c;
+            }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>About You</h1>
-        @foreach (var users in Model)
+        <h1>Profile: </h1>
+        @foreach (var user in Model)
         {
-            <p style="text-align:center">
-                <label>User ID: </label>
-                <span>@users.userId</span>
+            <p>
+                <label>User ID:</label>
+                <span>@user.userId</span>
             </p>
-            <p style="text-align:center">
-                <label>Email: </label>
-                <span>@users.email</span>
+            <p>
+                <label>Email:</label>
+                <span>@user.email</span>
             </p>
-            <p style="text-align:center">
-                <label>Phone Number:  </label>
-                <label>Phone Number:</label> @users.phoneNo <a href="/Account/EditProfile" class="bi bi-pencil-square" data-toggle="tooltip" style="color: black"></a>
+            <p>
+                <label>Phone Number:</label>
+                <span>@user.phoneNo</span>
+                <a href="/Account/EditProfile2" class="bi bi-pencil-square" data-toggle="tooltip" style="color: black"></a>
             </p>
-            <p style ="text-align:center">
-                <label>Name: </label>
-                <span>@users.username </span>
+            <p>
+                <label>Name:</label>
+                <span>@user.username</span>
             </p>
-            <p style="text-align:center">
-                <label>School: </label>
-                <span>@users.school</span>
+            <p>
+                <label>School:</label>
+                <span>@user.school</span>
             </p>
         }
 
         <div class="btn-container">
-            <button class="button" onclick="location.href='/Account/EditProfile'">Change Password</button>
+            <button class="button" onclick="location.href='/Account/UpdatePassword'">Change Password</button>
         </div>
     </div>
 </body>
 </html>
-

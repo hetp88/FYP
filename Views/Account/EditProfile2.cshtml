@@ -1,4 +1,4 @@
-﻿@model NewEmployee
+﻿@model ChangePasswordViewModel
 
 @{
     Layout = "_Ticket";
@@ -56,8 +56,8 @@
         <h1>User Profile</h1>
         <form method="post" action="/Account/EditProfile2">
             <div>
-                <label for="Phone_no" class="form-label">New Phone number</label>
-                <textarea id="Phone_no" name="Phone_no" class="form-control"></textarea>
+                <label for="PhoneNumber" class="form-label">New Phone number</label>
+                <textarea id="PhoneNumber" name="PhoneNumber" class="form-control"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
