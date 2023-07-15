@@ -5,28 +5,14 @@ using FYP.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ZXing;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System;
 using System.Data;
-using Microsoft.AspNetCore.Http;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-using System.Security.Principal;
-using XAct.Users;
 using XAct;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
-using Org.BouncyCastle.Crypto.Generators;
-using BCrypt.Net;
-using static System.Text.Encoding;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Routing;
+using XAct.Messages;
+
 
 namespace FYP.Controllers;
 public class AccountController : Controller
@@ -547,14 +533,34 @@ public class AccountController : Controller
             byte[] passwordBytes = Encoding.UTF8.GetBytes(vm.EmpPw);
             byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
             string hashedPassword1 = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
-
+            
             string query = $"UPDATE users SET user_pw = {hashedPassword1} WHERE email = '{pl.Email}';";
             string updatepwE = $"UPDATE employee SET employee_pw = {hashedPassword1} WHERE employee_id = 400001";
 
+            //Send Email to inform user on Password update
+            string template = "Dear user, " +
+                              "<br>" +
+                              "<br>Your Password Have been reset successfully" +
+                              "<br>" +
+                              "<br>" +
+                              "<br>Thank you, " +
+                              "<br>IT Helper";
+            string title = "Password reset Successfully";
+            string message = String.Format(template);
             if (connection.Execute(query, pl) == 1)
             {
                 Console.WriteLine(vm.EmpPw);
                 ViewData["Message"] = "Updated successfully.";
+                if (EmailUtl.SendEmail(pl.Email, title, message, out string result))
+                {
+                    ViewData["Message"] = "Password Updaetd Successfully";
+                    ViewData["MsgType"] = "success";
+                }
+                else
+                {
+                    ViewData["Message"] = result;
+                    ViewData["MsgType"] = "warning";
+                }
                 return RedirectToAction("Login");
             }
             else if (connection.Execute(updatepwE, pl) == 1)
