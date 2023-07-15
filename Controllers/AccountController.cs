@@ -511,8 +511,8 @@ public class AccountController : Controller
         if (storedCode.HasValue && code == storedCode && userEmail == email)
         {
             // Code is correct, store the user email in TempData and redirect to the change password action
-            TempData["UserEmail"] = userEmail;
-            return RedirectToAction("ChangePassword", userEmail);
+            HttpContext.Session.SetString("UserEmail", userEmail);
+            return RedirectToAction("ChangePassword", new { email = userEmail });
         }
         else
         {
@@ -524,58 +524,52 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult ChangePassword()
+    public IActionResult ChangePassword(string email)
     {
-        string userEmail = HttpContext.Session.GetString("UserEmail"); // Retrieve user email from session
-        if (string.IsNullOrEmpty(userEmail))
-        {
-            // Handle the case when the userEmail is not available
-            return RedirectToAction("VerifyCode");
-        }
-
-        ViewBag.Email = userEmail;
+        ViewBag.Email = email;
         return View();
     }
 
     [HttpPost]
-    public IActionResult ChangePassword(ChangePasswordViewModel vm)
+    public IActionResult ChangePassword(NewEmployee vm, string email)
     {
         string userEmail = HttpContext.Session.GetString("UserEmail"); // Retrieve user email from session
 
-        if (ModelState.IsValid && !string.IsNullOrEmpty(userEmail))
+        using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            connection.Open();
+            NewEmployee pl = new NewEmployee()
             {
-                connection.Open();
-                ChangePasswordViewModel pt = new ChangePasswordViewModel()
-                {
-                    NewPassword = vm.NewPassword,
-                };
-                // Convert the plain text password to varbinary using SHA1 hashing
-                byte[] passwordBytes = Encoding.UTF8.GetBytes(vm.NewPassword);
-                byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
-                string hashedPassword = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
+                EmpPw = vm.EmpPw,
+                Email = (string)userEmail,
+            };
+            // Convert the plain text password to varbinary using SHA1 hashing
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(vm.EmpPw);
+            byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
+            string hashedPassword1 = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
 
-                string query = $"UPDATE users SET user_pw = {hashedPassword} WHERE email = '{userEmail}';";
+            string query = $"UPDATE users SET user_pw = {hashedPassword1} WHERE email = '{pl.Email}';";
+            string updatepwE = $"UPDATE employee SET employee_pw = {hashedPassword1} WHERE employee_id = 400001";
 
-                if (connection.Execute(query, pt) == 1)
-                {
-                    ViewData["Message"] = "Updated successfully.";
-                    return RedirectToAction("Login");
-                }
-                else
-                {
-                    ViewData["Message"] = "Unsuccessful update. Please try again.";
-                    return RedirectToAction("ChangePassword");
-                }
+            if (connection.Execute(query, pl) == 1)
+            {
+                Console.WriteLine(vm.EmpPw);
+                ViewData["Message"] = "Updated successfully.";
+                return RedirectToAction("Login");
+            }
+            else if (connection.Execute(updatepwE, pl) == 1)
+            {
+                Console.WriteLine(vm.EmpPw);
+                ViewData["Message"] = "Updated successfully.";
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                ViewData["Message"] = "Unsuccessful update. Please try again.";
+                return RedirectToAction("ChangePassword");
             }
         }
-
-        return View("Login");
     }
-
-
-
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {

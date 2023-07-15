@@ -113,7 +113,7 @@ namespace FYP.Controllers
                 int count = tickets.Count(t => t.Status == status);
                 foreach (Ticket ticket in tickets.Where(t => t.Status == status))
                 {
-                    ticket.StatusCount = count;
+                    ticket.StatusCount += 1;
                 }
             }
 
@@ -123,7 +123,7 @@ namespace FYP.Controllers
                 int count = tickets.Count(t => t.Priority == priority);
                 foreach (Ticket ticket in tickets.Where(t => t.Priority == priority))
                 {
-                    ticket.PriorityCount = count;
+                    ticket.PriorityCount += 1;
                 }
             }
 
@@ -133,7 +133,7 @@ namespace FYP.Controllers
                 int count = tickets.Count(t => t.Category == category);
                 foreach (Ticket ticket in tickets.Where(t => t.Category == category))
                 {
-                    ticket.CategoryCount = count;
+                    ticket.CategoryCount += 1;
                 }
             }
 
@@ -142,7 +142,7 @@ namespace FYP.Controllers
                int count = tickets.Count(t => t.Type == types);
                 foreach (Ticket ticket in tickets.Where(t => t.Type == types))
                 {
-                    ticket.TypeCount = count;
+                    ticket.TypeCount += 1;
                 }
             }
         }

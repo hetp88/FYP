@@ -70,8 +70,6 @@ namespace FYP.Controllers
                 connection.Open();
                 connection.Execute(queryU, news);
             }
-            // Perform any additional logic or redirection as needed
-
             return RedirectToAction("Index");
         }
     }
