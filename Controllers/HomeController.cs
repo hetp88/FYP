@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Collections.Generic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace FYP.Controllers
@@ -65,12 +66,49 @@ namespace FYP.Controllers
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-
                 string queryU = $"UPDATE News SET news_u = @newsU WHERE news_id = 1";
+
+                //Email
+                string template = "Dear user, " +
+                                  "<br>" + news.newsU +
+                                  "<br>" +
+                                  "<br>Sincerely," +
+                                  "<br>IT Helper Team";
+                string title = "News Update";
+                string message = String.Format(template);
+
                 connection.Open();
-                connection.Execute(queryU, news);
+
+                if (connection.Execute(queryU, news) == 1)
+                {
+                    ViewData["Message"] = "Updated successfully.";
+                    string queryEmails = @"SELECT email FROM users UNION SELECT email FROM employee";
+                    var emails = connection.Query<string>(queryEmails);
+
+                    foreach (var email in emails)
+                    {
+                        if (EmailUtl.SendEmail(email, title, message, out string result))
+                        {
+                            ViewData["Message"] = "Emails Sent Successfully";
+                            ViewData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            ViewData["Message"] = result;
+                            ViewData["MsgType"] = "warning";
+                        }
+                    }
+
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ViewData["Message"] = "Failed to update.";
+                    ViewData["MsgType"] = "warning";
+                    return RedirectToAction("Index");
+                }
             }
-            return RedirectToAction("Index");
         }
+
     }
 }
