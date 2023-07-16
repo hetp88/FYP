@@ -10,6 +10,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FYP.Controllers
 {
@@ -67,7 +68,25 @@ namespace FYP.Controllers
             }
             
         }
+        public IActionResult Solution(int FaqId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string q = @"SELECT f.faq_id AS FaqId, tc.category, f.question, f.solution 
+                               FROM FAQ f
+                               INNER JOIN ticket_categories tc ON tc.category_id = f.category_id
+                               WHERE (f.faq_id = @FaqId)"
+                ;
+                connection.Open();
 
+                FAQ Details = connection.QueryFirstOrDefault<FAQ>(q, new { FaqId = FaqId });
+                if (Details != null)
+                {
+                    return View(Details);
+                }
+            }
+            return RedirectToAction("Details");
+        }
 
         public IActionResult Search(string query)
         {

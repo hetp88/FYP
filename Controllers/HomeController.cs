@@ -76,7 +76,6 @@ namespace FYP.Controllers
                                   "<br>IT Helper Team";
                 string title = "News Update";
                 string message = String.Format(template);
-
                 connection.Open();
 
                 if (connection.Execute(queryU, news) == 1)
@@ -84,7 +83,6 @@ namespace FYP.Controllers
                     ViewData["Message"] = "Updated successfully.";
                     string queryEmails = @"SELECT email FROM users UNION SELECT email FROM employee";
                     var emails = connection.Query<string>(queryEmails);
-
                     foreach (var email in emails)
                     {
                         if (EmailUtl.SendEmail(email, title, message, out string result))

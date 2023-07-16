@@ -115,7 +115,9 @@
                     <tr>
                         <td>@faq.FaqId</td>
                         <td>@faq.Question</td>
-                        <td>@faq.Solution</td>
+                        <td>
+                            <a href="@Url.Action("Solution", "FAQ", new { FaqId = faq.FaqId })" class="btn btn-primary">View Solution</a>
+                        </td>
                         <td>@faq.Category</td>
 
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
