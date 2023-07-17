@@ -1,0 +1,32 @@
+﻿@model FYP.Models.FAQ
+@{
+    Layout = "_Ticket";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FAQs</title>
+    <style>
+        .container {
+            margin-top: 40px;
+            background: #FFFFFF;
+            padding: 20px;
+        }
+        .card{
+            border: 10px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <strong>Solution: </strong>
+        <div class="card">
+            <div class="mb-3">
+                 @Model.Solution;
+            </div>
+        </div>
+    </div>
+</body>
+</html>
