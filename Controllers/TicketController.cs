@@ -34,10 +34,10 @@ namespace FYP.Controllers
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     string query = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, e.name AS EmployeeName, " +
-                                   $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution " +
+                                         $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution " +
                                    $"FROM ticket t INNER JOIN users u ON u.userid = t.userid " +
                                    $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
-                                   $"INNER JOIN employee e ON t.employee_id = e.employee_id  " +
+                                   $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
                                    $"WHERE t.userid='{currentuser}'";
 
                     connection.Open();
@@ -53,11 +53,40 @@ namespace FYP.Controllers
             
         }
 
-        public IActionResult ViewTicket()
+        public IActionResult ToDoTicket()
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
             {
                 int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, " +
+                                         $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason " +
+                                    $"FROM ticket t " +
+                                    $"INNER JOIN users u ON u.userid = t.userid " +
+                                    $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
+                                    $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
+                                    $"WHERE t.employee_id='{currentuser}'" +
+                                    $"OR t.escalation_SE = '{currentuser}'";
+                   
+                    connection.Open();
+                    List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
+                    
+                    return View(tickets);
+                }
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+        }
+
+        public IActionResult ViewTicket()
+        {
+            if (User.IsInRole("administrator"))
+            {
                 // Retrieve ticket data from the database
 
                 using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -67,12 +96,11 @@ namespace FYP.Controllers
                                 FROM ticket t
                                 INNER JOIN users u ON u.userid = t.userid
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON t.employee_id = e.employee_id;";
+                                INNER JOIN employee e ON e.employee_id = t.employee_id;";
 
                     connection.Open();
                     List<Ticket> tickets = connection.Query<Ticket>(query).AsList();
-                    ViewBag.Current = currentuser;
-                    //Console.WriteLine(ViewBag.Current);
+
                     return View(tickets);
                 }
             }
@@ -215,6 +243,7 @@ namespace FYP.Controllers
                     if (connection.Execute(query, newTicket) == 1 && connection.Execute(update) == 1)
                     {
                         string link = "https://localhost:44397/Account/Login";
+                        string delete = "https://localhost:44397/Ticket/Delete/" + newTicket.TicketId;
 
                         string template = "Hello {0}, " +
                                           "<br>" +
@@ -227,7 +256,11 @@ namespace FYP.Controllers
                                           "<br>We will get back you as soon as possible. " +
                                           "<br>" +
                                           "<br>Thank you, " +
-                                          "<br>RP IT HelpDesk";
+                                          "<br>RP IT HelpDesk" +
+
+                                          "<br>" +
+                                          "<br>" +
+                                          "<br>If ticket is not submitted by you, kindly click the link " + delete;
 
                         string title = "Ticket Submitted Successful";
 
@@ -250,7 +283,7 @@ namespace FYP.Controllers
                         TempData["MsgType"] = "danger";
                     }
                 }
-                return RedirectToAction("ViewTicket", "Ticket");
+                return RedirectToAction("ToDoTicket", "Ticket");
             }
             else
             {
@@ -269,7 +302,7 @@ namespace FYP.Controllers
                                 FROM ticket t 
                                 INNER JOIN users u ON u.userid = t.userid 
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON t.employee_id = e.employee_id
+                                INNER JOIN employee e ON e.employee_id = t.employee_id
                                 WHERE t.ticket_id = @TicketId;";
 
                 connection.Open();
@@ -283,7 +316,7 @@ namespace FYP.Controllers
                     return View(tickets);
                 }
             }
-            return RedirectToAction("ViewTicket");
+            return RedirectToAction("ToDoTicket");
         }
 
         [HttpPost]
@@ -339,7 +372,7 @@ namespace FYP.Controllers
                     ViewData["Message"] = "Unsuccessful escalate. Do try again.";
                 }
             }
-            return RedirectToAction("ViewTicket", "Ticket");
+            return RedirectToAction("ToDoTicket", "Ticket");
         }
 
         public IActionResult HAUpdateTicket(int ticketid)
@@ -353,7 +386,7 @@ namespace FYP.Controllers
                                 FROM ticket t 
                                 INNER JOIN users u ON u.userid = t.userid 
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON t.employee_id = e.employee_id
+                                INNER JOIN employee e ON e.employee_id = t.employee_id
                                 WHERE t.ticket_id = @TicketId;";
 
                     connection.Open();
@@ -365,7 +398,7 @@ namespace FYP.Controllers
                         return View(tickets);
                     }
                 }
-                return View("ViewTicket");
+                return View("ToDoTicket");
             }
             else
             {
@@ -570,7 +603,7 @@ namespace FYP.Controllers
                         }
                     }
                 }
-                return RedirectToAction("ViewTicket", "Ticket");
+                return RedirectToAction("ToDoTicket", "Ticket");
             }
             else
             {
@@ -590,7 +623,7 @@ namespace FYP.Controllers
                                 FROM ticket t 
                                 INNER JOIN users u ON u.userid = t.userid 
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON t.employee_id = e.employee_id
+                                INNER JOIN employee e ON e.employee_id = t.employee_id
                                 WHERE t.ticket_id = @TicketId;";
 
                     connection.Open();
@@ -602,7 +635,7 @@ namespace FYP.Controllers
                         return View(tickets);
                     }
                 }
-                return View("ViewTicket");
+                return View("ToDoTicket");
             }
             else
             {
@@ -636,33 +669,53 @@ namespace FYP.Controllers
                     ViewData["Message"] = "Unsuccessful update. Do try again.";
                 }
             }
-            return RedirectToAction("ViewTicket", "Ticket");
+            return RedirectToAction("ToDoTicket", "Ticket");
         }
 
-        public IActionResult ToDoTicket()
+        [HttpPost]
+        public IActionResult Delete(int ticketid)
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            int helpdeskAgent = 0;
+            int no_tickets = 0;
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                connection.Open();
+
+                string assignedHA = $"SELECT employee_id FROM ticket WHERE ticket_id = '{ticketid}'";
+
+                List<int> HAagent = connection.Query<int>(assignedHA).AsList();
+                foreach (int i in HAagent)
                 {
-                    string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, " +
-                                        $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution " +
-                                        $"FROM ticket t INNER JOIN users u ON u.userid = t.userid " +
-                                        $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
-                                        $"INNER JOIN employee e ON t.employee_id = e.employee_id  " +
-                                        $"WHERE t.employee_id='{currentuser}'";
-                    connection.Open();
-                    List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
-                    return View(tickets);
+                    helpdeskAgent = i;
+                }
+
+                string retrieve = $"SELECT e.tickets " +
+                                  $"FROM tickets t " +
+                                  $"INNER JOIN employee e ON e.employee_id = t.employee_id " +
+                                  $"WHERE e.employee_id = '{helpdeskAgent}'";
+
+                List<int> t = connection.Query<int>(retrieve).AsList();
+                foreach (int i in t)
+                {
+                    no_tickets = i - 1;
+                }
+
+                string delete = $"DELETE FROM ticket WHERE ticket_id = '{ticketid}'";
+
+                string update = $"UPDATE employee SET tickets = '{no_tickets}'";
+
+                if (connection.Execute(delete) == 1 && connection.Execute(update) == 1)
+                {
+                    ViewData["Message"] = "Delete successfully.";
+                }
+                else
+                {
+                    ViewData["Message"] = "Unsuccessful delete. Do try again.";
                 }
             }
-            else
-            {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
-            }
+            
+            return RedirectToAction("ToDoTicket", "Ticket");
         }
-
     }
 }
