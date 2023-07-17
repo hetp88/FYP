@@ -14,51 +14,55 @@
         }
 
         .container {
-            width: 980px;
+            width: 600px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #5555
+            background-color: #555;
+            color: #fff;
+
         }
 
         h1 {
-            color: #FFFFFF;
-        }
-
-        p {
-            /*text-align: center;
-                    color: #FFFFFF;*/
-            padding: 5px;
-            /*font-size: 110%*/
+            text-align: center;
         }
 
         label {
-            display: block;
+            font-weight: bold;
             margin-bottom: 5px;
-            text-align: center;
-            color: lightcyan;
-            padding: 5px;
-            font-size: 120%
         }
 
-        span {
-            text-align: center;
-            color: #FFFFFF;
-            padding: 10px;
-            font-size: 120%;
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .container .btn {
-            display: inline-block;
-            justify-content: center;
+        li {
+            margin-bottom: 5px;
+        }
+
+        .btn-container {
+            text-align: center;
             margin-top: 10px;
+        }
+
+        .button {
+            display: inline-block;
             padding: 8px 16px;
             border-radius: 4px;
+            background-color: #337ab7;
             color: #fff;
             text-decoration: none;
             transition: background-color 0.3s;
+            cursor: pointer;
+            border: none;
         }
+
+            .button:hover {
+                background-color: #23527c;
+            }
     </style>
 </head>
 <body>
@@ -66,25 +70,21 @@
         <h1>User Profile</h1>
         @foreach (var employee in Model)
         {
-            <p><label>User ID: </label>
-                <ul>@employee.EmployeeId</ul>
-            </p>
-            <p><label>Email: </label>
-                <ul>@employee.Email</ul>
-            </p>
-            <p><label>Phone Number: </label>
-                <ul>@employee.Phone_no</ul>
-            </p>
-            <p><label>Name: </label>
-                <ul>@employee.Name</ul>
-            </p>
+            <ul>
+                <li><label>User ID:</label> @employee.EmployeeId</li>
+                <li><label>Email:</label> @employee.Email</li>
+                <li>
+                    <label>Phone Number:</label> @employee.Phone_no <a href="/Account/EditProfile2" class="bi bi-pencil-square" data-toggle="tooltip" style="color: black"></a>
+                </li>
+
+                <li><label>Name:</label> @employee.Name</li>
+            </ul>
         }
         <div class="btn-container">
-            <button type="button" class="btn btn-primary btn-block"  asp-controller="Account"
-               asp-action="Update"
-               >Edit Profile</button>
+            <button class="button" onclick="location.href='/Account/UpdatePassword'">Change Password</button>
         </div>
     </div>
 </body>
 </html>
+
 

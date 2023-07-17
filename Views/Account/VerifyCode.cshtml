@@ -2,7 +2,16 @@
 @{
     string email = ViewBag.Email;
 }
-
+<style>
+    .center-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+    }
+</style>
 <form asp-controller="Account" asp-action="VerifyCode" method="post">
     <div class="form-group">
         <label for="code">Verification Code:</label>

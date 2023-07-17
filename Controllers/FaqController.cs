@@ -10,6 +10,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FYP.Controllers
 {
@@ -22,7 +23,7 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        
+
         public IActionResult Details(string faqIdQuery, string questionQuery, string solutionQuery, string categoryQuery)
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff"))
@@ -36,8 +37,8 @@ namespace FYP.Controllers
                                WHERE (@FaqIdQuery IS NULL OR f.faq_id = @FaqIdQuery)
                                    AND (@QuestionQuery IS NULL OR f.question LIKE '%' + @QuestionQuery + '%')
                                    AND (@SolutionQuery IS NULL OR f.solution LIKE '%' + @SolutionQuery + '%')
-                                   AND (@CategoryQuery IS NULL OR tc.category_id = @CategoryQuery)
-                                   AND f.faq_id > 0";
+                                   AND (@CategoryQuery IS NULL OR tc.category_id = @CategoryQuery)";
+
 
 
                     // Retrieve the category ID based on the selected category name
@@ -55,6 +56,11 @@ namespace FYP.Controllers
                         QuestionQuery = string.IsNullOrEmpty(questionQuery) ? null : questionQuery,
                         SolutionQuery = string.IsNullOrEmpty(solutionQuery) ? null : solutionQuery,
                         CategoryQuery = string.IsNullOrEmpty(categoryQuery) ? null : categoryQuery
+                    }).Select(faq =>
+                    {
+                        faq.FaqId++;
+                        return faq;
+
                     }).AsList();
                 }
 
@@ -65,9 +71,27 @@ namespace FYP.Controllers
                 // Unauthorized actions for other roles
                 return View("Forbidden");
             }
-            
-        }
 
+        }
+        public IActionResult Solution(int FaqId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string q = @"SELECT f.faq_id AS FaqId, tc.category, f.question, f.solution 
+                               FROM FAQ f
+                               INNER JOIN ticket_categories tc ON tc.category_id = f.category_id
+                               WHERE (f.faq_id = @FaqId)"
+                ;
+                connection.Open();
+
+                FAQ Details = connection.QueryFirstOrDefault<FAQ>(q, new { FaqId = FaqId });
+                if (Details != null)
+                {
+                    return View(Details);
+                }
+            }
+            return RedirectToAction("Details");
+        }
 
         public IActionResult Search(string query)
         {
@@ -100,7 +124,7 @@ namespace FYP.Controllers
             }
         }
 
-        
+
         [HttpPost]
         public IActionResult CreateFAQ(FAQ faq)
         {
@@ -144,10 +168,10 @@ namespace FYP.Controllers
                 // Unauthorized actions for other roles
                 return View("Forbidden");
             }
-            
+
         }
 
-        
+
 
         public IActionResult Delete(int faqId)
         {
@@ -160,9 +184,9 @@ namespace FYP.Controllers
                     {
                         // Delete the FAQ with the specified ID
                         string deleteQuery = "DELETE FROM FAQ WHERE faq_id = @FaqId";
-                        connection.Execute(deleteQuery, new { FaqId = faqId }, transaction);
+                        connection.Execute(deleteQuery, new { FaqId = faqId +1}, transaction);
 
-                        // Update the remaining FAQ IDs in the database
+                        // Update the remaining FAQ IDs greater than the deleted FAQ ID
                         string updateQuery = "UPDATE FAQ SET faq_id = faq_id - 1 WHERE faq_id > @FaqId";
                         connection.Execute(updateQuery, new { FaqId = faqId }, transaction);
 
@@ -180,6 +204,6 @@ namespace FYP.Controllers
             }
         }
 
-
     }
 }
+

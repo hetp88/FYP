@@ -8,8 +8,14 @@ namespace FYP.Models
 
         [Required(ErrorMessage = "Please enter Name")]
         public string Name { get; set; } = null!;
+        [Required(ErrorMessage = "Confirm password is required.")]
+        [DataType(DataType.Password)]
+        [Compare("EmpPw", ErrorMessage = "Passwords do not match.")]
+        [StringLength(20, MinimumLength = 7, ErrorMessage = "Password must be 7-20 characters")]
+        public string NewPw { get; set; } = null!;
 
         [DataType(DataType.Password)]
+        [StringLength(20, MinimumLength = 7, ErrorMessage = "Password must be 7-20 characters")]
         public string EmpPw { get; set; } = null!;
 
         public int Roles_id { get; set; }
