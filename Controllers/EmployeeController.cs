@@ -292,7 +292,7 @@ namespace FYP.Controllers
             if (leaveId > 0)
             {
                 // Redirect to the LeaveRequests page
-                return RedirectToAction("LeaveRequests");
+                return RedirectToAction("Schedule");
             }
             else
             {
