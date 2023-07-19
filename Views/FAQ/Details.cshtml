@@ -9,10 +9,10 @@
     <title>FAQs</title>
     <style>
         .card {
-            margin-top: 30px;
+            margin-top: 150px;
             background: #FFFFFF;
             padding: 20px;
-            margin-top: 200px;
+            border: none;
         }
 
         .search-form {
@@ -30,11 +30,10 @@
 
             .search-form button {
                 padding: 8px 16px;
-                background-color: #000000;
+                background-color: #4CAF50;
                 color: white;
                 border: none;
                 cursor: pointer;
-                border-radius
             }
 
         table {
@@ -70,9 +69,6 @@
 <body>
     <div class="card">
         <form method="get" action="/FAQ/Details" class="search-form">
-            <div>
-                <input type="text" name="faqIdQuery" placeholder="FAQ ID" />
-            </div>
             <div>
                 <input type="text" name="questionQuery" placeholder="Question" />
             </div>
@@ -123,12 +119,10 @@
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                         {
                             <td>
-                                <form method="post" action="/FAQ/Delete">
-                                    <input type="hidden" name="faqId" value="@faq.FaqId" />
-                                    <button type="submit" style="background-color: transparent; border: none; color: indianred">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
-                                </form>
+                                <a href="/FAQ/Delete/@faq.FaqId" style="text-decoration:none; color:indianred"
+                       onclick="return confirm('Delete FAQ with ID @faq.FaqId?')">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
                             </td>
                         }
                     </tr>
