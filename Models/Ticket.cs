@@ -7,7 +7,7 @@ namespace FYP.Models
         public int TicketId { get; set; }
 
         [RegularExpression("(\\d{8}|\\d{4})", ErrorMessage = "either 4 or 8 digits only")]
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
 
         public string Email { get; set; } = null!;
 

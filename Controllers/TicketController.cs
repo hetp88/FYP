@@ -162,6 +162,7 @@ namespace FYP.Controllers
         public IActionResult AddTicket(Ticket ticket)
         {
             int ticketid = 0;
+            int? userid = 0;
             Random generate = new Random();
             int assignedticket = 0;
             DateTime created = DateTime.Now;
@@ -193,10 +194,19 @@ namespace FYP.Controllers
                 List<int> empid = connection.Query<int>(empquery).AsList();
                 int emp = generate.Next(0, empid.Count);
 
+                if(User.IsInRole("helpdesk agent"))
+                {
+                    userid = ticket.UserId;
+                }
+                else if (User.IsInRole("staff") || User.IsInRole("student"))
+                {
+                    userid = contextAccessor.HttpContext.Session.GetInt32("userID");
+                }
+
                 Ticket newTicket = new Ticket
                 {
                     TicketId = ticketid + 1,
-                    UserId = ticket.UserId,
+                    UserId = userid,
                     Type = ticket.Type,
                     Description = ticket.Description,
                     Category = ticket.Category,
@@ -241,7 +251,7 @@ namespace FYP.Controllers
                 if (connection.Execute(query, newTicket) == 1 && connection.Execute(update) == 1)
                 {
                     string link = "https://localhost:44397/Account/Login";
-                    string delete = "https://localhost:44397/Ticket/Delete/" + newTicket.TicketId;
+                    string delete = "https://localhost:44397/Ticket/Terminate/" + newTicket.TicketId;
 
                     string template = "Hello {0}, " +
                                         "<br>" +
@@ -254,11 +264,7 @@ namespace FYP.Controllers
                                         "<br>We will get back you as soon as possible. " +
                                         "<br>" +
                                         "<br>Thank you, " +
-                                        "<br>RP IT HelpDesk" +
-
-                                        "<br>" +
-                                        "<br>" +
-                                        "<br>If ticket is not submitted by you, kindly click the link <a href =\"" + delete + "\">here</a>";
+                                        "<br>RP IT HelpDesk";
 
                     string title = "Ticket Submitted Successful";
 
@@ -299,89 +305,105 @@ namespace FYP.Controllers
 
         public IActionResult EscalateTicket(int ticketid)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            if (User.IsInRole("helpdesk agent"))
             {
-                string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority,
-                                         t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
-                                FROM ticket t 
-                                INNER JOIN users u ON u.userid = t.userid 
-                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON e.employee_id = t.employee_id
-                                WHERE t.ticket_id = @TicketId;";
-
-                connection.Open();
-
-                //Ticket leaveRequest = connection.QueryFirstOrDefault<Ticekt>(query, new { LeaveId = leaveId });
-
-                Ticket tickets = connection.QueryFirstOrDefault<Ticket>(tquery, new { TicketId = ticketid });
-
-                if (tickets != null)
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    return View(tickets);
+                    string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority,
+                                             t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
+                                    FROM ticket t 
+                                    INNER JOIN users u ON u.userid = t.userid 
+                                    INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                                    INNER JOIN employee e ON e.employee_id = t.employee_id
+                                    WHERE t.ticket_id = @TicketId;";
+
+                    connection.Open();
+
+                    //Ticket leaveRequest = connection.QueryFirstOrDefault<Ticekt>(query, new { LeaveId = leaveId });
+
+                    Ticket tickets = connection.QueryFirstOrDefault<Ticket>(tquery, new { TicketId = ticketid });
+
+                    if (tickets != null)
+                    {
+                        return View(tickets);
+                    }
                 }
+                return View("ToDoTicket");
             }
-            return RedirectToAction("ToDoTicket");
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
         }
 
         [HttpPost]
         public IActionResult EscalateTicket(Ticket ticket)
         {
-            Random generate = new Random();
-            int assignedticket = 0;
-
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            if (User.IsInRole("helpdesk agent"))
             {
-                string equery = @"SELECT DISTINCT e.employee_id
-                                    FROM employee e
-                                    LEFT JOIN leave l ON l.employee_id = e.employee_id
-                                    WHERE e.roles_id = 4
-                                    AND (e.tickets IS NULL OR e.tickets < 5)
-                                    AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
-  	                                    OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
-                                    AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
-                                        OR l.employee_id IS NULL)";
+                Random generate = new Random();
+                int assignedticket = 0;
 
-                List<int> emid = connection.Query<int>(equery).AsList();
-                int emp = generate.Next(0, emid.Count);
-
-                connection.Open();
-
-                Ticket escalation = new Ticket
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    TicketId = ticket.TicketId,
-                    Status = "waiting for resolution",
-                    Employee = emid[emp],
-                    Escalate_Reason = ticket.Escalate_Reason,
-                };
+                    string equery = @"SELECT DISTINCT e.employee_id
+                                        FROM employee e
+                                        LEFT JOIN leave l ON l.employee_id = e.employee_id
+                                        WHERE e.roles_id = 4
+                                        AND (e.tickets IS NULL OR e.tickets < 5)
+                                        AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
+  	                                        OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
+                                        AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
+                                            OR l.employee_id IS NULL)";
 
-                string update = @"UPDATE Ticket SET status = @Status, escalation_SE = @Employee, escalate_reason = @Escalate_Reason WHERE ticket_id = @TicketId";
+                    List<int> emid = connection.Query<int>(equery).AsList();
+                    int emp = generate.Next(0, emid.Count);
 
-                string empticket = $"SELECT tickets FROM employee WHERE employee_id = '{emid[emp]}'";
+                    connection.Open();
 
-                List<int> eticket = connection.Query<int>(empticket).AsList();
-                
-                foreach (int id in eticket)
-                {
-                    assignedticket = id + 1;
+                    Ticket escalation = new Ticket
+                    {
+                        TicketId = ticket.TicketId,
+                        Status = "waiting for resolution",
+                        Employee = emid[emp],
+                        Escalate_Reason = ticket.Escalate_Reason,
+                    };
+
+                    string update = @"UPDATE Ticket SET status = @Status, escalation_SE = @Employee, escalate_reason = @Escalate_Reason WHERE ticket_id = @TicketId";
+
+                    string empticket = $"SELECT tickets FROM employee WHERE employee_id = '{emid[emp]}'";
+
+                    List<int> eticket = connection.Query<int>(empticket).AsList();
+
+                    foreach (int id in eticket)
+                    {
+                        assignedticket = id + 1;
+                    }
+
+                    string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'";
+
+                    if (connection.Execute(update, escalation) == 1 && connection.Execute(assign) == 1)
+                    {
+                        ViewData["Message"] = "Escalated successfully.";
+                    }
+                    else
+                    {
+                        ViewData["Message"] = "Unsuccessful escalate. Do try again.";
+                    }
                 }
-
-                string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'";
-
-                if (connection.Execute(update, escalation) == 1 && connection.Execute(assign) == 1)
-                {
-                    ViewData["Message"] = "Escalated successfully.";
-                }
-                else
-                {
-                    ViewData["Message"] = "Unsuccessful escalate. Do try again.";
-                }
+                return View("ToDoTicket");
             }
-            return RedirectToAction("ToDoTicket", "Ticket");
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
         }
 
         public IActionResult HAUpdateTicket(int ticketid)
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            if (User.IsInRole("helpdesk agent"))
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
@@ -415,7 +437,7 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult HAUpdateTicket(Ticket tickets)
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            if (User.IsInRole("helpdesk agent"))
             {
                 int HAassigned = 0;
                 int SEassigned = 0;
@@ -618,7 +640,7 @@ namespace FYP.Controllers
 
         public IActionResult SEResolution(int ticketid)
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            if (User.IsInRole("support engineer"))
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
@@ -651,112 +673,38 @@ namespace FYP.Controllers
         [HttpPost]
         public IActionResult SEResolution(Ticket tickets)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            if (User.IsInRole("support engineer"))
             {
-                connection.Open();
-
-                Ticket update = new Ticket()
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    TicketId = tickets.TicketId,
-                    newStatus = tickets.newStatus,
-                    Resolution = tickets.Resolution,
-                };
+                    connection.Open();
 
-                string updateticket = @"UPDATE Ticket SET status = @newStatus, resolution = @Resolution WHERE ticket_id = @TicketId";
-
-                if (connection.Execute(updateticket, update) == 1)
-                {
-                    ViewData["Message"] = "Updated successfully.";
-                }
-                else
-                {
-                    ViewData["Message"] = "Unsuccessful update. Do try again.";
-                }
-            }
-            return RedirectToAction("ToDoTicket", "Ticket");
-        }
-
-        public IActionResult Delete(int ticketid)
-        {
-            int helpdeskAgent = 0;
-            int no_tickets = 0;
-            string user_name = "";
-            string user_email = "";
-
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                string assignedHA = $"SELECT employee_id FROM ticket WHERE ticket_id = '{ticketid}'";
-
-                List<int> HAagent = connection.Query<int>(assignedHA).AsList();
-                foreach (int i in HAagent)
-                {
-                    helpdeskAgent = i;
-                }
-
-                string retrieve = $"SELECT e.tickets " +
-                                  $"FROM employee e " +
-                                  $"INNER JOIN ticket t ON t.employee_id = e.employee_id " +
-                                  $"WHERE t.ticket_id = '{ticketid}' " +
-                                  $"AND e.employee_id = '{helpdeskAgent}'";
-
-                List<int> t = connection.Query<int>(retrieve).AsList();
-                foreach (int i in t)
-                {
-                    no_tickets = i - 1;
-                }
-
-                string delete = $"DELETE FROM ticket WHERE ticket_id = '{ticketid}'";
-
-                string update = $"UPDATE employee SET tickets = '{no_tickets}' " +
-                                $"WHERE employee_id = '{helpdeskAgent}'";
-
-                string getUserinfo = $"SELECT u.username, u.email " +
-                                     $"FROM users u " +
-                                     $"INNER JOIN ticket t ON t.userid = u.userid " +
-                                     $"WHERE t.ticket_id = '{ticketid}'";
-
-                List<Ticket> userinfo = connection.Query<Ticket>(getUserinfo).AsList();
-                foreach (Ticket info in userinfo)
-                {
-                    user_name = info.Username;
-                    user_email = info.Email;
-                }
-
-                if (connection.Execute(delete) == 1 && connection.Execute(update) == 1)
-                {
-                    string link = "https://localhost:44397/Account/Login";
-
-                    string template = "Hello {0}, " +
-                                        "<br>" +
-                                        "<br>We have deleted the ticket that was not submitted by you. " +
-                                        "<br>You can confirm by logging in <a href =\"" + link + "\">here</a>" +
-                                        "<br>" +
-                                        "<br>Thank you, " +
-                                        "<br>RP IT HelpDesk";
-
-                    string title = "Ticket Delete Successful";
-
-                    string message = String.Format(template, user_name);
-
-                    if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                    Ticket update = new Ticket()
                     {
-                        ViewData["Message"] = "Delete successfully.";
-                        ViewData["MsgType"] = "success";
+                        TicketId = tickets.TicketId,
+                        newStatus = tickets.newStatus,
+                        Resolution = tickets.Resolution,
+                    };
+
+                    string updateticket = @"UPDATE Ticket SET status = @newStatus, resolution = @Resolution WHERE ticket_id = @TicketId";
+
+                    if (connection.Execute(updateticket, update) == 1)
+                    {
+                        ViewData["Message"] = "Updated successfully.";
                     }
                     else
                     {
-                        ViewData["Message"] = result;
-                        ViewData["MsgType"] = "warning";
+                        ViewData["Message"] = "Unsuccessful update. Do try again.";
                     }
                 }
-                else
-                {
-                    ViewData["Message"] = "Unsuccessful delete. Do try again.";
-                }
+                return View("ToDoTicket");
             }
-            return RedirectToAction("ToDoTicket", "Ticket");
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
         }
+
     }
 }

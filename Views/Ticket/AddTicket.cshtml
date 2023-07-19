@@ -97,11 +97,19 @@
         <div class="card">
             <h3 class="mb-4">New Ticket</h3>
             <form method="post" action="/Ticket/AddTicket">
-
-                <div class="form-group mb-3">
-                    <label for="userid" class="form-label">User ID:</label>
-                    <input type="number" name="userid" class="form-control" required>
-                </div>
+                @if(User.IsInRole("helpdesk agent"))
+                {
+                    <div class="form-group mb-3">
+                        <label for="userid" class="form-label">User ID:</label>
+                        <input type="number" name="userid" class="form-control" required>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group mb-3">
+                       <input type="number" name="userid" class="form-control" hidden>
+                    </div>
+                }
 
                 <div class="form-group mb-3">
                     <label for="type" class="form-label">Ticket type:</label>
