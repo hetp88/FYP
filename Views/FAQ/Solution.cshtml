@@ -9,9 +9,10 @@
     <title>FAQs</title>
     <style>
         .card {
-            margin-top: 150px;
+            margin-top: 130px;
             background: #FFFFFF;
             padding: 20px;
+            margin-top: 150px;
         }
         .card{
             border: 10px;
@@ -21,12 +22,9 @@
 </head>
 <body>
     <div class="card">
+        <strong>Question: @Model.Question</strong>
         <strong>Solution: </strong>
-        <div class="card">
-            <div class="mb-3">
-                 @Model.Solution;
-            </div>
-        </div>
+        <p>@Model.Solution;</p>
     </div>
 </body>
 </html>

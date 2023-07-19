@@ -120,7 +120,8 @@
                     <th>Resolution</th>
                     <th>Employee In-Charge</th>
                     <th>Escalate Reason</th>
-                    <th>Escalate In-Charge</th>                   
+                    <th>Escalate In-Charge</th>
+                    <th>Delete</th>
                 </tr>
 
                 @foreach (var ticket in Model)
@@ -172,6 +173,20 @@
                         else
                         {
                             <td>@ticket.Escalate_SE</td>
+                        }
+
+                        @if(ticket.Status == "terminated")
+                        {                                                    
+                            <td>
+                                <a href=@Url.Action("Delete", "Ticket", new { TicketId = ticket.TicketId })
+                                   onclick="return confirm('Delete Ticket: @ticket.Description?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
                         }
                     </tr>
                 }
