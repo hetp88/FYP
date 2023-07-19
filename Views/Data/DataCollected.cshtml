@@ -9,13 +9,11 @@
         * {
             box-sizing: border-box;
         }
-
         body {
             background-color: black;
             margin: 0;
             padding: 20px;
         }
-
         .container {
             display: flex;
             flex-wrap: wrap;
@@ -24,13 +22,11 @@
             padding: 20px;
             border-radius: 5px;
         }
-
         .chart-container {
             width: 50%;
             padding: 20px;
             box-sizing: border-box;
         }
-
         .button {
             background-color: dodgerblue;
             border: none;
@@ -44,37 +40,33 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
-
         input[type="date"] {
             padding: 5px;
             border: 1px solid #ccc;
             border-radius: 3px;
         }
-
         h1, h2 {
             margin: 0;
             color: #333;
         }
-
         canvas {
             width: 100%;
             height: auto;
         }
-
         .btn-primary {
-            background-color: #28a745; /* Green color */
-            border-color: #28a745; /* Green color */
+            background-color: #C1C8E4;
+            border-color: #C1C8E4;
         }
 
             .btn-primary:hover {
-                background-color: #218838; /* Darker shade of green */
-                border-color: #218838; /* Darker shade of green */
+                background-color: #91A0D9; 
+                border-color: #91A0D9; 
             }
     </style>
     <title>Data Collected</title>
 </head>
 <body>
-    <a href="javascript:history.back()" class="back-button">Back</a>
+    <button class="button" onclick="location.href='/Home/Index'"> Back</button>
     <div class="container">
     <div>
         <label for="startDate" style="display: block; margin-bottom: 5px;">Start Date:</label>

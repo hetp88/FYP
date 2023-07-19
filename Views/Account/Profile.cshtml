@@ -13,14 +13,15 @@
             font-family: Arial, sans-serif;
         }
 
-        .container {
+        .card {
             width: 600px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #555;
+            background-color: #C1C8E4;
             color: #fff;
+            margin-top: 200px;
         }
 
         h1 {
@@ -65,7 +66,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <h1>Profile: </h1>
         @foreach (var user in Model)
         {
@@ -91,7 +92,6 @@
                 <span>@user.school</span>
             </p>
         }
-
         <div class="btn-container">
             <button class="button" onclick="location.href='/Account/UpdatePassword'">Change Password</button>
         </div>

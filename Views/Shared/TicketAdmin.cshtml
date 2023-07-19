@@ -22,6 +22,7 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
+            
         }
 
         header {
@@ -29,6 +30,12 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 5%;
+            background-color: #C1C8E4;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
         }
 
         .logo {
@@ -36,10 +43,27 @@
             margin-right: auto;
         }
 
+        .white-profile-icon {
+            color: white;
+        }
+
+            .white-profile-icon:hover {
+                color: #5AB9EA;
+            }
+
+        .navbar_links .nav-link:hover .icon-large,
+        .navbar_links .nav-link:hover .bigger-icon {
+            color: #5AB9EA;
+        }
+
         .nav_links {
             list-style: none;
-            margin-right: auto;
-            align-items: flex-start;
+            display: flex;
+            align-items: center;
+            background: #5AB9EA;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px auto;
         }
 
             .nav_links li {
@@ -58,6 +82,7 @@
             color: black;
             text-decoration: none;
             font-size: 24px;
+            
         }
 
         .nav_links li:hover {
@@ -104,7 +129,7 @@
         .navbar_links {
             display: flex;
             justify-content: flex-end;
-
+            margin-top: 20px;
 
         }
 
@@ -121,10 +146,11 @@
     </style>
 </head>
 <body>
-    <header>  
+    <header> 
+        <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo3.png" height="60"></a>
         <nav>
             <ul class="nav_links">
-                <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo3.png" height="60"></a>
+                
                 <li class="dropdown">
                     <a>FAQ</a>
                     <div class="dropdown-content">
@@ -162,7 +188,7 @@
         <ul class="navbar_links">
             <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
                 <a class="nav-link" asp-controller="Account" asp-action="EmpProfile">
-                    <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
+                    <span class="bi bi-person-circle icon-large white-profile-icon" style="margin-right: 5px;"></span>
                 </a>
 
                 <a class="nav-link" asp-controller="Account" asp-action="Logout">
