@@ -83,6 +83,47 @@ namespace FYP.Controllers
             }
         }
 
+        public IActionResult Notification()
+        {
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+            {
+                int id = 0;
+                string d = "";
+
+                int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    string equery = $"SELECT t.ticket_id AS TicketId, t.description " +
+                                    $"FROM ticket t " +
+                                    $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
+                                    $"WHERE status = 'submitted' " +
+                                    $"AND t.employee_id ='{currentuser}'" +
+                                    $"OR t.escalation_SE = '{currentuser}'";
+
+                    connection.Open();
+                    List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
+
+                    foreach (Ticket n in tickets)
+                    {
+                        id = n.TicketId;
+                        d = n.Description;
+                    }
+
+                    var noti = id + ". " + d;
+
+                    ViewBag.Notification = noti;
+
+                    return View();
+                }
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+        }
+
         public IActionResult ViewTicket()
         {
             if (User.IsInRole("administrator"))

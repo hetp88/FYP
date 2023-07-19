@@ -144,7 +144,20 @@
         <ul class="navbar_links">
 
             <li class="dropdown" style=" list-style-type: none; display: flex; align-items: center;">
-                <a class="dropdown-item bi bi-bell" href="~/Ticket/ToDoTicket"></a>
+                <a class="dropdown-item bi bi-bell"></a>
+                <div class="dropdown-content">
+                    @if(ViewBag.Notifications != null)
+                    {
+                        foreach(var notifications in ViewBag.Notifications)
+                        {
+                            <a class="notification-item" @Url.Action("HAUpdateTicket", "Ticket", new { TicketId = notifications.TicketId })>@notifications</a>
+                        }
+                    }
+                    else
+                    {
+                        <div>No newly assigned tickets</div>
+                    }
+                </div>
             </li>
 
             <li></li>
