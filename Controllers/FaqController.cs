@@ -132,11 +132,16 @@ namespace FYP.Controllers
                     connection.Open();
 
                     var maxId = connection.QuerySingleOrDefault<int?>(idQuery);
-                    faqid = maxId.HasValue ? maxId.Value + 1 : 1;
+
+                    List<int> tid = connection.Query<int>(idQuery).AsList();
+                    foreach (int id in tid)
+                    {
+                        faqid = id;
+                    }
 
                     FAQ newFaq = new FAQ
                     {
-                        FaqId = faqid,
+                        FaqId = faqid + 1,
                         Category = faq.Category,
                         Question = faq.Question,
                         Solution = faq.Solution,
@@ -166,7 +171,6 @@ namespace FYP.Controllers
             
         }
 
-        
 
         public IActionResult Delete(int faqId)
         {
@@ -181,10 +185,6 @@ namespace FYP.Controllers
                         string deleteQuery = "DELETE FROM FAQ WHERE faq_id = @FaqId";
                         connection.Execute(deleteQuery, new { FaqId = faqId }, transaction);
 
-                        // Update the remaining FAQ IDs in the database
-                        string updateQuery = "UPDATE FAQ SET faq_id = faq_id - 1 WHERE faq_id > @FaqId";
-                        connection.Execute(updateQuery, new { FaqId = faqId }, transaction);
-
                         transaction.Commit();
 
                         // Redirect to the updated FAQ list
@@ -198,7 +198,5 @@ namespace FYP.Controllers
                 }
             }
         }
-
-
     }
 }

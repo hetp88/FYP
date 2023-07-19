@@ -8,10 +8,11 @@
 <head>
     <title>FAQs</title>
     <style>
-        .container {
+        .card {
             margin-top: 30px;
             background: #FFFFFF;
             padding: 20px;
+            margin-top: 200px;
         }
 
         .search-form {
@@ -29,10 +30,11 @@
 
             .search-form button {
                 padding: 8px 16px;
-                background-color: #4CAF50;
+                background-color: #000000;
                 color: white;
                 border: none;
                 cursor: pointer;
+                border-radius
             }
 
         table {
@@ -66,7 +68,7 @@
     </script>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <form method="get" action="/FAQ/Details" class="search-form">
             <div>
                 <input type="text" name="faqIdQuery" placeholder="FAQ ID" />
@@ -100,7 +102,6 @@
         {
             <table>
                 <tr>
-                    <th>FAQ ID</th>
                     <th>Question</th>
                     <th>Solution</th>
                     <th>Category</th>
@@ -113,7 +114,6 @@
                 @foreach (var faq in Model)
                 {
                     <tr>
-                        <td>@faq.FaqId</td>
                         <td>@faq.Question</td>
                         <td>
                             <a href="@Url.Action("Solution", "FAQ", new { FaqId = faq.FaqId })" class="btn btn-primary">View Solution</a>
@@ -123,10 +123,12 @@
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                         {
                             <td>
-                                <a href="/FAQ/Delete/@faq.FaqId" style="text-decoration:none; color:indianred"
-                                   onclick="return confirm('Delete FAQ with ID @faq.FaqId?')">
-                                    <i class="bi bi-trash3"></i>
-                                </a>
+                                <form method="post" action="/FAQ/Delete">
+                                    <input type="hidden" name="faqId" value="@faq.FaqId" />
+                                    <button type="submit" style="background-color: transparent; border: none; color: indianred">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
                             </td>
                         }
                     </tr>

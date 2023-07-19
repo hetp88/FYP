@@ -10,17 +10,28 @@
         * {
             box-sizing: border-box;
         }
-        
-        .container {
+
+        .card {
             margin-left: 20px;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 30px;
             margin-bottom: 5px;
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
             font-size: 20px;
-            background-color: #E6EDF2;
-            border-radius: 10px;
+            background-color: #C1C8E4;
+            border-radius: 25px;
+            height: auto;
+            color: black;
+            margin-right: 10px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px;
+            margin-top: 80px;
         }
 
         .button {
@@ -29,8 +40,8 @@
             font-size: 18px;
             border-radius: 4px;
             text-decoration: none;
-            background-color: dimgrey; 
-            color: white;
+            background-color: #5AB9EA;
+            color: black;
             border: none;
             cursor: pointer;
             margin: 5px;
@@ -38,18 +49,24 @@
         }
 
             .button:hover {
-                background-color: lightslategrey; 
+                background-color: #1D9200;
             }
 
         .news-container {
             flex-basis: 100%;
         }
 
+        .table {
+            background-color: #C1C8E4;
+            color: black;
+            box-shadow: 0;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <div>
+        <div class="card">
             <h1>Welcome to IT Helper</h1>
             <p>
                 IT Helper will be your one-stop solution for the technical problems you face, software and hardware.
@@ -60,37 +77,35 @@
                 <button class="button" onclick="location.href='/Ticket/AddTicket'">Report a problem!</button>
                 <button class="button" onclick="location.href='/FAQ/Details'">Possible Solutions You May Be Looking For</button>
             </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <h1>News Updates</h1>
-            @if (Model == null || Model.Count == 0)
-            {
-                <p class="no-tickets-message">No Announcements available.</p>
-            }
-            else
-            {
-                <table class="table">
-                @foreach (var newsu in Model)
+            <div class="card-right">
+                <h1>News Updates</h1>
+                @if (Model == null || Model.Count == 0)
                 {
-                    <tr>
-                        <td>@newsu.newsU</td>
-                    </tr>
+                    <p class="no-tickets-message">No Announcements available.</p>
                 }
-                </table>
-            }
-    </div>
-    <div class="container">
-        <div>
-            <h1>Contact Us</h1>
-            <p>
-                For any queries, contact us through our email, rptickethelper@gmail.com or contact us at +65 9339 2019.
-            </p>
-            <button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>
+                else
+                {
+                    <table class="table">
+                        @foreach (var newsu in Model)
+                        {
+                            <tr>
+                                <td>@newsu.newsU</td>
+                            </tr>
+                        }
+                    </table>
+                }
+            </div>
+            <div class="card-right">
+                <div>
+                    <h1>Contact Us</h1>
+                    <p>
+                        For any queries, contact us through our email, rptickethelper@gmail.com or contact us at +65 9339 2019.
+                    </p>
+                    <button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>
+                </div>
+            </div>
         </div>
     </div>
-
 
 </body>
 </html>
