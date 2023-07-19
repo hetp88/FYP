@@ -1,0 +1,56 @@
+﻿@model FYP.Models.Employee
+
+@{
+    Layout = "_Ticket";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Employee Information</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Employee</h1>
+        <form method="post" action="/Employee/Update">
+            <input type="hidden" name="employeeId" value="@Model.EmployeeId" />
+            <div>
+                <label>Employee ID:</label>
+                <span>@Model.EmployeeId</span>
+            </div>
+            <div>
+                <label>Role:</label>
+                <span>@Model.Role</span>
+            </div>
+            <div>
+                <label>Name:</label>
+                <input type="text" name="name" value="@Model.Name" />
+            </div>
+            <div>
+                <label>Email:</label>
+                <input type="email" name="email" value="@Model.Email" />
+            </div>
+            <div>
+                <label>Phone Number:</label>
+                <input type="text" name="phoneNumber" value="@Model.Phone_no" />
+            </div>
+            <div>
+                <label>Number of Tickets Assigned:</label>
+                <input type="text" name="numTickets" value="@Model.no_tickets" />
+            </div>
+            <div>
+                <label>Number of Tickets Closed:</label>
+                <input type="text" name="numclosed_tickets" value="@Model.closed_tickets" />
+            </div>
+            <div>
+                <label>Account Status:</label>
+                <input type="text" name="accStatus" value="@Model.AccStatus" />
+            </div>
+            <div>
+                <button type="submit">Save</button>
+                <a href="/Employee/EmployeeList">Back to Employee List</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

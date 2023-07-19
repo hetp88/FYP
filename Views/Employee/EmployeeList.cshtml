@@ -9,11 +9,12 @@
 <head>
     <title>Tickets</title>
     <style>
-        .container {
-            margin-top: 40px;
+        .card {
+            margin-top: 150px;
             width: auto;
             background: #FFFFFF;
             border-radius: 20px;
+            padding: 10px;
         }
 
         .btn-primary {
@@ -44,11 +45,12 @@
             document.getElementsByName("phoneNumber")[0].value = "";
             document.getElementsByName("numTickets")[0].value = "";
             document.getElementsByName("numclosed_tickets")[0].value = "";
+            document.getElementsByName("accStatus")[0].value = "";
         };
     </script>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <form method="get" action="/Employee/SearchEmployees">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" name="employeeId" placeholder="Employee ID" aria-label="Employee ID">
@@ -58,6 +60,7 @@
                 <input type="text" class="form-control" name="phoneNumber" placeholder="Phone Number" aria-label="Phone Number">
                 <input type="text" class="form-control" name="numTickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
                 <input type="text" class="form-control" name="numclosed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
+                <input type="text" class="form-control" name="accStatus" placeholder="Account Status" aria-label="Account Status">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
@@ -79,7 +82,8 @@
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Number of Tickets Assigned</th>
                     <th style="text-align:center">Number of Tickets Closed</th>
-                    
+                    <th style="text-align:center">Account Status</th> <!-- New column header -->
+                    <th style="text-align: center">Action</th>
                 </tr>
                 @foreach (var employee in Model)
                 {
@@ -91,8 +95,9 @@
                         <td style="text-align:center">@employee.Phone_no</td>
                         <td style="text-align:center">@employee.no_tickets</td>
                         <td style="text-align:center">@employee.closed_tickets</td>
+                        <td style="text-align:center">@employee.AccStatus</td> <!-- New data cell -->
                         <td style="text-align: center">
-                            <i class="update-icon" onclick="updateEmployee(@employee.EmployeeId)">&#9998;</i>
+                            <a href="/Employee/UpdateEmployee/@employee.EmployeeId" class="btn btn-primary">Update</a>
                         </td>
                     </tr>
                 }

@@ -37,7 +37,7 @@ namespace FYP.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
+                    string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets, e.acc_status AS AccStatus
                 FROM employee e
                 INNER JOIN roles r ON r.roles_id = e.roles_id;";
 
@@ -55,25 +55,63 @@ namespace FYP.Controllers
             }
             
         }
-        
+        // EmployeeController.cs
+
+        public IActionResult UpdateEmployee(int employeeId)
+        {
+            if (User.IsInRole("administrator"))
+            {
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    connection.Open();
+
+                    string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets, e.acc_status AS AccStatus
+                            FROM employee e
+                            INNER JOIN roles r ON r.roles_id = e.roles_id
+                            WHERE e.employee_id = @EmployeeId;";
+
+                    Employee employee = connection.QueryFirstOrDefault<Employee>(query, new { EmployeeId = employeeId });
+
+                    if (employee != null)
+                    {
+                        return View("UpdateEmployee", employee);
+                    }
+                }
+
+                // If employee with the given ID is not found, redirect to a "NotFound" view.
+                return View("NotFound");
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+        }
 
 
-        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets)
+
+
+
+
+        public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets, string accStatus)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
 
-                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets
-                 FROM employee e
-                 INNER JOIN roles r ON r.roles_id = e.roles_id
-                 WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
-                    AND (@Role IS NULL OR r.roles_type LIKE @Role)
-                    AND (@Name IS NULL OR e.name LIKE @Name)
-                    AND (@Email IS NULL OR e.email LIKE @Email)
-                    AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
-                    AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
-                    AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)";
+                string query = @"
+            SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no AS Phone_no, 
+                   e.tickets AS no_tickets, e.closed_tickets AS closed_tickets, e.acc_status AS AccStatus
+            FROM employee e
+            INNER JOIN roles r ON r.roles_id = e.roles_id
+            WHERE (@EmployeeId IS NULL OR e.employee_id LIKE @EmployeeId)
+                AND (@Role IS NULL OR r.roles_type LIKE @Role)
+                AND (@Name IS NULL OR e.name LIKE @Name)
+                AND (@Email IS NULL OR e.email LIKE @Email)
+                AND (@Phone_no IS NULL OR e.phone_no LIKE @Phone_no)
+                AND (@no_tickets IS NULL OR e.tickets LIKE @no_tickets)
+                AND (@closed_tickets IS NULL OR e.closed_tickets LIKE @closed_tickets)
+                AND (@AccStatus IS NULL OR e.acc_status LIKE @AccStatus)";
 
                 List<Employee> employees = connection.Query<Employee>(query, new
                 {
@@ -83,12 +121,14 @@ namespace FYP.Controllers
                     Email = string.IsNullOrEmpty(email) ? null : "%" + email + "%",
                     Phone_no = string.IsNullOrEmpty(phoneNumber) ? null : "%" + phoneNumber + "%",
                     no_tickets = string.IsNullOrEmpty(numTickets) ? null : "%" + numTickets + "%",
-                    closed_tickets = string.IsNullOrEmpty(numclosed_tickets) ? null : "%" + numclosed_tickets + "%"
+                    closed_tickets = string.IsNullOrEmpty(numclosed_tickets) ? null : "%" + numclosed_tickets + "%",
+                    AccStatus = string.IsNullOrEmpty(accStatus) ? null : "%" + accStatus + "%"
                 }).ToList();
 
                 return View("EmployeeList", employees);
             }
         }
+
 
 
         public IActionResult SearchLeaveRequests(string employeeId, DateTime? startDate, DateTime? endDate, string reason, string status)
@@ -188,26 +228,6 @@ namespace FYP.Controllers
             
         }
 
-
-
-        //private int GetNextLeaveId()
-        //{
-        //    int leaveid = 0;
-        //    using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-        //    {
-        //        connection.Open();
-        //        string query = $"SELECT MAX(leave_id) FROM leave";
-
-        //        List<int> id = connection.Query<int>(query).AsList();
-        //        foreach (int lid in id)
-        //        {
-        //            leaveid = lid;
-        //        }
-
-        //        return leaveid;
-        //    }
-        //}
-
         public IActionResult ApplyLeave()
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
@@ -225,42 +245,6 @@ namespace FYP.Controllers
 
         }
 
-        //[HttpPost]
-        //public IActionResult ApplyLeave(EmployeeSchedule leave)
-        //{
-        //    int leaveId;
-
-        //    using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-        //    {
-        //        // Find the maximum leave_id from the database
-        //        string maxIdQuery = @"SELECT MAX(leave_id) FROM leave";
-        //        connection.Open();
-        //        var maxId = connection.QuerySingleOrDefault<int?>(maxIdQuery);
-        //        leaveId = maxId.HasValue ? maxId.Value + 1 : 1;
-
-        //        // Retrieve the logged-in employee's ID
-        //        int employeeId = GetLoggedInEmployeeId();
-
-        //        // Store the leave request in the database
-        //        string insertQuery = @"
-        //    INSERT INTO leave (leave_id, employee_id, startDate, end_date, reason, proof_provided, is_approved)
-        //    VALUES (@LeaveId, @EmployeeId, @StartDate, @EndDate, @Reason, @ProofProvided, 'pending');";
-
-        //        connection.Execute(insertQuery, new { LeaveId = leaveId, EmployeeId = employeeId, leave.StartDate, leave.EndDate, leave.Reason, leave.ProofProvided });
-        //    }
-
-        //    if (leaveId > 0)
-        //    {
-        //        // Redirect to the LeaveRequests page
-        //        return RedirectToAction("LeaveRequests");
-        //    }
-        //    else
-        //    {
-        //        // Handle error scenario
-        //        return View("Error");
-        //    }
-        //}
-        // ApplyLeave action method
         [HttpPost]
         public IActionResult ApplyLeave(EmployeeSchedule leave)
         {
@@ -430,9 +414,6 @@ namespace FYP.Controllers
 
             return RedirectToAction("LeaveRequests");
         }
-
-
-
 
 
         //for admin to add?
