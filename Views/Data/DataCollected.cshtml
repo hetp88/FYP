@@ -10,9 +10,11 @@
             box-sizing: border-box;
         }
         body {
-            background-color: black;
             margin: 0;
-            padding: 20px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            height: 100vh;
         }
         .container {
             display: flex;
@@ -65,7 +67,8 @@
     </style>
     <title>Data Collected</title>
 </head>
-<body>
+
+<body background="\Images\MainBackground.jpg">
     <button class="button" onclick="location.href='/Home/Index'"> Back</button>
     <div class="container">
     <div>
@@ -182,39 +185,27 @@
 
         @*============ To display the values extracted from above to the diagrams [Render Charts] ============*@
         var statusCtx = document.getElementById('statusChart').getContext('2d');
-        var statusChart = new Chart(statusCtx, {
-            type: 'bar', 
-            data: statusData,
-            options: {
-                responsive: true,
-            }
+        var statusChart = new Chart(statusCtx, { //Form new chart 
+            type: 'bar', //Set the chart type
+            data: statusData, //Which data to extract from
         });
 
         var priorityCtx = document.getElementById('priorityChart').getContext('2d');
         var priorityChart = new Chart(priorityCtx, {
             type: 'bar',
             data: priorityData,
-            options: {
-                responsive: true,
-            }
         });
 
         var categoryCtx = document.getElementById('categoryChart').getContext('2d');
         var categoryChart = new Chart(categoryCtx, {
             type: 'bar',
             data: categoryData,
-            options: {
-                responsive: true,
-            }
         });
 
         var typeCtx = document.getElementById('typeChart').getContext('2d'); 
         var typeChart = new Chart(typeCtx, {
             type: 'bar',
             data: typeData,
-            options: {
-                reponsive: true,
-            } 
         });
 
         //Confirm Exit Page
@@ -224,20 +215,18 @@
             if (confirmation) {
                 window.location.href = "/Home/Index";
             } else {
-                // User chose to cancel, will just get back to the form
+
             }
         }
 
         //Functions User input for the date range
         function applyDateRange() {
-            var startDateInput = document.getElementById("startDate");
-            var endDateInput = document.getElementById("endDate");
-            var startDate = startDateInput.value;
-            var endDate = endDateInput.value;
-
+            var startDateInput = document.getElementById("startDate"); //Retrieve the startdate input
+            var endDateInput = document.getElementById("endDate"); //Retrieve enddate input
+            var startDate = startDateInput.value; //Stores the input as variable
+            var endDate = endDateInput.value; //stores the input as variable
             window.location.href = "/Data/DataCollected?startDate=" + startDate + "&endDate=" + endDate;
         }
-
     </script>
 </body>
 </html>
