@@ -120,16 +120,7 @@
                     <th>Resolution</th>
                     <th>Employee In-Charge</th>
                     <th>Escalate Reason</th>
-                    <th>Escalate In-Charge</th>
-                    @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
-                    {
-                        <th>Update</th>
-                    }
-
-                    @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent"))
-                    {
-                        <th>Escalate</th>
-                    }
+                    <th>Escalate In-Charge</th>                   
                 </tr>
 
                 @foreach (var ticket in Model)
@@ -181,48 +172,6 @@
                         else
                         {
                             <td>@ticket.Escalate_SE</td>
-                        }
-
-                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Employee == ViewBag.Current)
-                        {
-                            <td>
-                                <a href=@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = ticket.TicketId })
-                                   onclick="return confirm('Update Ticket: @ticket.Description?')">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-
-                        @if (User.IsInRole("support engineer") && ticket.Status != "closed" && ticket.Escalate_SE == ViewBag.Current)
-                        {
-                            <td>
-                                <a href=@Url.Action("SEResolution", "Ticket", new { TicketId = ticket.TicketId })
-                                   onclick="return confirm('Update Ticket: @ticket.Description?')">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td></td>
-                        }
-
-                        @if ((User.IsInRole("administrator") || User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Escalate_SE == 0 && ticket.Employee == ViewBag.Current)
-                        {
-                            <td>
-                                <a href=@Url.Action("EscalateTicket", "Ticket", new { TicketId = ticket.TicketId }) 
-                                   onclick="return confirm('Escalate Ticket (ID): @ticket.TicketId?')">
-                                    <i class="bi bi-exclamation-triangle"></i>
-                                </a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td></td>
                         }
                     </tr>
                 }
