@@ -55,42 +55,57 @@ namespace FYP.Controllers
             }
             
         }
-        // EmployeeController.cs
 
         public IActionResult UpdateEmployee(int employeeId)
         {
-            if (User.IsInRole("administrator"))
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                connection.Open();
+
+                string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, 
+                        e.tickets AS no_tickets, e.closed_tickets AS closed_tickets, e.acc_status AS AccStatus
+                        FROM employee e
+                        INNER JOIN roles r ON r.roles_id = e.roles_id
+                        WHERE e.employee_id = @EmployeeId;";
+
+                var employee = connection.QueryFirstOrDefault<Employee>(query, new { EmployeeId = employeeId });
+
+                if (employee != null)
                 {
-                    connection.Open();
-
-                    string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets, e.acc_status AS AccStatus
-                            FROM employee e
-                            INNER JOIN roles r ON r.roles_id = e.roles_id
-                            WHERE e.employee_id = @EmployeeId;";
-
-                    Employee employee = connection.QueryFirstOrDefault<Employee>(query, new { EmployeeId = employeeId });
-
-                    if (employee != null)
-                    {
-                        return View("UpdateEmployee", employee);
-                    }
+                    return View(employee);
                 }
+            }
 
-                // If employee with the given ID is not found, redirect to a "NotFound" view.
-                return View("NotFound");
-            }
-            else
-            {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
-            }
+            // If employee not found, redirect back to the EmployeeList
+            return RedirectToAction("EmployeeList");
         }
+        [HttpPost]
+        public IActionResult SaveEmployee(Employee updatedEmployee)
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
 
+                string updateQuery = @"UPDATE employee 
+                              SET name = @Name, email = @Email, phone_no = @Phone_no, 
+                                  tickets = @no_tickets, closed_tickets = @closed_tickets,
+                                  acc_status = @AccStatus
+                              WHERE employee_id = @EmployeeId;";
 
+                connection.Execute(updateQuery, new
+                {
+                    EmployeeId = updatedEmployee.EmployeeId,
+                    Name = updatedEmployee.Name,
+                    Email = updatedEmployee.Email,
+                    Phone_no = updatedEmployee.Phone_no,
+                    no_tickets = updatedEmployee.no_tickets,
+                    closed_tickets = updatedEmployee.closed_tickets,
+                    AccStatus = updatedEmployee.AccStatus
+                });
+            }
 
-
+            return RedirectToAction("EmployeeList");
+        }
 
 
         public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets, string accStatus)

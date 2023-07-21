@@ -9,10 +9,13 @@
 <head>
     <title>Tickets</title>
     <style>
-        .container {
-            margin-top: 40px;
+        .card {
+            margin-top: 150px;
             width: auto;
             background: #FFFFFF;
+            border-radius: 20px;
+            padding: 13px;
+            
         }
 
         .btn-primary {
@@ -38,7 +41,7 @@
     </script>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <form method="get" action="/Account/Users">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" name="searchUserId" placeholder="User ID" aria-label="User ID">

@@ -59,10 +59,8 @@
     </style>
     <script>
         window.onload = function () {
-            document.getElementsByName("faqIdQuery")[0].value = "";
-            document.getElementsByName("questionQuery")[0].value = "";
-            document.getElementsByName("solutionQuery")[0].value = "";
-            document.getElementsByName("categoryQuery")[0].value = "";
+            document.getElementsById("questionQuery")[0].value = "";
+            document.getElementsById("categoryQuery")[0].value = "";
         };
     </script>
 </head>
@@ -71,9 +69,6 @@
         <form method="get" action="/FAQ/Details" class="search-form">
             <div>
                 <input type="text" name="questionQuery" placeholder="Question" />
-            </div>
-            <div>
-                <input type="text" name="solutionQuery" placeholder="Solution" />
             </div>
             <div>
                 <select name="categoryQuery">

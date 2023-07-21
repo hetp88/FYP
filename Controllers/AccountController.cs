@@ -22,9 +22,10 @@ public class AccountController : Controller
             INNER JOIN roles r ON r.roles_id = u.roles_id
             WHERE u.userid = '{0}' AND u.user_pw = HASHBYTES('SHA1', '{1}')";
     private const string LOGIN_EMP =
-        @"SELECT e.employee_id, e.employee_pw, r.roles_type FROM employee e 
-            INNER JOIN roles r ON r.roles_id = e.roles_id
-            WHERE e.employee_id = '{0}' AND e.employee_pw = HASHBYTES('SHA1', '{1}')";
+    @"SELECT e.employee_id, e.employee_pw, e.acc_Status, r.roles_type FROM employee e 
+        INNER JOIN roles r ON r.roles_id = e.roles_id
+        WHERE e.employee_id = '{0}' AND e.employee_pw = HASHBYTES('SHA1', '{1}')";
+
 
     private const string LASTLOGIN_SQ =
         @"UPDATE users SET last_login=@Last_login WHERE userid = @UserID";
@@ -583,32 +584,38 @@ public class AccountController : Controller
 
         DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
         DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
-        if (ds.Rows.Count == 1)
+
+        // Check if the user is an "Active" user with "roles_type" as "Student" or "Staff"
+        if (ds.Rows.Count == 1 && ds.Rows[0]["acc_Status"].ToString() == "Active")
         {
             principal =
                new ClaimsPrincipal(
                   new ClaimsIdentity(
                      new Claim[] {
-                         new Claim(ClaimTypes.NameIdentifier, uid),
-                         new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
+                     new Claim(ClaimTypes.NameIdentifier, uid),
+                     new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
                      }, "Basic"
                   )
                );
             return true;
         }
-        else if (de.Rows.Count == 1)
+        // Check if the employee is an "Active" user with "roles_type" as "Helpdesk Agent," "Support Engineer," or "Administrator"
+        else if (de.Rows.Count == 1 && de.Rows[0]["acc_Status"].ToString() == "Active")
         {
             principal =
                new ClaimsPrincipal(
                   new ClaimsIdentity(
                      new Claim[] {
-                         new Claim(ClaimTypes.NameIdentifier, uid),
-                         new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
+                     new Claim(ClaimTypes.NameIdentifier, uid),
+                     new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
                      }, "Basic"
                   )
                );
             return true;
         }
+
+        // User account is either not found, or account status is not "Active"
         return false;
     }
+
 }

@@ -1,4 +1,4 @@
-@model List<FYP.Models.Employee>
+﻿@model List<FYP.Models.Employee>
 
 @{
     Layout = "_Ticket";
@@ -37,16 +37,9 @@
         }
     </style>
     <script>
-        window.onload = function () {
-            document.getElementsByName("employeeId")[0].value = "";
-            document.getElementsByName("role")[0].value = "";
-            document.getElementsByName("name")[0].value = "";
-            document.getElementsByName("email")[0].value = "";
-            document.getElementsByName("phoneNumber")[0].value = "";
-            document.getElementsByName("numTickets")[0].value = "";
-            document.getElementsByName("numclosed_tickets")[0].value = "";
-            document.getElementsByName("accStatus")[0].value = "";
-        };
+        function redirectToUpdatePage(employeeId) {
+            window.location.href = `/Employee/UpdateEmployee?employeeId=${employeeId}`;
+        }
     </script>
 </head>
 <body>
@@ -82,8 +75,8 @@
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Number of Tickets Assigned</th>
                     <th style="text-align:center">Number of Tickets Closed</th>
-                    <th style="text-align:center">Account Status</th> <!-- New column header -->
-                    <th style="text-align: center">Action</th>
+                    <th style="text-align:center">Account Status</th>
+                    <th style="text-align:center">Update</th> <!-- New column header -->
                 </tr>
                 @foreach (var employee in Model)
                 {
@@ -95,9 +88,10 @@
                         <td style="text-align:center">@employee.Phone_no</td>
                         <td style="text-align:center">@employee.no_tickets</td>
                         <td style="text-align:center">@employee.closed_tickets</td>
-                        <td style="text-align:center">@employee.AccStatus</td> <!-- New data cell -->
-                        <td style="text-align: center">
-                            <a href="/Employee/UpdateEmployee/@employee.EmployeeId" class="btn btn-primary">Update</a>
+                        <td style="text-align:center">@employee.AccStatus</td>
+                        <td style="text-align:center">
+                            <!-- Add the update button/icon in the last column -->
+                            <span class="update-icon cute-icon" onclick="redirectToUpdatePage('@employee.EmployeeId')">🖊️</span>
                         </td>
                     </tr>
                 }
