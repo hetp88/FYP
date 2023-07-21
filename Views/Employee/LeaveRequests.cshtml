@@ -9,11 +9,11 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <style>
         /* Add your custom styles here */
-        
-
         .card {
             margin-top: 150px;
             width: auto;
@@ -35,17 +35,46 @@
                 background-color: #218838; /* Darker shade of green */
                 border-color: #218838; /* Darker shade of green */
             }
-        
+
+        /* Add custom styles for the cancel icon */
+        .search-form .search-box {
+            position: relative;
+        }
+
+        .search-form input[type="text"],
+        .search-form select {
+            padding: 8px;
+            width: 200px;
+        }
+
+        .search-form .cancel-icon {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa; /* Light grey color for the X icon */
+        }
+
+        .search-form input[type="text"]:not(:placeholder-shown) + .cancel-icon,
+        .search-form select:not(:placeholder-shown) + .cancel-icon {
+            display: inline;
+        }
     </style>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         window.onload = function () {
-            document.getElementById("employeeId").value = "";
-            document.getElementById("startDate").value = "";
-            document.getElementById("endDate").value = "";
-            document.getElementById("reason").value = "";
-            document.getElementById("status").value = "";
+            clearSearchInput();
         };
+
+        function clearSearchInput() {
+            var searchInputs = document.querySelectorAll(".search-form input[type='text'], .search-form select");
+            for (var i = 0; i < searchInputs.length; i++) {
+                searchInputs[i].value = "";
+            }
+        }
 
         function searchLeaveRequests() {
             var employeeId = document.getElementById("employeeId").value;
@@ -59,34 +88,38 @@
                 + "&startDate=" + startDate + "&endDate=" + endDate + "&reason=" + reason + "&status=" + status;
         }
     </script>
-
 </head>
 <body>
     <div class="card">
         <h1>Leave</h1>
 
-        <div class="row">
-            <div class="col">
+        <div class="row search-form">
+            <div class="col search-box">
                 <input type="text" class="form-control" id="employeeId" placeholder="Enter employee ID">
+                <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
             </div>
-            <div class="col">
-                <input type="date" class="form-control" id="startDate">
+            <div class="col search-box">
+                <input type="date" class="form-control" id="startDate" placeholder="Start Date">
+                <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
             </div>
-            <div class="col">
-                <input type="date" class="form-control" id="endDate">
+            <div class="col search-box">
+                <input type="date" class="form-control" id="endDate" placeholder="End Date">
+                <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
             </div>
-            <div class="col">
+            <div class="col search-box">
                 <input type="text" class="form-control" id="reason" placeholder="Enter reason">
+                <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
             </div>
-            <div class="col">
+            <div class="col search-box">
                 <select id="status" name="status" class="form-control">
                     <option value="">Select a status</option>
                     <option value="Approved">Approved</option>
                     <option value="Rejected">Rejected</option>
                     <option value="Pending">Pending</option>
                 </select>
+                <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
             </div>
-            <div class="col">
+            <div class="col search-box">
                 <button class="btn btn-primary" onclick="searchLeaveRequests()">Search</button>
             </div>
         </div>

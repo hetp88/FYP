@@ -8,6 +8,9 @@
 <html>
 <head>
     <title>Tickets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .card {
             margin-top: 150px;
@@ -35,25 +38,92 @@
             font-size: 24px;
             color: pink;
         }
+
+        /* Add custom styles for the cancel icon */
+        .search-box {
+            position: relative;
+            width: 145px; /* Adjust the width to fit all elements in one line */
+            
+        }
+
+            .search-box .form-control {
+                
+                padding-right: 30px; /* Add some right padding to make space for the icon */
+            }
+
+            .search-box .cancel-icon {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #aaa; /* Light grey color for the X icon */
+                display: none;
+            }
+
+            .search-box .form-control:not(:placeholder-shown) + .cancel-icon {
+                display: inline;
+            }
     </style>
     <script>
+        window.onload = function () {
+            clearSearchInput();
+        };
+
+        function clearSearchInput() {
+            var searchInputs = document.querySelectorAll(".search-box .form-control");
+            for (var i = 0; i < searchInputs.length; i++) {
+                searchInputs[i].value = "";
+            }
+        };
+
         function redirectToUpdatePage(employeeId) {
             window.location.href = `/Employee/UpdateEmployee?employeeId=${employeeId}`;
         }
+
     </script>
 </head>
 <body>
     <div class="card">
         <form method="get" action="/Employee/SearchEmployees">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" name="employeeId" placeholder="Employee ID" aria-label="Employee ID">
-                <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
-                <input type="text" class="form-control" name="name" placeholder="Name" aria-label="Name">
-                <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
-                <input type="text" class="form-control" name="phoneNumber" placeholder="Phone Number" aria-label="Phone Number">
-                <input type="text" class="form-control" name="numTickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
-                <input type="text" class="form-control" name="numclosed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
-                <input type="text" class="form-control" name="accStatus" placeholder="Account Status" aria-label="Account Status">
+                <div class="search-box">
+                    <input type="text" class="form-control" name="employeeId" placeholder="Employee ID" aria-label="Employee ID">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="name" placeholder="Name" aria-label="Name">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="phoneNumber" placeholder="Phone Number" aria-label="Phone Number">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="numTickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="numclosed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <select class="form-select" name="accStatus" aria-label="Account Status">
+                        <option value="">Account Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Suspended">Suspended</option>
+                        <option value="Resigned">Resigned</option>
+                    </select>
+                </div>
+
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
