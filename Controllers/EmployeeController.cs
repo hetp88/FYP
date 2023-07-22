@@ -175,13 +175,6 @@ namespace FYP.Controllers
             }
         }
 
-
-
-
-
-
-
-
         public IActionResult Schedule()
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator")) 
@@ -307,7 +300,7 @@ namespace FYP.Controllers
             if (leaveId > 0)
             {
                 // Redirect to the LeaveRequests page
-                return RedirectToAction("Schedule");
+                return RedirectToAction("LeaveRequests");
             }
             else
             {
@@ -316,33 +309,38 @@ namespace FYP.Controllers
             }
         }
 
-        // DownloadProof action method
+
         public IActionResult DownloadProof(int leaveId)
         {
-            if (User.IsInRole("administrator"))
-            {
-                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
-                {
-                    string query = "SELECT proof_provided FROM [leave] WHERE leave_id = @LeaveId;";
-                    connection.Open();
-                    string proofProvided = connection.QuerySingleOrDefault<string>(query, new { LeaveId = leaveId });
+            int loggedInEmployeeId = GetLoggedInEmployeeId();
 
-                    if (!string.IsNullOrEmpty(proofProvided))
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                // Retrieve the employee ID and proof_provided for the given leaveId
+                string query = "SELECT employee_id, proof_provided FROM [leave] WHERE leave_id = @LeaveId;";
+                var leaveInfo = connection.QuerySingleOrDefault<dynamic>(query, new { LeaveId = leaveId });
+
+                if (leaveInfo != null)
+                {
+                    int employeeId = leaveInfo.employee_id;
+                    string proofProvided = leaveInfo.proof_provided;
+
+                    // Check if the logged-in user is an administrator or the proof belongs to them
+                    if (User.IsInRole("administrator") || loggedInEmployeeId == employeeId)
                     {
                         byte[] proofBytes = Convert.FromBase64String(proofProvided);
                         return File(proofBytes, "application/pdf");
                     }
                 }
+            }
 
-                return NotFound();
-            }
-            else
-            {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
-            }
-            
+            // If the logged-in user is not authorized to view the proof, return Forbidden page
+            return View("Forbidden");
         }
+
+
 
         private int GetLoggedInEmployeeId()
         {
@@ -360,11 +358,11 @@ namespace FYP.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    // Retrieve all leave requests
+                    // Retrieve all leave requests for administrators
                     string query = @"
-            SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate AS StartDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
-            FROM leave l
-            INNER JOIN employee e ON e.employee_id = l.employee_id;";
+                SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate AS StartDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+                FROM leave l
+                INNER JOIN employee e ON e.employee_id = l.employee_id;";
 
                     connection.Open();
 
@@ -375,20 +373,35 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
+                // For employees (other than administrators), filter leave requests based on the logged-in employee's ID
+                int loggedInEmployeeId = GetLoggedInEmployeeId();
+
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    // Retrieve leave requests for the logged-in employee only
+                    string query = @"
+                SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate AS StartDate, l.end_date AS EndDate, l.reason, l.is_approved AS IsApproved, l.proof_provided
+                FROM leave l
+                INNER JOIN employee e ON e.employee_id = l.employee_id
+                WHERE e.employee_id = @LoggedInEmployeeId;";
+
+                    connection.Open();
+
+                    List<EmployeeSchedule> leaveRequests = connection.Query<EmployeeSchedule>(query, new { LoggedInEmployeeId = loggedInEmployeeId }).ToList();
+
+                    return View(leaveRequests);
+                }
             }
-            
         }
-
-
         public IActionResult ReviewLeave(int leaveId)
         {
             if (User.IsInRole("administrator"))
             {
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    string query = @"SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date as EndDate, l.reason, l.is_approved, l.proof_provided
+                    // Retrieve the leave request for administrators
+                    string query = @"
+                SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date as EndDate, l.reason, l.is_approved, l.proof_provided
                 FROM leave l
                 INNER JOIN employee e ON e.employee_id = l.employee_id
                 WHERE l.leave_id = @LeaveId;";
@@ -407,26 +420,168 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
+                // For employees (other than administrators), filter leave requests based on the logged-in employee's ID
+                int loggedInEmployeeId = GetLoggedInEmployeeId();
+
+                using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+                {
+                    // Retrieve leave requests for the logged-in employee only
+                    string query = @"
+                SELECT l.leave_id AS LeaveId, e.employee_id AS EmployeeId, e.name AS EmployeeName, l.startDate, l.end_date as EndDate, l.reason, l.is_approved, l.proof_provided
+                FROM leave l
+                INNER JOIN employee e ON e.employee_id = l.employee_id
+                WHERE l.leave_id = @LeaveId AND e.employee_id = @LoggedInEmployeeId;";
+
+                    connection.Open();
+
+                    EmployeeSchedule leaveRequest = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveId, LoggedInEmployeeId = loggedInEmployeeId });
+
+                    if (leaveRequest != null)
+                    {
+                        return View(leaveRequest);
+                    }
+                }
+
+                return RedirectToAction("LeaveRequests");
             }
-            
         }
 
         [HttpPost]
         public IActionResult ReviewLeave(EmployeeSchedule leaveRequest)
         {
+            int loggedInEmployeeId = GetLoggedInEmployeeId();
+
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
-                string updateQuery = @"UPDATE leave
-                                      SET is_approved = @IsApproved
-                                      WHERE leave_id = @LeaveId;";
+                if (User.IsInRole("administrator"))
+                {
+                    // For administrators, allow them to update the leave request status
+                    string updateQuery = @"UPDATE leave
+                                  SET is_approved = @IsApproved
+                                  WHERE leave_id = @LeaveId;";
 
-                connection.Open();
+                    connection.Open();
+                    connection.Execute(updateQuery, leaveRequest);
+                }
+                else
+                {
+                    // For employees (other than administrators), ensure they can only review their own leave requests
+                    string query = @"
+                SELECT e.employee_id AS EmployeeId, l.is_approved
+                FROM leave l
+                INNER JOIN employee e ON e.employee_id = l.employee_id
+                WHERE l.leave_id = @LeaveId AND e.employee_id = @LoggedInEmployeeId;";
 
-                connection.Execute(updateQuery, leaveRequest);
+                    connection.Open();
+                    EmployeeSchedule existingLeaveRequest = connection.QueryFirstOrDefault<EmployeeSchedule>(query, new { LeaveId = leaveRequest.LeaveId, LoggedInEmployeeId = loggedInEmployeeId });
+
+                    if (existingLeaveRequest != null)
+                    {
+                        if (leaveRequest.IsApproved == "Withdraw")
+                        {
+                            // Delete the leave request from the database
+                            string deleteQuery = "DELETE FROM leave WHERE leave_id = @LeaveId AND employee_id = @EmployeeId;";
+                            connection.Execute(deleteQuery, new { LeaveId = leaveRequest.LeaveId, EmployeeId = loggedInEmployeeId });
+
+                            // Redirect back to the LeaveRequests page after successful withdrawal
+                            return RedirectToAction("LeaveRequests");
+                        }
+                        else
+                        {
+                            // Update the leave information for the logged-in employee
+                            string updateQuery = @"UPDATE leave
+                                          SET startDate = @StartDate, end_date = @EndDate, reason = @Reason
+                                          WHERE leave_id = @LeaveId AND employee_id = @EmployeeId;";
+
+                            connection.Execute(updateQuery, new
+                            {
+                                LeaveId = leaveRequest.LeaveId,
+                                EmployeeId = loggedInEmployeeId,
+                                StartDate = leaveRequest.StartDate,
+                                EndDate = leaveRequest.EndDate,
+                                Reason = leaveRequest.Reason
+                            });
+
+                            // Redirect back to the LeaveRequests page after successful update
+                            return RedirectToAction("LeaveRequests");
+                        }
+                    }
+                    else
+                    {
+                        // Unauthorized access, redirect back to the LeaveRequests page
+                        return RedirectToAction("LeaveRequests");
+                    }
+                }
             }
 
+            // If the method reaches this point, there might be an error, redirect to the LeaveRequests page
+            return RedirectToAction("LeaveRequests");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateLeaveDetails(EmployeeSchedule updatedLeave)
+        {
+            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            {
+                connection.Open();
+
+                // Prepare the base update query
+                string updateQuery = @"UPDATE leave 
+                              SET";
+
+                // Initialize a list to store the update parameters
+                var parameters = new DynamicParameters();
+                parameters.Add("LeaveId", updatedLeave.LeaveId);
+
+                // Check and add the fields that are updated by the employee
+                if (updatedLeave.StartDate != default(DateTime))
+                {
+                    updateQuery += " startDate = @StartDate,";
+                    parameters.Add("StartDate", updatedLeave.StartDate);
+                }
+
+                if (updatedLeave.EndDate != default(DateTime))
+                {
+                    updateQuery += " end_date = @EndDate,";
+                    parameters.Add("EndDate", updatedLeave.EndDate);
+                }
+
+                if (!string.IsNullOrEmpty(updatedLeave.Reason))
+                {
+                    updateQuery += " reason = @Reason,";
+                    parameters.Add("Reason", updatedLeave.Reason);
+                }
+
+                // Check if the proof has been updated and add it to the update query
+                if (updatedLeave.ProofProvided != null)
+                {
+                    // Convert the new proof provided to a byte array
+                    byte[] proofBytes;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        updatedLeave.ProofProvided.CopyTo(memoryStream);
+                        proofBytes = memoryStream.ToArray();
+                    }
+
+                    // Store the proof as a base64-encoded string
+                    string proof = Convert.ToBase64String(proofBytes);
+
+                    // Add the proof_provided parameter to the update query
+                    updateQuery += " proof_provided = @ProofProvided,";
+                    parameters.Add("ProofProvided", proof);
+                }
+
+                // Remove the trailing comma
+                updateQuery = updateQuery.TrimEnd(',');
+
+                // Append the WHERE clause to update only the specific leave entry
+                updateQuery += " WHERE leave_id = @LeaveId;";
+
+                // Execute the update query with the parameters
+                connection.Execute(updateQuery, parameters);
+            }
+
+            // Redirect to the LeaveRequests page or any other appropriate page after updating the leave details
             return RedirectToAction("LeaveRequests");
         }
 

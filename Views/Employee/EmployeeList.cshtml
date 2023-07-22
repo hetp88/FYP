@@ -30,7 +30,7 @@
                 border-color: #218838; /* Darker shade of green */
             }
 
-        .update-icon {
+        .update-icon, .delete-icon {
             cursor: pointer;
         }
 
@@ -43,11 +43,9 @@
         .search-box {
             position: relative;
             width: 145px; /* Adjust the width to fit all elements in one line */
-            
         }
 
             .search-box .form-control {
-                
                 padding-right: 30px; /* Add some right padding to make space for the icon */
             }
 
@@ -64,6 +62,32 @@
             .search-box .form-control:not(:placeholder-shown) + .cancel-icon {
                 display: inline;
             }
+
+        /* Center align table headers */
+        .table {
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            .table th,
+            .table td {
+                padding: 8px;
+                text-align: center;
+            }
+
+            .table th {
+                background-color: #f2f2f2;
+            }
+
+            .table td {
+                border: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+                .table td:last-child {
+                    border-right: none;
+                }
     </style>
     <script>
         window.onload = function () {
