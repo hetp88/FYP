@@ -37,7 +37,10 @@ namespace FYP.Controllers
             {
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
-                    string query = @"SELECT e.employee_id AS EmployeeId, r.roles_type AS Role, e.name, e.email, e.phone_no, e.tickets AS no_tickets, e.closed_tickets AS closed_tickets, e.acc_status AS AccStatus
+                    string query = @"SELECT e.employee_id AS EmployeeId, 
+                r.roles_type AS Role, e.name, e.email, e.phone_no,
+                e.tickets AS no_tickets, e.closed_tickets AS closed_tickets,
+                e.acc_status AS AccStatus
                 FROM employee e
                 INNER JOIN roles r ON r.roles_id = e.roles_id;";
 
@@ -86,11 +89,22 @@ namespace FYP.Controllers
             {
                 connection.Open();
 
+                // Fetch the current acc_status from the database
+                string getStatusQuery = "SELECT acc_status FROM employee WHERE employee_id = @EmployeeId;";
+                var currentStatus = connection.QueryFirstOrDefault<string>(getStatusQuery, new { EmployeeId = updatedEmployee.EmployeeId });
+
+                // Update only the fields that were changed in the form
                 string updateQuery = @"UPDATE employee 
                               SET name = @Name, email = @Email, phone_no = @Phone_no, 
                                   tickets = @no_tickets, closed_tickets = @closed_tickets,
                                   acc_status = @AccStatus
                               WHERE employee_id = @EmployeeId;";
+
+                // If the acc_status was not changed in the form, keep the current status
+                if (string.IsNullOrWhiteSpace(updatedEmployee.AccStatus))
+                {
+                    updatedEmployee.AccStatus = currentStatus;
+                }
 
                 connection.Execute(updateQuery, new
                 {
@@ -106,6 +120,7 @@ namespace FYP.Controllers
 
             return RedirectToAction("EmployeeList");
         }
+
 
 
         public IActionResult SearchEmployees(string employeeId, string role, string name, string email, string phoneNumber, string numTickets, string numclosed_tickets, string accStatus)
