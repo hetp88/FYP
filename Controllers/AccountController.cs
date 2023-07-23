@@ -180,8 +180,8 @@ public class AccountController : Controller
                 if (totalDigits == 8)
                 {
 
-                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
-                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
+                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login , acc_Status)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login, 'Active' )";
 
                     if (connection.Execute(insertQuery1, student) == 1)
                     {
@@ -197,8 +197,8 @@ public class AccountController : Controller
 
                 else if (totalDigits == 4)
                 {
-                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
-                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
+                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login, acc_Status)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login, 'Active' )";
 
                     if (connection.Execute(insertQuery2, staff) == 1)
                     {
