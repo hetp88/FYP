@@ -27,42 +27,23 @@
             padding-left: 30px;
         }
         .nav_links {
-    list-style: none;
-    margin-right: auto;
-    align-items: flex-end;
-    margin: 20px;
-}
+            list-style: none;
+            margin-right: auto;
+            align-items: flex-end;
+            margin: 20px;
+        }
 
-.nav_links li {
-    display: inline-block;
-    padding: 0px 20px;
-    margin-right: auto;
-}
+            .nav_links li {
+                display: inline-block;
+                padding: 0px 20px;
+                margin-right: auto;
+            }
 
-.nav_links li a {
-    position: relative; /* Add relative positioning to the links */
-    transition: all 0.3s ease 0s;
-    margin-right: auto;
-    align-items: flex-start;
-    text-decoration: none; /* Remove default underline */
-}
-
-.nav_links li a::after {
-    content: ""; /* Add an empty pseudo-element for the underline */
-    position: absolute;
-    left: 0;
-    bottom: -3px; /* Adjust this value to control the underline position */
-    width: 100%;
-    height: 2px; /* Adjust this value to control the underline thickness */
-    background-color: #000; /* Set the initial underline color */
-    opacity: 0; /* Hide the underline initially */
-    transition: opacity 0.3s ease, background-color 0.3s ease; /* Add transition for smooth animation */
-}
-
-.nav_links li a:hover::after {
-    opacity: 1; /* Show the underline on hover */
-    background-color: #ff0000; /* Set the underline color on hover */
-}
+                .nav_links li a {
+                    transition: all 0.3s ease 0s;
+                    margin-right: auto;
+                    align-items: flex-start;
+                }
 
         li, button {
             color: black;
