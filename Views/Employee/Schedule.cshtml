@@ -1,9 +1,4 @@
 ﻿@model FYP.Models.EmployeeSchedule
-
-@{
-    Layout = "_Ticket";
-}
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,17 +12,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
     <style>
         
-        body {
-            margin-top: 200px;
+        body { 
             font-family: Arial, sans-serif;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            height: 100vh;
+            justify-content: center;
+            align-content: center;
         }
 
         #calendar {
             max-width: 900px;
-            margin: 40px auto;
+            margin: 20px auto;
             background-color: #FFF;
             border-radius: 4px;
-            margin-top: 120px; /* Adjust the value to shift the calendar up */
         }
 
         .leave-event {
@@ -60,6 +59,12 @@
 
         .create-event-icon {
             vertical-align: middle;
+        }
+        .button{
+            margin-top: 10px;
+            margin-left: 10px;
+            border-radius: 10px;
+            background: #BEACDF;
         }
     </style>
 
@@ -119,7 +124,8 @@
         });
     </script>
 </head>
-<body>
+<body background="\Images\MainBackground.jpg">
+    <button class="button" onclick="location.href='/Home/Index'"> Back</button>
     <div id="calendar"></div>
 </body>
 </html>

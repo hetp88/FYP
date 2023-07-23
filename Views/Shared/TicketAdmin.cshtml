@@ -1,5 +1,4 @@
 ﻿<head>
-    
     <script>
         function showMessage() {
             var confirmation = confirm("Confirm Logging out?");
@@ -22,7 +21,7 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-            
+            font-size: 16px;
         }
 
         header {
@@ -30,18 +29,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background-color: #BEACDF;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 999;
+            background-color: #3A71FF;
+            color: white
         }
 
         .logo {
             cursor: pointer;
             margin-right: auto;
-            padding-left:30px;
+            padding-left: 30px;
         }
 
         .white-profile-icon {
@@ -49,45 +44,44 @@
         }
 
             .white-profile-icon:hover {
-                color: #BEACDF;
+                color: #FFFFFF;
             }
 
-        .navbar_links .nav-link:hover .icon-large,
-        .navbar_links .nav-link:hover .bigger-icon {
-            color: #BEACDF;
-        }
-
         .nav_links {
+            display: flex;
+            margin: 10px;
+            border-radius: 10px;
+            color: #FFFFFF;
+        }
+        .navbar_links {
             list-style: none;
             display: flex;
             align-items: center;
-            background: #FFFFFF;
             border-radius: 10px;
             padding: 10px;
-            margin: 20px auto;
+            margin: 20px;
+            
         }
-            .nav_links li {
-                display: inline-block;
-                padding: 0px 20px;
-                margin-right: auto;
-            }
-                .nav_links li a {
-                    transition: all 0.3s ease 0s;
-                    margin-right: auto;
-                    align-items: flex-start;
-                }
+        
+        .nav_links li {
+            display: inline-block;
+            padding: 0px 20px;
+        }
+
         li, button {
             color: black;
             text-decoration: none;
             font-size: 24px;
-            
         }
+
         .nav_links li:hover {
             color: lightgrey;
         }
+
         .dropdown {
             position: relative;
         }
+
         .dropdown-content {
             display: none;
             position: absolute;
@@ -99,6 +93,7 @@
             border-radius: 4px;
             font-size: 14px;
         }
+
             .dropdown-content a {
                 display: block;
                 padding: 8px 12px;
@@ -108,39 +103,41 @@
             }
 
                 .dropdown-content a:hover {
-                    background-color: #0000 /* Change the background color on hover */
-                    ;
+                    background-color: #0000;
                 }
+
         .dropdown:hover .dropdown-content {
             display: block;
         }
+
         .line {
             border-top: 1px solid lightslategrey;
         }
+
         .navbar_links {
             display: flex;
             justify-content: flex-end;
             margin-top: 20px;
-            padding-right:10px;
+            padding-right: 10px;
         }
+
             .navbar_links .nav-link {
                 display: flex;
                 align-items: center;
                 margin-left: 10px;
-                transition: color 0.3s ease; /* Transition for hover effect */
+                transition: color 0.3s ease;
             }
 
                 .navbar_links .nav-link:hover {
-                    color: #0000; /* Color on hover */
+                    color: #0000; 
                 }
     </style>
 </head>
 <body>
     <header> 
-        <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo4.png" height="60"></a>
+        <a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo3.png" height="60"></a>
         <nav>
             <ul class="nav_links">
-                
                 <li class="dropdown">
                     <a>FAQ</a>
                     <div class="dropdown-content">

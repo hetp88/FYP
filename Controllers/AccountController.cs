@@ -585,8 +585,7 @@ public class AccountController : Controller
         DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
         DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
 
-        // Check if the user is an "Active" user with "roles_type" as "Student" or "Staff"
-        if (ds.Rows.Count == 1 && ds.Rows[0]["acc_Status"].ToString() == "Active")
+        if (ds.Rows.Count == 1 /*&& ds.Rows[0]["acc_Status"].ToString() == "Active"*/)
         {
             principal =
                new ClaimsPrincipal(
@@ -613,8 +612,6 @@ public class AccountController : Controller
                );
             return true;
         }
-
-        // User account is either not found, or account status is not "Active"
         return false;
     }
 
