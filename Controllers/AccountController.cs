@@ -180,8 +180,8 @@ public class AccountController : Controller
                 if (totalDigits == 8)
                 {
 
-                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login , acc_Status)
-                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login, 'Active' )";
+                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login )
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
 
                     if (connection.Execute(insertQuery1, student) == 1)
                     {
@@ -197,8 +197,8 @@ public class AccountController : Controller
 
                 else if (totalDigits == 4)
                 {
-                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login, acc_Status)
-                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login, 'Active' )";
+                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
+                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login )";
 
                     if (connection.Execute(insertQuery2, staff) == 1)
                     {
@@ -578,6 +578,44 @@ public class AccountController : Controller
         }
     }
 
+    //private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
+    //{
+    //    principal = null!;
+
+    //    DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
+    //    DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
+
+    //    if (ds.Rows.Count == 1 && ds.Rows[0]["acc_Status"].ToString() == "Active")
+    //    {
+    //        principal =
+    //           new ClaimsPrincipal(
+    //              new ClaimsIdentity(
+    //                 new Claim[] {
+    //                 new Claim(ClaimTypes.NameIdentifier, uid),
+    //                 new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
+    //                 }, "Basic"
+    //              )
+    //           );
+    //        return true;
+    //    }
+    //    // Check if the employee is an "Active" user with "roles_type" as "Helpdesk Agent," "Support Engineer," or "Administrator"
+    //    else if (de.Rows.Count == 1 && de.Rows[0]["acc_Status"].ToString() == "Active")
+    //    {
+    //        principal =
+    //           new ClaimsPrincipal(
+    //              new ClaimsIdentity(
+    //                 new Claim[] {
+    //                 new Claim(ClaimTypes.NameIdentifier, uid),
+    //                 new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
+    //                 }, "Basic"
+    //              )
+    //           );
+    //        return true;
+    //    }
+    //    return false;
+    //}
+
+
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
@@ -585,34 +623,101 @@ public class AccountController : Controller
         DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
         DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
 
-        if (ds.Rows.Count == 1 /*&& ds.Rows[0]["acc_Status"].ToString() == "Active"*/)
+        if (ds.Rows.Count == 1 && IsUserInValidRole(ds.Rows[0]["roles_type"].ToString()))
         {
-            principal =
-               new ClaimsPrincipal(
-                  new ClaimsIdentity(
-                     new Claim[] {
-                     new Claim(ClaimTypes.NameIdentifier, uid),
-                     new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
-                     }, "Basic"
-                  )
-               );
-            return true;
+            // For staff and student roles, skip account status check and allow login
+            if (IsUserStaffOrStudent(ds.Rows[0]["roles_type"].ToString()))
+            {
+                principal =
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                            new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, uid),
+                            new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
+                            }, "Basic"
+                        )
+                    );
+                return true;
+            }
+
+            // For other roles, check the account status
+            if (IsUserInActiveStatus(ds.Rows[0]["roles_type"].ToString(), ds.Rows[0]["acc_Status"].ToString()))
+            {
+                principal =
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                            new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, uid),
+                            new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
+                            }, "Basic"
+                        )
+                    );
+                return true;
+            }
         }
         // Check if the employee is an "Active" user with "roles_type" as "Helpdesk Agent," "Support Engineer," or "Administrator"
-        else if (de.Rows.Count == 1 && de.Rows[0]["acc_Status"].ToString() == "Active")
+        else if (de.Rows.Count == 1 && IsUserInValidRole(de.Rows[0]["roles_type"].ToString()))
         {
-            principal =
-               new ClaimsPrincipal(
-                  new ClaimsIdentity(
-                     new Claim[] {
-                     new Claim(ClaimTypes.NameIdentifier, uid),
-                     new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
-                     }, "Basic"
-                  )
-               );
-            return true;
+            // For "staff" and "student" roles, skip account status check and allow login
+            if (IsUserStaffOrStudent(de.Rows[0]["roles_type"].ToString()))
+            {
+                principal =
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                            new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, uid),
+                            new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
+                            }, "Basic"
+                        )
+                    );
+                return true;
+            }
+
+            // For other roles, check the account status
+            if (IsUserInActiveStatus(de.Rows[0]["roles_type"].ToString(), de.Rows[0]["acc_Status"].ToString()))
+            {
+                principal =
+                    new ClaimsPrincipal(
+                        new ClaimsIdentity(
+                            new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, uid),
+                            new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
+                            }, "Basic"
+                        )
+                    );
+                return true;
+            }
         }
+
         return false;
     }
+
+    private static bool IsUserInValidRole(string role)
+    {
+        string[] validRoles = { "helpdesk agent", "support engineer", "administrator", "staff", "student" };
+        return validRoles.Contains(role.ToLower());
+    }
+
+    private static bool IsUserStaffOrStudent(string role)
+    {
+        string[] staffAndStudentRoles = { "staff", "student" };
+        return staffAndStudentRoles.Contains(role.ToLower());
+    }
+
+    private static bool IsUserInActiveStatus(string role, string accStatus)
+    {
+        // Check the account status only for the specified roles
+        string[] rolesWithAccStatusCheck = { "helpdesk agent", "support engineer", "administrator" };
+        if (rolesWithAccStatusCheck.Contains(role.ToLower()))
+        {
+            return accStatus.Equals("active", StringComparison.OrdinalIgnoreCase);
+        }
+        return true; // For other roles, skip account status check
+    }
+
+
+
+
+
 
 }
