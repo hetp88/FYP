@@ -107,7 +107,6 @@
                     <th>Additional Details</th>
                     <th>Resolution</th>
                     <th>Employee In-Charge</th>
-                    <th>Escalate Reason</th>
                     <th>Escalate In-Charge</th>
                     @if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                     {
@@ -152,16 +151,7 @@
                         }
 
                         <td>@ticket.EmployeeName</td>
-
-                        @if (ticket.Escalate_Reason == null)
-                        {
-                            <td>-</td>
-                        }
-                        else
-                        {
-                            <td>@ticket.Escalate_Reason</td>
-                        }
-
+                                                
                         @if (ticket.Escalate_SE == 0)
                         {
                             <td>-</td>
