@@ -27,7 +27,10 @@ namespace FYP.Controllers
             return _configuration.GetConnectionString("DefaultConnection");
         }
 
-        
+        public IActionResult Forbidden()
+        {
+            return View();
+        }
  
         public IActionResult Index()
         {

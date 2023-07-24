@@ -8,11 +8,16 @@
 <html>
 <head>
     <title>Tickets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        .container {
-            margin-top: 40px;
+        .card {
+            margin-top: 60px;
             width: auto;
             background: #FFFFFF;
+            border-radius: 20px;
+            padding: 13px;
         }
 
         .btn-primary {
@@ -24,30 +29,99 @@
                 background-color: #218838; /* Darker shade of green */
                 border-color: #218838; /* Darker shade of green */
             }
+
+        /* Add custom styles for the cancel icon */
+        .search-box {
+            position: relative;
+            width: 195px; /* Adjust the width to fit all elements in one line */
+            
+        }
+
+            .search-box .form-control {
+                right: 10px; /* Add some right padding to make space for the icon */
+            }
+
+            .search-box .cancel-icon {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #aaa; /* Light grey color for the X icon */
+                display: none;
+            }
+
+            .search-box .form-control:not(:placeholder-shown) + .cancel-icon {
+                display: inline;
+            }
+
+        .table {
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            .table th,
+            .table td {
+                padding: 8px;
+                text-align: center;
+            }
+
+            .table th {
+                background-color: #f2f2f2;
+            }
+
+            .table td {
+                border: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+                .table td:last-child {
+                    border-right: none;
+                }
     </style>
     <script>
         window.onload = function () {
-            document.getElementsByName("searchUserId")[0].value = "";
-            document.getElementsByName("searchRole")[0].value = "";
-            document.getElementsByName("searchName")[0].value = "";
-            document.getElementsByName("searchSchool")[0].value = "";
-            document.getElementsByName("searchEmail")[0].value = "";
-            document.getElementsByName("searchPhone")[0].value = "";
-            
+            clearSearchInput();
+        };
+
+        function clearSearchInput() {
+            var searchInputs = document.querySelectorAll(".search-box .form-control");
+            for (var i = 0; i < searchInputs.length; i++) {
+                searchInputs[i].value = "";
+            }
         };
     </script>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <form method="get" action="/Account/Users">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" name="searchUserId" placeholder="User ID" aria-label="User ID">
-                <input type="text" class="form-control" name="searchRole" placeholder="Role" aria-label="Role">
-                <input type="text" class="form-control" name="searchName" placeholder="Name" aria-label="Name">
-                <input type="text" class="form-control" name="searchSchool" placeholder="School" aria-label="School">
-                <input type="text" class="form-control" name="searchEmail" placeholder="Email" aria-label="Email">
-                <input type="text" class="form-control" name="searchPhone" placeholder="Phone Number" aria-label="Phone Number">
-                
+                <div class="search-box">
+                    <input type="text" class="form-control" name="searchUserId" placeholder="User ID" aria-label="User ID">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="searchRole" placeholder="Role" aria-label="Role">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="searchName" placeholder="Name" aria-label="Name">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="searchSchool" placeholder="School" aria-label="School">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="searchEmail" placeholder="Email" aria-label="Email">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="searchPhone" placeholder="Phone Number" aria-label="Phone Number">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">Search</button>
                 </div>
@@ -87,3 +161,4 @@
     </div>
 </body>
 </html>
+

@@ -16,5 +16,7 @@
         public int no_tickets { get; set; }
 
         public int closed_tickets { get; set; }
+
+        public string? AccStatus { get; set; }
     }
 }

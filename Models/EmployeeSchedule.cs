@@ -24,7 +24,10 @@ namespace FYP.Models
         [Required(ErrorMessage = "Upload proof")]
         public IFormFile ProofProvided { get; set; }
 
+
         public string IsApproved { get; set; } = null!;
+
+        
     }
 
 }

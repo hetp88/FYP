@@ -1,4 +1,4 @@
-@model List<FYP.Models.Employee>
+﻿@model List<FYP.Models.Employee>
 
 @{
     Layout = "_Ticket";
@@ -8,25 +8,29 @@
 <html>
 <head>
     <title>Tickets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        .container {
-            margin-top: 40px;
-            width: auto;
+        .card {
+            margin-top: 50px;
             background: #FFFFFF;
-            border-radius: 20px;
+            padding: 20px;
+            border: none;
+            width: 100%;
         }
 
         .btn-primary {
-            background-color: #28a745; /* Green color */
-            border-color: #28a745; /* Green color */
+            background-color: #28a745; 
+            border-color: #28a745; 
         }
 
             .btn-primary:hover {
-                background-color: #218838; /* Darker shade of green */
-                border-color: #218838; /* Darker shade of green */
+                background-color: #218838; 
+                border-color: #218838; 
             }
 
-        .update-icon {
+        .update-icon, .delete-icon {
             cursor: pointer;
         }
 
@@ -34,32 +38,117 @@
             font-size: 24px;
             color: pink;
         }
+
+        /* Add custom styles for the cancel icon */
+        .search-box {
+            position: relative;
+            width: 145px; /* Adjust the width to fit all elements in one line */
+        }
+
+            .search-box .form-control {
+                padding-right: 30px; /* Add some right padding to make space for the icon */
+            }
+
+            .search-box .cancel-icon {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #aaa; /* Light grey color for the X icon */
+                display: none;
+            }
+
+            .search-box .form-control:not(:placeholder-shown) + .cancel-icon {
+                display: inline;
+            }
+
+        .table {
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+            .table th,
+            .table td {
+                padding: 8px;
+                text-align: center;
+            }
+
+            .table th {
+                background-color: #f2f2f2;
+            }
+
+            .table td {
+                border: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+                .table td:last-child {
+                    border-right: none;
+                }
     </style>
     <script>
         window.onload = function () {
-            document.getElementsByName("employeeId")[0].value = "";
-            document.getElementsByName("role")[0].value = "";
-            document.getElementsByName("name")[0].value = "";
-            document.getElementsByName("email")[0].value = "";
-            document.getElementsByName("phoneNumber")[0].value = "";
-            document.getElementsByName("numTickets")[0].value = "";
-            document.getElementsByName("numclosed_tickets")[0].value = "";
+            clearSearchInput();
         };
+
+        function clearSearchInput() {
+            var searchInputs = document.querySelectorAll(".search-box .form-control");
+            for (var i = 0; i < searchInputs.length; i++) {
+                searchInputs[i].value = "";
+            }
+        };
+
+        function redirectToUpdatePage(employeeId) {
+            window.location.href = `/Employee/UpdateEmployee?employeeId=${employeeId}`;
+        }
+
     </script>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <form method="get" action="/Employee/SearchEmployees">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" name="employeeId" placeholder="Employee ID" aria-label="Employee ID">
-                <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
-                <input type="text" class="form-control" name="name" placeholder="Name" aria-label="Name">
-                <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
-                <input type="text" class="form-control" name="phoneNumber" placeholder="Phone Number" aria-label="Phone Number">
-                <input type="text" class="form-control" name="numTickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
-                <input type="text" class="form-control" name="numclosed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
+                <div class="search-box">
+                    <input type="text" class="form-control" name="employeeId" placeholder="Employee ID" aria-label="Employee ID">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="role" placeholder="Role" aria-label="Role">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="name" placeholder="Name" aria-label="Name">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="email" placeholder="Email" aria-label="Email">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="phoneNumber" placeholder="Phone Number" aria-label="Phone Number">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="numTickets" placeholder="Number of Tickets Assigned" aria-label="Number of Tickets Assigned">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <input type="text" class="form-control" name="numclosed_tickets" placeholder="Number of Tickets Closed" aria-label="Number of Tickets Closed">
+                    <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <div class="search-box">
+                    <select class="form-select" name="accStatus" aria-label="Account Status">
+                        <option value="">Account Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Suspended">Suspended</option>
+                        <option value="Resigned">Resigned</option>
+                    </select>
+                </div>
+
                 <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">Search</button>
+                    <button class="btn btn-primary bi bi-search" type="submit" style="margin-left: 5px;"></button>
                 </div>
             </div>
         </form>
@@ -79,7 +168,8 @@
                     <th style="text-align:center">Phone Number</th>
                     <th style="text-align:center">Number of Tickets Assigned</th>
                     <th style="text-align:center">Number of Tickets Closed</th>
-                    
+                    <th style="text-align:center">Account Status</th>
+                    <th style="text-align:center">Update</th> <!-- New column header -->
                 </tr>
                 @foreach (var employee in Model)
                 {
@@ -91,8 +181,10 @@
                         <td style="text-align:center">@employee.Phone_no</td>
                         <td style="text-align:center">@employee.no_tickets</td>
                         <td style="text-align:center">@employee.closed_tickets</td>
-                        <td style="text-align: center">
-                            <i class="update-icon" onclick="updateEmployee(@employee.EmployeeId)">&#9998;</i>
+                        <td style="text-align:center">@employee.AccStatus</td>
+                        <td style="text-align:center">
+                            <!-- Add the update button/icon in the last column -->
+                            <span class="update-icon cute-icon" onclick="redirectToUpdatePage('@employee.EmployeeId')">🖊️</span>
                         </td>
                     </tr>
                 }

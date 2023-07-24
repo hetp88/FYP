@@ -10,40 +10,44 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-
+            font-size: 16px;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 5%;
+            padding: 10px;
             background-color: #BEACDF;
-
         }
 
         .logo {
             cursor: pointer;
             margin-right: auto;
+            padding-left: 30px;
         }
 
-        .nav_links {
-            list-style: none;
-            margin-right: auto;
-            align-items: flex-start;
+        .white-profile-icon {
+            color: #000000;
         }
 
-            .nav_links li {
-                display: inline-block;
-                padding: 0px 20px;
-                margin-right: auto;
+            .white-profile-icon:hover {
+                color: #BEACDF;
             }
 
-                .nav_links li a {
-                    transition: all 0.3s ease 0s;
-                    margin-right: auto;
-                    align-items: flex-start;
-                }
+        .navbar_links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px;
+        }
+
+        .nav_links li {
+            display: inline-block;
+            padding: 0px 20px;
+        }
 
         li, button {
             color: black;
@@ -80,8 +84,7 @@
             }
 
                 .dropdown-content a:hover {
-                    background-color: #0000 /* Change the background color on hover */
-                    ;
+                    background-color: #0000;
                 }
 
         .dropdown:hover .dropdown-content {
@@ -95,18 +98,19 @@
         .navbar_links {
             display: flex;
             justify-content: flex-end;
-            border-radius: 4px;
+            margin-top: 20px;
+            padding-right: 10px;
         }
 
             .navbar_links .nav-link {
                 display: flex;
                 align-items: center;
                 margin-left: 10px;
-                transition: color 0.3s ease; /* Transition for hover effect */
+                transition: color 0.3s ease;
             }
 
                 .navbar_links .nav-link:hover {
-                    color: black; /* Color on hover */
+                    color: #0000;
                 }
     </style>
 </head>
@@ -138,6 +142,7 @@
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-calendar" href="~/Employee/Schedule"> Calendar</a> @*employee & admins*@
                         <a class="dropdown-item bi bi-clock" href="~/Employee/ApplyLeave"> Apply Leave</a> @*can be for employee only OR employee & admins*@
+                        <a class="dropdown-item bi bi-calendar-date" href="~/Employee/LeaveRequests"> Leave</a> @*Admins Only*@
                     </div>
                 </li>
             </ul>

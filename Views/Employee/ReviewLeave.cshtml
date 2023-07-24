@@ -12,7 +12,7 @@
     <style>
         /* Add your custom styles here */
         .container {
-            margin-top: 30px;
+            margin-top: 90px;
             display: flex;
             justify-content: space-between;
         }
@@ -25,6 +25,8 @@
             padding: 30px;
             margin: 5px;
             flex-grow: 1;
+            border-radius: 20px;
+           
         }
 
         .form-group {
@@ -52,6 +54,9 @@
             background-color: #28a745;
             border-color: #28a745;
             transition: background-color 0.3s ease;
+            /* Set the size of the button */
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
         }
 
             .btn-primary:hover {
@@ -83,20 +88,66 @@
             </div>
         </div>
         <div class="card">
-            <h3 class="mb-3">Review</h3>
+            <h3 class="mb-3"></h3>
             <form action="@Url.Action("ReviewLeave", "Employee")" method="POST">
                 <input type="hidden" name="LeaveId" value="@Model.LeaveId">
                 <div class="form-group">
                     <label for="IsApproved" class="form-label">Review:</label>
                     <select class="form-control" id="IsApproved" name="IsApproved" required>
-                        <option value="">Select leave status</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                        <option value="Pending">Pending</option>
+                        <option value="">Select action</option>
+                        @if (User.IsInRole("administrator"))
+                        {
+                            <option value="Approved">Approve</option>
+                            <option value="Rejected">Reject</option>
+                            <option value="Pending">Pending</option>
+                        }
+                        else
+                        {
+                            <option value="Withdraw">Withdraw</option>
+                        }
                     </select>
                 </div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateModal">Update</button>
                 <button type="submit" class="btn btn-primary">Submit</button>
+                
+
             </form>
+        </div>
+    </div>
+
+    <!-- Modal for updating leave details -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update Leave Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Leave details update form -->
+                    <form action="@Url.Action("UpdateLeaveDetails", "Employee")" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="LeaveId" value="@Model.LeaveId">
+                        <div class="form-group">
+                            <label for="StartDate" class="form-label">Start Date:</label>
+                            <input type="date" class="form-control" id="StartDate" name="StartDate" value="@Model.StartDate.ToShortDateString()" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="EndDate" class="form-label">End Date:</label>
+                            <input type="date" class="form-control" id="EndDate" name="EndDate" value="@Model.EndDate.ToShortDateString()" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="Reason" class="form-label">Reason:</label>
+                            <textarea class="form-control" id="Reason" name="Reason" rows="4" required>@Model.Reason</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="ProofProvided" class="form-label">Proof Provided:</label>
+                            <input type="file" class="form-control" id="ProofProvided" name="ProofProvided">
+                            <small class="form-text text-muted">Upload a new proof document if needed.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </body>

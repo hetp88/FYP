@@ -9,31 +9,63 @@
 <html>
 <head>
     <title>Tickets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .container {
-            margin-top: 20px;
+        .card {
+            margin-top: 10px;
             background: #FFFFFF;
             padding: 20px;
-            width: auto;
+            border: none;
+            width: 100%;
         }
 
         .search-form {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
             .search-form input[type="text"],
             .search-form select {
-                padding: 5px;
-                width: 185px;
+                padding: 8px;
+                width: 200px;
+            }
+
+            .search-form .search-box {
+                position: relative;
+            }
+
+                .search-form .search-box input[type="text"] {
+                    padding-right: 30px; 
+                }
+
+            .search-form .cancel-icon {
+                display: none;
+                position: absolute;
+                top: 50%;
+                right: 13px;
+                transform: translateY(-50%);
+                cursor: pointer;
+                color: #aaa;
+            }
+
+            .search-form input[type="text"]:not(:placeholder-shown) + .cancel-icon {
+                display: inline;
+            }
+
+            .search-form button {
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                cursor: pointer;
             }
 
         table {
-            width: auto;
+            width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         th, td {
@@ -50,52 +82,53 @@
             text-align: center;
             font-weight: bold;
         }
-
-        .btn-primary {
-            background-color: #28a745; /* Green color */
-            border-color: #28a745; /* Green color */
-        }
-
-            .btn-primary:hover {
-                background-color: #218838; /* Darker shade of green */
-                border-color: #218838; /* Darker shade of green */
-            }
     </style>
     <script>
         window.onload = function () {
             document.getElementsByName("ticketIdQuery")[0].value = "";
+            document.getElementsByName("userIdQuery")[0].value = "";
             document.getElementsByName("ticketTypeQuery")[0].value = "";
             document.getElementsByName("statusQuery")[0].value = "";
             document.getElementsByName("priorityQuery")[0].value = "";
             document.getElementsByName("resolutionQuery")[0].value = "";
             document.getElementsByName("employeeQuery")[0].value = "";
         };
+
+        function clearSearchInput(inputName) {
+            var searchInput = document.querySelector(`.search-form input[name='${inputName}']`);
+            searchInput.value = "";
+        };
     </script>
 </head>
 <body>
-
-    <div class="container">
+    <div class="card">
         <form method="get" action="/Ticket/SearchTicket" class="search-form">
-            <div>
+            <div style="position: relative;">
                 <input type="text" name="ticketIdQuery" placeholder="Ticket ID" />
+                <span class="cancel-icon" onclick="clearSearchInput('ticketIdQuery')"><i class="fa fa-times-circle"></i></span>
             </div>
-            <div>
+            <div style="position: relative;">
                 <input type="text" name="userIdQuery" placeholder="User ID" />
+                <span class="cancel-icon" onclick="clearSearchInput('userIdQuery')"><i class="fa fa-times-circle"></i></span>
             </div>
-            <div>
+            <div style="position: relative;">
                 <input type="text" name="ticketTypeQuery" placeholder="Ticket Type" />
+                <span class="cancel-icon" onclick="clearSearchInput('ticketTypeQuery')"><i class="fa fa-times-circle"></i></span>
             </div>
-            <div>
+            <div style="position: relative;">
                 <input type="text" name="statusQuery" placeholder="Status" />
+                <span class="cancel-icon" onclick="clearSearchInput('statusQuery')"><i class="fa fa-times-circle"></i></span>
             </div>
-            <div>
+            <div style="position: relative;">
                 <input type="text" name="priorityQuery" placeholder="Priority" />
+                <span class="cancel-icon" onclick="clearSearchInput('priorityQuery')"><i class="fa fa-times-circle"></i></span>
             </div>
-            <div>
+            <div style="position: relative;">
                 <input type="text" name="employeeQuery" placeholder="Employee In-Charge" />
+                <span class="cancel-icon" onclick="clearSearchInput('employeeQuery')"><i class="fa fa-times-circle"></i></span>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Search</button>
+                <button class="btn btn-primary bi bi-search" type="submit" ></button>
             </div>
         </form>
 
