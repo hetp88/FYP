@@ -17,8 +17,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;            
-            background-color: lightsteelblue;
+            padding: 10px;
+            background-color: #3A71FF;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            font-family: "Raleway", sans-serif;
         }
 
         .logo {
@@ -136,7 +142,7 @@
                     <a>FAQ</a>
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-binoculars" href="~/FAQ/Details"> FAQs</a> @*users, employee & admins*@
-                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/Create"> New FAQ</a> @*admins and employee only*@
+                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/FAQ/CreateFAQ"> New FAQ</a> @*admins and employee only*@
                     </div>
                 </li>
                 <li class="dropdown">
