@@ -53,37 +53,37 @@ namespace FYP.Controllers
             
         }
 
-        //public IActionResult ToDoTicket()
-        //{
-        //    if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
-        //    {
-        //        int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
-
-        //        using (SqlConnection connection = new SqlConnection(_connectionString))
-        //        {
-        //            string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, " +
-        //                                 $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason " +
-        //                            $"FROM ticket t " +
-        //                            $"INNER JOIN users u ON u.userid = t.userid " +
-        //                            $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
-        //                            $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
-        //                            $"WHERE t.employee_id='{currentuser}'" +
-        //                            $"OR t.escalation_SE = '{currentuser}'";
-                   
-        //            connection.Open();
-        //            List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
-                    
-        //            return View(tickets);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        // Unauthorized actions for other roles
-        //        return View("Forbidden");
-        //    }
-        //}
-
         public IActionResult ToDoTicket()
+        {
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+            {
+                int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, " +
+                                         $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason " +
+                                    $"FROM ticket t " +
+                                    $"INNER JOIN users u ON u.userid = t.userid " +
+                                    $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
+                                    $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
+                                    $"WHERE t.employee_id='{currentuser}'" +
+                                    $"OR t.escalation_SE = '{currentuser}'";
+                   
+                    connection.Open();
+                    List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
+                    
+                    return View(tickets);
+                }
+            }
+            else
+            {
+                // Unauthorized actions for other roles
+                return View("Forbidden");
+            }
+        }
+
+        public IActionResult Notification()
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
             {
@@ -115,8 +115,6 @@ namespace FYP.Controllers
                     };
 
                     ViewBag.Notification = noti;
-
-                    Console.WriteLine(tickets.Count);
 
                     return View();
                 }
