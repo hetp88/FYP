@@ -17,8 +17,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background-color: #BEACDF;
+            padding: 10px;            
+            background-color: lightsteelblue;
         }
 
         .logo {
@@ -35,19 +35,30 @@
                 color: #BEACDF;
             }
 
-        .navbar_links {
+        .nav ul {
+            display: inline;
+        }
+
+        .nav_links {
             list-style: none;
-            display: flex;
-            align-items: center;
-            border-radius: 10px;
-            padding: 10px;
+            margin-right: auto;
+            align-items: flex-end;
+            padding: 20px;
             margin: 20px;
         }
 
-        .nav_links li {
-            display: inline-block;
-            padding: 0px 20px;
-        }
+            .nav_links li {
+                display: inline-block;
+                padding: 0px 20px;
+                margin-right: auto;
+            }
+
+                .nav_links li a {
+                    transition: all 0.3s ease 0s;
+                    margin-right: auto;
+                    align-items: flex-start;
+                    font-size:25px;
+                }
 
         li, button {
             color: black;
@@ -77,6 +88,7 @@
 
             .dropdown-content a {
                 display: block;
+                align-items: center;
                 padding: 8px 12px;
                 color: #333;
                 text-decoration: none;
@@ -98,14 +110,15 @@
         .navbar_links {
             display: flex;
             justify-content: flex-end;
-            margin-top: 20px;
+            margin-top: 10px;
             padding-right: 10px;
+            margin-right: 5px;
         }
 
             .navbar_links .nav-link {
-                display: flex;
+                display: inline-block;
                 align-items: center;
-                margin-left: 10px;
+                margin-right: 20px;
                 transition: color 0.3s ease;
             }
 
@@ -116,9 +129,9 @@
 </head>
 <body>
     <header>
+        <a class="logo" style="margin-left:10px;" asp-controller="Home" asp-action="Index"><img src="\Images\Logo3.png" height="80"></a>
         <nav>
-            <ul class="nav_links">
-                <li><a class="logo" asp-controller="Home" asp-action="Index"><img src="\Images\Logo3.png" height="60"></a></li>
+            <ul class="nav_links">                
                 <li class="dropdown">
                     <a>FAQ</a>
                     <div class="dropdown-content">
@@ -147,14 +160,14 @@
                 </li>
             </ul>
         </nav>
-        <ul class="navbar_links">
 
-            <li class="dropdown" style=" list-style-type: none; display: flex; align-items: center;">
-                <a class="dropdown-item bi bi-bell"></a>
+        <ul class="navbar_links"> 
+            <li class="dropdown" style="list-style-type: none; display: flex; align-items: center;">
+                <a class="dropdown-item bi bi-bell" style="margin-right: 30px;"></a>
                 <div class="dropdown-content">
-                    @if(ViewBag.Notifications != null)
+                    @if (ViewBag.Notifications != null)
                     {
-                        foreach(var notifications in ViewBag.Notifications)
+                        foreach (var notifications in ViewBag.Notifications)
                         {
                             <a class="notification-item" @Url.Action("HAUpdateTicket", "Ticket", new { TicketId = notifications.TicketId })>@notifications</a>
                         }
@@ -166,16 +179,13 @@
                 </div>
             </li>
 
-            <li></li>
-
             <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
-
                 <a class="nav-link" asp-controller="Account" asp-action="EmpProfile">
                     <span class="bi bi-person-circle icon-large" style="margin-right: 5px;"></span>
                 </a>
 
                 <a class="nav-link" asp-controller="Account" asp-action="Logout">
-                    <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-left: 1px;"></span>
+                    <span class="bi bi-box-arrow-in-right text-muted bigger-icon" data-toggle="tooltip" title="Log out" style="margin-right: 1px;"></span>
                 </a>
             </li>
         </ul>

@@ -21,8 +21,38 @@
             margin-right: auto;
         }
 
-        .card {
-            flex-basis: 48%;
+        .card1 {
+            flex-basis: 30%;
+            padding: 30px;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
+            font-size: 20px;
+            background-color: #FFFFFF;
+            border-radius: 25px;
+            height: auto;
+            color: black;
+        }
+
+        .card2 {
+            flex-basis: 30%;
+            padding: 30px;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
+            font-size: 20px;
+            background-color: #FFFFFF;
+            border-radius: 25px;
+            height: auto;
+            color: black;
+        }
+
+        .card3 {
+            flex-basis: 30%;
             padding: 30px;
             margin-bottom: 5px;
             display: flex;
@@ -68,7 +98,27 @@
 </head>
 <body>
     <div class="container">
-        <div class="card">
+
+        <div class="card1">
+            <h1>News Updates</h1>
+            @if (Model == null || Model.Count == 0)
+            {
+                <p class="no-tickets-message">No Announcements available.</p>
+            }
+            else
+            {
+                <table class="table">
+                    @foreach (var newsu in Model)
+                    {
+                        <tr>
+                            <td>@newsu.newsU</td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+
+        <div class="card2">
             <h1>Welcome to IT Helper</h1>
             <p>
                 IT Helper will be your one-stop solution for the technical problems you face, software and hardware.
@@ -80,30 +130,15 @@
                 <button class="button" onclick="location.href='/FAQ/Details'">Possible Solutions</button>
             </div>
         </div>
-        <div class="card">
-            <h1>News Updates</h1>
-                @if (Model == null || Model.Count == 0)
-                {
-                    <p class="no-tickets-message">No Announcements available.</p>
-                }
-                else
-                {
-                    <table class="table">
-                        @foreach (var newsu in Model)
-                        {
-                            <tr>
-                                <td>@newsu.newsU</td>
-                            </tr>
-                        }
-                    </table>
-                }
-            <h1>Contact Us</h1>
-                    <p>
-                        For any queries, contact us through our email, rptickethelper@gmail.com or contact us at +65 9339 2019.
-                    </p>
-                    <button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>
-        </div>
-    </div>
 
+        <div class="card3">
+            <h1>Contact Us</h1>
+            <p>
+                For any queries, contact us through our email, rptickethelper@gmail.com or contact us at +65 9339 2019.
+            </p>
+            <button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>
+        </div>
+
+    </div>
 </body>
 </html>
