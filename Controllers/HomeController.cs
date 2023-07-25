@@ -64,6 +64,7 @@ namespace FYP.Controllers
                 return View("Forbidden");
             }
         }
+
         [HttpPost]
         public IActionResult Editor(News news)
         {

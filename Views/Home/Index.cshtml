@@ -11,20 +11,25 @@
             box-sizing: border-box;
         }
 
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
         .container {
             display: flex;
+            flex-wrap: wrap; /* Allow cards to wrap on small screens */
             justify-content: space-between;
             margin: 20px;
             margin-top: 70px;
-            max-width: 1200px; 
-            margin-left: 60px; 
+            max-width: 1200px;
+            margin-left: 20px;
             margin-right: auto;
         }
 
         .card1 {
-            flex-basis: 30%;
+            flex-basis: 30%; 
             padding: 30px;
-            margin-bottom: 5px;
             display: flex;
             flex-direction: column;
             justify-content: start;
@@ -35,26 +40,9 @@
             height: auto;
             color: black;
         }
-
         .card2 {
-            flex-basis: 30%;
+            flex-basis: 65%; 
             padding: 30px;
-            margin-bottom: 5px;
-            display: flex;
-            flex-direction: column;
-            justify-content: start;
-            align-items: start;
-            font-size: 20px;
-            background-color: #FFFFFF;
-            border-radius: 25px;
-            height: auto;
-            color: black;
-        }
-
-        .card3 {
-            flex-basis: 30%;
-            padding: 30px;
-            margin-bottom: 5px;
             display: flex;
             flex-direction: column;
             justify-content: start;
@@ -69,7 +57,7 @@
         .button {
             display: inline-block;
             padding: 10px 20px;
-            font-size: 18px;
+            font-size: 15px;
             border-radius: 4px;
             text-decoration: none;
             background-color: #3A71FF;
@@ -94,6 +82,24 @@
             box-shadow: 0;
             align-content: center;
         }
+
+        .card3 {
+            flex-basis: 100%;
+            padding: 10px;
+            background-color: lightsteelblue;
+            color: black;
+            border-top: 1px solid #ccc;
+            margin-top: auto; /* Pushes the card to the bottom */
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
     </style>
 </head>
 <body>
@@ -132,10 +138,6 @@
         </div>
 
         <div class="card3">
-            <h1>Contact Us</h1>
-            <p>
-                For any queries, contact us through our email, rptickethelper@gmail.com or contact us at +65 9339 2019.
-            </p>
             <button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>
         </div>
 
