@@ -97,9 +97,8 @@ namespace FYP.Controllers
                     string equery = $"SELECT t.ticket_id AS TicketId, t.description " +
                                     $"FROM ticket t " +
                                     $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
-                                    $"WHERE status = 'submitted' " +
-                                    $"AND t.employee_id ='{currentuser}'" +
-                                    $"OR t.escalation_SE = '{currentuser}'";
+                                    $"WHERE (status = 'submitted' AND t.employee_id ='{currentuser}') " +
+                                    $"OR (status = 'submitted' AND t.escalation_SE = '{currentuser}')";
 
                     connection.Open();
                     List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
@@ -110,7 +109,10 @@ namespace FYP.Controllers
                         d = n.Description;
                     }
 
-                    var noti = id + ". " + d;
+                    List<Ticket> noti = new List<Ticket>
+                    {
+                        new Ticket { TicketId = id, Description = d}
+                    };
 
                     ViewBag.Notification = noti;
 
