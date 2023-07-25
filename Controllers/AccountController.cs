@@ -176,12 +176,18 @@ public class AccountController : Controller
                     PhoneNo = newUser.PhoneNo,
                     Last_login = null,
                 };
+                byte[] passwordBytes = Encoding.UTF8.GetBytes(staff.UserPw2);
+                byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
+                string hashedPassword1 = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
+
+                byte[] passwordBytes1 = Encoding.UTF8.GetBytes(student.UserPw2);
+                byte[] hashedPasswordBytes1 = SHA1.Create().ComputeHash(passwordBytes1);
+                string hashedPassword2 = "0x" + BitConverter.ToString(hashedPasswordBytes1).Replace("-", "");
 
                 if (totalDigits == 8)
                 {
 
-                    string insertQuery1 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login )
-                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
+                    string insertQuery1 = $"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login ) VALUES (@UserID, {hashedPassword2}, @UserName, @Role, @School, @Email, @PhoneNo, @Last_login)";
 
                     if (connection.Execute(insertQuery1, student) == 1)
                     {
@@ -197,8 +203,7 @@ public class AccountController : Controller
 
                 else if (totalDigits == 4)
                 {
-                    string insertQuery2 = @"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login)
-                                            VALUES (@UserID, HASHBYTES('SHA1', @UserPw2), @UserName, @Role, @School, @Email, @PhoneNo, @Last_login )";
+                    string insertQuery2 = $"INSERT INTO users(userid, user_pw, username, roles_id, school, email, phone_no, last_login) VALUES (@UserID, {hashedPassword1}, @UserName, @Role, @School, @Email, @PhoneNo, @Last_login )";
 
                     if (connection.Execute(insertQuery2, staff) == 1)
                     {
@@ -577,44 +582,6 @@ public class AccountController : Controller
             }
         }
     }
-
-    //private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
-    //{
-    //    principal = null!;
-
-    //    DataTable ds = DBUtl.GetTable(LOGIN_SQ, uid, pw);
-    //    DataTable de = DBUtl.GetTable(LOGIN_EMP, uid, pw);
-
-    //    if (ds.Rows.Count == 1 && ds.Rows[0]["acc_Status"].ToString() == "Active")
-    //    {
-    //        principal =
-    //           new ClaimsPrincipal(
-    //              new ClaimsIdentity(
-    //                 new Claim[] {
-    //                 new Claim(ClaimTypes.NameIdentifier, uid),
-    //                 new Claim(ClaimTypes.Role, ds.Rows[0]["roles_type"].ToString()!)
-    //                 }, "Basic"
-    //              )
-    //           );
-    //        return true;
-    //    }
-    //    // Check if the employee is an "Active" user with "roles_type" as "Helpdesk Agent," "Support Engineer," or "Administrator"
-    //    else if (de.Rows.Count == 1 && de.Rows[0]["acc_Status"].ToString() == "Active")
-    //    {
-    //        principal =
-    //           new ClaimsPrincipal(
-    //              new ClaimsIdentity(
-    //                 new Claim[] {
-    //                 new Claim(ClaimTypes.NameIdentifier, uid),
-    //                 new Claim(ClaimTypes.Role, de.Rows[0]["roles_type"].ToString()!)
-    //                 }, "Basic"
-    //              )
-    //           );
-    //        return true;
-    //    }
-    //    return false;
-    //}
-
 
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
