@@ -21,10 +21,11 @@
             flex-wrap: wrap; /* Allow cards to wrap on small screens */
             justify-content: space-between;
             margin: 20px;
-            margin-top: 70px;
-            max-width: 1200px;
+            margin-top: 90px;
+            max-width: 1400px;
             margin-left: 20px;
             margin-right: auto;
+            max-height: 700px;
         }
 
         .card1 {
@@ -53,36 +54,27 @@
             height: auto;
             color: black;
         }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            font-size: 15px;
-            border-radius: 4px;
-            text-decoration: none;
-            background-color: #3A71FF;
-            color: #FFFFFF;
-            border: none;
-            cursor: pointer;
-            margin: 5px;
-            transition: background-color 0.3s;
-        }
-
-            .button:hover {
-                background-color: #BEACDF;
-            }
-
         .news-container {
             flex-basis: 100%;
         }
-
         .table {
             background-color: #FFFFFF;
             color: black;
             box-shadow: 0;
             align-content: center;
         }
-
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #FFFFFF;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            transition: color 0.3s;
+        }
         .card3 {
             flex-basis: 100%;
             padding: 10px;
@@ -99,6 +91,12 @@
             left: 0;
             right: 0;
         }
+        .card3 .button{
+            color: black;
+        }
+            .card3 .button:hover {
+                color: white;
+            }
 
     </style>
 </head>
@@ -131,17 +129,15 @@
                 <br />Our application will help you to conveniently report your problems or even provide you with solutions you might need under the FAQ section.<br />
                 <br />We will ensure that your problems will be settled as soon as possible and provide you with the best troubleshooting experience.
             </p>
-            <div>
-                <button class="button" onclick="location.href='/Ticket/AddTicket'">Report a problem!</button>
-                <button class="button" onclick="location.href='/FAQ/Details'">Possible Solutions</button>
-            </div>
         </div>
 
         <div class="card3">
-            <p>
-                For any queries, contact us through our email, <a href="mailto: rpIThelpdesk@outlook.com">here</a> or contact us at +65 9339 2019.
-            </p>
-            @*<button class="button" onclick="location.href='https://mail.google.com/mail/?view=cm&fs=1&tf=1'">Email us here!</button>*@
+            <div class="button-container">
+                <a href="mailto:rpIThelpdesk@outlook.com" class="button">Email Us</a>
+                <a href="tel:9339 2019" class="button">Contact Us</a>
+                <a href="/Account/TermsConditions" class="button">T&Cs</a>
+                <a href="/Account/policy" class="button bi bi-question-circle"></a>
+            </div>
         </div>
 
     </div>

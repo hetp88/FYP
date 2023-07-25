@@ -89,7 +89,22 @@
                 .navbar_links .nav-link:hover {
                     color: #0000; /* Color on hover */
                 }
-    </style>
+
+        .nav_links li {
+            position: relative;
+        }
+
+            .nav_links li:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: -5px; /* Adjust the value to control the space between the nav links and the lines */
+                height: 30px;
+                width: 1px;
+                background-color: black;
+                transform: translateY(-50%);
+            }
+        </style>
 </head>
 <body>
     <header>
@@ -98,7 +113,7 @@
             <ul class="nav_links">
                 <li><a class="nav-link" asp-controller="Ticket" asp-action="UserTicket">My Tickets</a></li>
                 <li><a class="nav-link" asp-controller="FAQ" asp-action="Details">FAQ</a></li>
-                <li><a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">Report an Issue</a></li>
+                <li><a class="nav-link" asp-controller="Ticket" asp-action="AddTicket">+ Ticket</a></li>
             </ul>
         </nav>
          <ul class="navbar_links">
