@@ -20,25 +20,6 @@
             width: 100%;
         }
 
-        .btn-primary {
-            background-color: #28a745; 
-            border-color: #28a745; 
-        }
-
-            .btn-primary:hover {
-                background-color: #218838; 
-                border-color: #218838; 
-            }
-
-        .update-icon, .delete-icon {
-            cursor: pointer;
-        }
-
-        .cute-icon {
-            font-size: 24px;
-            color: pink;
-        }
-
         /* Add custom styles for the cancel icon */
         .search-box {
             position: relative;
@@ -184,7 +165,7 @@
                         <td style="text-align:center">@employee.AccStatus</td>
                         <td style="text-align:center">
                             <!-- Add the update button/icon in the last column -->
-                            <span class="update-icon cute-icon" onclick="redirectToUpdatePage('@employee.EmployeeId')">🖊️</span>
+                            <span class="btn btn-primary" onclick="redirectToUpdatePage('@employee.EmployeeId')">Update</span>
                         </td>
                     </tr>
                 }
