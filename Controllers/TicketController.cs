@@ -224,7 +224,8 @@ namespace FYP.Controllers
                                     AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
                                         OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
                                     AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
-                                        OR l.employee_id IS NULL)";
+                                        OR l.employee_id IS NULL)
+                                    AND e.acc_status = 'active'";
 
                 connection.Open();
 
@@ -398,7 +399,8 @@ namespace FYP.Controllers
                                         AND ((GETDATE() NOT BETWEEN l.startDate AND l.end_date)
   	                                        OR (GETDATE() <> l.startDate AND GETDATE() <> l.end_date) 
                                         AND (l.is_approved = 'Rejected' OR l.is_approved IS NULL)
-                                            OR l.employee_id IS NULL)";
+                                            OR l.employee_id IS NULL)
+                                        AND e.acc_status = 'active'";
 
                     List<int> emid = connection.Query<int>(equery).AsList();
                     int emp = generate.Next(0, emid.Count);
@@ -452,11 +454,11 @@ namespace FYP.Controllers
                 {
                     string tquery = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority,
                                          t.employee_id AS Employee, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
-                                FROM ticket t 
-                                INNER JOIN users u ON u.userid = t.userid 
-                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
-                                INNER JOIN employee e ON e.employee_id = t.employee_id
-                                WHERE t.ticket_id = @TicketId;";
+                                    FROM ticket t 
+                                    INNER JOIN users u ON u.userid = t.userid 
+                                    INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                                    INNER JOIN employee e ON e.employee_id = t.employee_id
+                                    WHERE t.ticket_id = @TicketId;";
 
                     connection.Open();
 
