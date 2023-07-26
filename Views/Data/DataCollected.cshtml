@@ -102,6 +102,12 @@
             <canvas id="typeChart"></canvas>
         </div>
     </div>
+    <div class="container">
+        <div class="chart-container">
+            <h2>Top Employees (Closed Tickets)</h2>
+            <canvas id="topEmployeesChart"></canvas>
+        </div>
+    </div>
 
     <script>
         var statusData = {
@@ -183,6 +189,28 @@
             }]
         }
 
+
+        var topEmployeesData = {
+            labels: [
+        @foreach (var employee in Model.OrderByDescending(t => t.ClosedTicketCount).Take(10).Select(t => t.EmployeeName).Distinct())
+        {
+            @Html.Raw($"'{employee}',")
+        }
+            ],
+            datasets: [{
+                label: 'Top Employees (Closed Tickets)',
+                data: [
+        @foreach (var employee in Model.OrderByDescending(t => t.ClosedTicketCount).Take(10).Select(t => t.EmployeeName).Distinct())
+        {
+            var count = Model.Where(t => t.EmployeeName == employee).Sum(t => t.ClosedTicketCount);
+            @Html.Raw($"{count + 1},") 
+        }
+                ],
+                backgroundColor: 'rgba(39, 202, 245, 0.8)'
+            }]
+        };
+
+
         @*============ To display the values extracted from above to the diagrams [Render Charts] ============*@
         var statusCtx = document.getElementById('statusChart').getContext('2d');
         var statusChart = new Chart(statusCtx, { //Form new chart 
@@ -206,6 +234,12 @@
         var typeChart = new Chart(typeCtx, {
             type: 'bar',
             data: typeData,
+        });
+
+        var topEmployeesCtx = document.getElementById('topEmployeesChart').getContext('2d');
+        var topEmployeesChart = new Chart(topEmployeesCtx, {
+            type: 'bar',
+            data: topEmployeesData
         });
 
         //Confirm Exit Page

@@ -58,13 +58,10 @@ namespace FYP.Controllers
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                
-
                 connection.Open();
 
                 //Query to only take data from the current month we are in.
                 string query = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, t.category_id, tc.category , t.status, t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution FROM ticket t INNER JOIN users u ON u.userid = t.userid INNER JOIN ticket_categories tc ON tc.category_id = t.category_id INNER JOIN employee e ON t.employee_id = e.employee_id WHERE t.datetime >= @StartDate AND t.datetime <= @EndDate";
-
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -82,21 +79,66 @@ namespace FYP.Controllers
                             ticket.Status = (string)reader["status"];
                             ticket.DateTime = (DateTime)reader["datetime"];
                             ticket.Priority = (string)reader["priority"];
-                            //Collecting the number of values for the diagrams
-                            ticket.StatusCount = 0; 
+                            ticket.EmployeeName = reader["EmployeeName"] == DBNull.Value ? null : (string)reader["EmployeeName"];                                                                        
+                            ticket.StatusCount = 0;
                             ticket.PriorityCount = 0;
                             ticket.CategoryCount = 0;
-                            ticket.TypeCount= 0;
-                            tickets.Add(ticket); //Add the 
+                            ticket.TypeCount = 0;
+                            tickets.Add(ticket); //Add the ticket to the list
                         }
                     }
                 }
             }
-               //Adding up the counts for charts
+
+            //Calculate the closed ticket count for each employee
+            Dictionary<string, int> employeeClosedTicketCount = CalculateEmployeeClosedTicketCount(tickets, startDate, endDate);
+
+            // Update the ClosedTicketCount property for each ticket
+            foreach (Ticket ticket in tickets)
+            {
+                ticket.ClosedTicketCount = employeeClosedTicketCount.TryGetValue(ticket.EmployeeName, out int count) ? count : 0;
+            }
+            //Adding up the counts for charts
             counts(tickets);
 
             return tickets;
         }
+
+        private void counts(List<Ticket> tickets, out int incrementalSum)
+        {
+            incrementalSum = 0;
+            foreach (Ticket ticket in tickets)
+            {
+                incrementalSum += ticket.ClosedTicketCount;
+            }
+        }
+
+        private Dictionary<string, int> CalculateEmployeeClosedTicketCount(List<Ticket> tickets, DateTime startDate, DateTime endDate)
+        {
+            Dictionary<string, int> employeeClosedTicketCount = new Dictionary<string, int>();
+
+            foreach (Ticket ticket in tickets)
+            {
+                // Check if the ticket is closed, has an employee name, and falls within the date range
+                if (ticket.Status == "Closed" && ticket.EmployeeName != null && ticket.DateTime >= startDate && ticket.DateTime <= endDate)
+                {
+                    // If the employee already exists in the dictionary, increment the count
+                    if (employeeClosedTicketCount.ContainsKey(ticket.EmployeeName))
+                    {
+                        employeeClosedTicketCount[ticket.EmployeeName]++;
+                    }
+                    else
+                    {
+                        // If the employee does not exist in the dictionary, add a new entry with count 1
+                        employeeClosedTicketCount[ticket.EmployeeName] = 1;
+                    }
+                }
+            }
+
+            return employeeClosedTicketCount;
+        }
+
+
 
 
 
