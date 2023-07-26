@@ -60,5 +60,6 @@ namespace FYP.Models
 
         public int TypeCount { get; set; }
         public int category_id { get; set; }
+        public int ClosedTicketCount { get; set; }
     }
 }

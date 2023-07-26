@@ -14,6 +14,9 @@ using System.Security.Claims;
 using System.Collections;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Security.Cryptography;
+using BCrypt.Net;
 
 namespace FYP.Controllers
 {
@@ -600,140 +603,58 @@ namespace FYP.Controllers
             return RedirectToAction("LeaveRequests");
         }
 
-
-        //for admin to add?
         public IActionResult NewEmployee()
         {
-            if (User.IsInRole("administrator"))
-            {
-                return View();
-            }
-            else
-            {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
-            }
+            return View();
         }
 
         [HttpPost]
-        public IActionResult NewEmployee(NewEmployee newEmp)
+        public IActionResult CreateNewEmployee(NewEmployeeViewModel newEmployee)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                //Validation Check
-                ViewData["MsgType"] = "danger";
-                return View("NewEmployee");
-            }
-            else
-            {
-                // Save the add employee data to the database
-                string[] NumArray = newEmp.Email.Split("@");
-                string numbers = NumArray[0];
-                int EmpID = int.Parse(numbers);
-                int totalDigits = EmpID.ToString().Length;
-
+                // Hash the password using BCrypt
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newEmployee.Password);
 
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
                     connection.Open();
 
-                    NewEmployee helpdesk_agent = new NewEmployee
+                    // Find the largest employee ID for all roles
+                    string maxEmployeeIdQuery = "SELECT MAX(employee_id) FROM employee;";
+                    int maxEmployeeId = connection.QuerySingleOrDefault<int>(maxEmployeeIdQuery);
+
+                    // Increment the employee ID by 1 to get the new employee's ID
+                    int newEmployeeId = maxEmployeeId + 1;
+
+                    // Assign the new employee ID to EmployeeId
+                    newEmployee.EmployeeId = newEmployeeId;
+
+                    // Insert the new employee into the database
+                    string insertQuery = @"
+                INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets)
+                VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, @Password, 0, 0);";
+
+                    connection.Execute(insertQuery, new
                     {
-                        Employee_id = EmpID,
-                        Roles_id = 3,
-                        EmpPw = newEmp.EmpPw,
-                        Name = newEmp.Name,
-                        Email = newEmp.Email,
-                        Phone_no = newEmp.Phone_no,
-                        Tickets = 0,
-                        Last_login = null,
-                        Closed_Tickets = 0,
-                    };
-
-                    NewEmployee support_eng = new NewEmployee
-                    {
-                        Employee_id = EmpID,
-                        Roles_id = 4,
-                        EmpPw = newEmp.EmpPw,
-                        Name = newEmp.Name,
-                        Email = newEmp.Email,
-                        Phone_no = newEmp.Phone_no,
-                        Tickets = 0,
-                        Last_login = null,
-                        Closed_Tickets = 0,
-                    };
-
-                    NewEmployee admin = new NewEmployee
-                    {
-                        Employee_id = EmpID,
-                        Roles_id = 5,
-                        EmpPw = newEmp.EmpPw,
-                        Name = newEmp.Name,
-                        Email = newEmp.Email,
-                        Phone_no = newEmp.Phone_no,
-                        Tickets = 0,
-                        Last_login = null,
-                        Closed_Tickets = 0,
-                    };
-
-                    if (totalDigits == 3)
-                    {
-
-                        string insertQuery1 = @"INSERT INTO employee(employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
-                                            VALUES (@Employee_id, @Roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
-
-                        if (connection.Execute(insertQuery1, helpdesk_agent) == 1)
-                        {
-                            TempData["Message"] = "Helpdesk Agent registered successfully";
-                            TempData["MsgType"] = "success";
-                            return RedirectToAction("NewEmployee");
-                        }
-                        else
-                        {
-                            TempData["Message"] = "Account registered failed";
-                            TempData["MsgType"] = "danger";
-                        }
-                    }
-
-                    else if (totalDigits == 5)
-                    {
-                        string insertQuery2 = @"INSERT INTO employee(employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
-                                            VALUES (@Employee_id, @Roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
-
-                        if (connection.Execute(insertQuery2, support_eng) == 1)
-                        {
-                            TempData["Message"] = "Support Engineer registered successfully";
-                            TempData["MsgType"] = "success";
-                            return RedirectToAction("NewEmployee");
-                        }
-                        else
-                        {
-                            TempData["Message"] = "Account registered failed";
-                            TempData["MsgType"] = "danger";
-                        }
-                    }
-
-
-                    else if (totalDigits == 6)
-                    {
-                        string insertQuery3 = @"INSERT INTO employee(employee_id, roles_id, employee_pw, name, email, phone_no, tickets, last_login, closed_tickets)
-                                            VALUES (@Employee_id, @Roles_id, HASHBYTES('SHA1', @EmpPw), @Name, @Email, @Phone_no, @Tickets, @Last_login, @Closed_Tickets)";
-
-                        if (connection.Execute(insertQuery3, admin) == 1)
-                        {
-                            TempData["Message"] = "Admin registered successfully";
-                            TempData["MsgType"] = "success";
-                            return RedirectToAction("NewEmployee");
-                        }
-                        else
-                        {
-                            TempData["Message"] = "Account registered failed";
-                            TempData["MsgType"] = "danger";
-                        }
-                    }
+                        newEmployee.EmployeeId,
+                        newEmployee.RolesId,
+                        newEmployee.Name,
+                        newEmployee.Email,
+                        PhoneNo = newEmployee.PhoneNo.ToString(),
+                        Password = Encoding.Unicode.GetBytes(hashedPassword)
+                    });
                 }
+
+                // Redirect to the EmployeeList page after successfully adding the new employee
+                return RedirectToAction("EmployeeList");
             }
-            return RedirectToAction("EmployeeList", "Employee");
+
+            // If the model state is invalid, return the view with validation errors
+            return View("NewEmployee", newEmployee);
         }
+
+
+
     }
 }
