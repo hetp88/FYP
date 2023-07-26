@@ -393,7 +393,7 @@ public class AccountController : Controller
             NewEmployee pl = new NewEmployee()
             {
                 EmpPw = np.EmpPw, // Assuming np.EmpPw is the plain text password
-                Employee_id = (int)currentuser,
+                EmployeeId = (int)currentuser,
             };
 
             // Convert the plain text password to varbinary using SHA1 hashing
