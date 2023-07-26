@@ -17,8 +17,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;            
+            padding: 10px;
             background-color: lightsteelblue;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            font-family: "Raleway", sans-serif;
         }
 
         .logo {
@@ -32,33 +38,29 @@
         }
 
             .white-profile-icon:hover {
-                color: #BEACDF;
+                color: #FFFFFF;
             }
 
-        .nav ul {
-            display: inline;
+        .nav_links {
+            display: flex;
+            margin: 10px;
+            border-radius: 10px;
+            color: black
         }
 
-        .nav_links {
+        .navbar_links {
             list-style: none;
-            margin-right: auto;
-            align-items: flex-end;
-            padding: 20px;
+            display: flex;
+            align-items: center;
+            border-radius: 10px;
+            padding: 10px;
             margin: 20px;
         }
 
-            .nav_links li {
-                display: inline-block;
-                padding: 0px 20px;
-                margin-right: auto;
-            }
-
-                .nav_links li a {
-                    transition: all 0.3s ease 0s;
-                    margin-right: auto;
-                    align-items: flex-start;
-                    font-size:25px;
-                }
+        .nav_links li {
+            display: inline-block;
+            padding: 0px 20px;
+        }
 
         li, button {
             color: black;
@@ -88,7 +90,6 @@
 
             .dropdown-content a {
                 display: block;
-                align-items: center;
                 padding: 8px 12px;
                 color: #333;
                 text-decoration: none;
@@ -103,22 +104,32 @@
             display: block;
         }
 
-        .line {
-            border-top: 1px solid lightslategrey;
+        .nav_links li {
+            position: relative;
         }
+
+            .nav_links li:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: -5px; /* Adjust the value to control the space between the nav links and the lines */
+                height: 30px;
+                width: 1px;
+                background-color: black;
+                transform: translateY(-50%);
+            }
 
         .navbar_links {
             display: flex;
             justify-content: flex-end;
-            margin-top: 10px;
+            margin-top: 20px;
             padding-right: 10px;
-            margin-right: 5px;
         }
 
             .navbar_links .nav-link {
-                display: inline-block;
+                display: flex;
                 align-items: center;
-                margin-right: 20px;
+                margin-left: 10px;
                 transition: color 0.3s ease;
             }
 
@@ -163,13 +174,19 @@
 
         <ul class="navbar_links"> 
             <li class="dropdown" style="list-style-type: none; display: flex; align-items: center;">
-                <a class="dropdown-item bi bi-bell" style="margin-right: 30px;"></a>
+                <a class="dropdown-item bi bi-bell" style="margin-right: 30px;" asp-controller="Ticket" asp-action="Notification"></a>
                 <div class="dropdown-content">
-                    @if (ViewBag.Notifications != null)
+                    @if (ViewBag.Notification != null)
                     {
-                        foreach (var notifications in ViewBag.Notifications)
+                        foreach (var notifications in ViewBag.Notification)
                         {
-                            <a class="notification-item" @Url.Action("HAUpdateTicket", "Ticket", new { TicketId = notifications.TicketId })>@notifications</a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = notifications.TicketId })">
+                                        @notifications.TicketId. @notifications.Description
+                                    </a>
+                                </li>
+                            </ul>
                         }
                     }
                     else

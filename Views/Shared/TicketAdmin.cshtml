@@ -29,8 +29,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background-color: #3A71FF;
-            color: white
+            background-color: lightsteelblue;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            font-family: "Raleway", sans-serif;
         }
 
         .logo {
@@ -51,7 +56,7 @@
             display: flex;
             margin: 10px;
             border-radius: 10px;
-            color: #FFFFFF;
+            color: black;
         }
         .navbar_links {
             list-style: none;
@@ -110,10 +115,20 @@
             display: block;
         }
 
-        .line {
-            border-top: 1px solid lightslategrey;
+        .nav_links li {
+            position: relative;
         }
 
+            .nav_links li:not(:last-child)::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: -5px; /* Adjust the value to control the space between the nav links and the lines */
+                height: 30px;
+                width: 1px;
+                background-color: black;
+                transform: translateY(-50%);
+            }
         .navbar_links {
             display: flex;
             justify-content: flex-end;
@@ -149,7 +164,6 @@
                     <a>Tickets</a>
                     <div class="dropdown-content">
                         <a class="dropdown-item bi bi-binoculars" href="~/Ticket/ViewTicket"> All Tickets</a> @*users, employee (only the tickets they submit) & admins (view all) *@
-                        <a class="dropdown-item bi bi-clipboard2-plus" href="~/Ticket/AddTicket"> Submit Ticket</a> @*users*@
                         <a class="dropdown-item bi bi-bar-chart" href="~/Data/DataCollected"> Monthly Reports</a> @*Employees Admins*@
                     </div>
                 </li>

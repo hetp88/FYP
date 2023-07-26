@@ -7,13 +7,16 @@
 <html>
 <head>
     <title>FAQs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .card {
-            margin-top: 110px;
+            margin-top: 30px;
             background: #FFFFFF;
             padding: 20px;
-            border: none;
+            margin-top: 120px;
+        }
+
+        .form {
+            padding: 5px;
         }
 
         .search-form {
@@ -29,36 +32,18 @@
                 width: 200px;
             }
 
-            .search-form .search-box {
-                position: relative;
-            }
-
-                .search-form .search-box input[type="text"] {
-                    padding-right: 30px; /* To accommodate the "X" icon */
-                }
-
-            .search-form .cancel-icon {
-                display: none;
-                position: absolute;
-                top: 50%;
-                right: 13px;
-                transform: translateY(-50%);
-                cursor: pointer;
-                color: #aaa;
-            }
-
-            .search-form input[type="text"]:not(:placeholder-shown) + .cancel-icon {
-                display: inline;
-            }
-
             .search-form button {
                 padding: 8px 16px;
                 background-color: #3A71FF;
                 color: white;
                 border: none;
                 cursor: pointer;
-                border-radius: 15px;
+                border-radius: 4px;
             }
+
+                .search-form button:hover {
+                    background-color: #555555;
+                }
 
         table {
             width: 100%;
@@ -80,17 +65,50 @@
             text-align: center;
             font-weight: bold;
         }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size:10px;
+        }
+
+        .pagination button {
+            padding: 6px 12px; 
+            margin: 0 2px;
+            background-color: #3A71FF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .pagination button:hover {
+            background-color: #555555;
+        }
+
+        .pagination button[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        window.onload = function () {
+            document.getElementsByName("faqIdQuery")[0].value = "";
+            document.getElementsByName("questionQuery")[0].value = "";
+            document.getElementsByName("solutionQuery")[0].value = "";
+            document.getElementsByName("categoryQuery")[0].value = "";
+        };
+    </script>
 </head>
 <body>
     <div class="card">
         <form method="get" action="/FAQ/Details" class="search-form">
-            <div class="search-box">
+            
                 <input type="text" name="questionQuery" placeholder="Question" />
-                <span class="cancel-icon" onclick="clearSearchInput()"><i class="fas fa-times-circle"></i></span>
-            </div>
-            <div>
+                <input type="text" name="solutionQuery" placeholder="Solution" />
                 <select name="categoryQuery">
                     <option value="">Select a category</option>
                     <option value="1">Software</option>
@@ -99,10 +117,7 @@
                     <option value="4">Access Portal</option>
                     <!-- Add more options for other categories -->
                 </select>
-            </div>
-            <div>
                 <button class="btn btn-primary bi bi-search" type="submit"></button>
-            </div>
         </form>
 
         @if (Model == null || Model.Count == 0)
@@ -134,21 +149,56 @@
                         @if (User.IsInRole("administrator") || User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
                         {
                             <td>
-                                <a href="/FAQ/Delete/@faq.FaqId" style="text-decoration:none; color:indianred"
-                                   onclick="return confirm('Delete FAQ with ID @faq.FaqId?')">
-                                    <i class="bi bi-trash3"></i>
-                                </a>
+                                <form method="post" action="/FAQ/Delete">
+                                    <input type="hidden" name="faqId" value="@faq.FaqId" />
+                                    <button type="submit" style="background-color: transparent; border: none; color: indianred">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
                             </td>
                         }
                     </tr>
                 }
             </table>
+
+            <div class="pagination">
+                <button onclick="prevPage()">Previous</button>
+                <span id="currentPage">Page 1</span>
+                <button onclick="nextPage()">Next</button>
+            </div>
+            <script>
+                var currentPage = 1;
+                var pageSize = 50;
+                var totalPages = Math.ceil(@Model.Count / pageSize);
+
+                                function displayPage(page) {
+                        var rows = document.getElementsByTagName('tr');
+                        var startIndex = (page - 1) * pageSize + 1;
+                        var endIndex = Math.min(startIndex + pageSize, @Model.Count);
+
+                        for (var i = 1; i < rows.length; i++) {
+                            rows[i].style.display = (i >= startIndex && i <= endIndex) ? 'table-row' : 'none';
+                        }
+
+                        document.getElementById('currentPage').textContent = 'Page ' + page;
+                        currentPage = page;
+                    }
+
+                                function prevPage() {
+                        if (currentPage > 1) {
+                            displayPage(currentPage - 1);
+                        }
+                    }
+
+                                function nextPage() {
+                        if (currentPage < totalPages) {
+                            displayPage(currentPage + 1);
+                        }
+                    }
+
+                                displayPage(1); // Display the initial page
+            </script>
         }
     </div>
-    <script>
-        function clearSearchInput() {
-            document.getElementsByName("questionQuery")[0].value = "";
-        }
-    </script>
 </body>
 </html>
