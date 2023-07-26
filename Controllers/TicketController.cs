@@ -437,7 +437,7 @@ namespace FYP.Controllers
                         ViewData["Message"] = "Unsuccessful escalate. Do try again.";
                     }
                 }
-                return View("ToDoTicket");
+                return RedirectToAction("ToDoTicket", "Ticket");
             }
             else
             {
@@ -706,7 +706,7 @@ namespace FYP.Controllers
                         return View(tickets);
                     }
                 }
-                return View("ToDoTicket");
+                return RedirectToAction("ToDoTicket", "Ticket");
             }
             else
             {
