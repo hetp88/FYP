@@ -613,36 +613,50 @@ namespace FYP.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Hash the password using BCrypt
-                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(newEmployee.Password);
 
                 using (SqlConnection connection = new SqlConnection(GetConnectionString()))
                 {
                     connection.Open();
-
-                    // Find the largest employee ID for all roles
-                    string maxEmployeeIdQuery = "SELECT MAX(employee_id) FROM employee;";
-                    int maxEmployeeId = connection.QuerySingleOrDefault<int>(maxEmployeeIdQuery);
+                    byte[] passwordBytes = Encoding.UTF8.GetBytes(newEmployee.Password);
+                    byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
+                    string hashedPassword = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
+                    // Find the largest employee ID for the selected role
+                    string maxEmployeeIdQuery = "SELECT MAX(employee_id) FROM employee WHERE roles_id = @RolesId;";
+                    int maxEmployeeId = connection.QuerySingleOrDefault<int>(maxEmployeeIdQuery, new { RolesId = newEmployee.RolesId });
 
                     // Increment the employee ID by 1 to get the new employee's ID
                     int newEmployeeId = maxEmployeeId + 1;
 
-                    // Assign the new employee ID to EmployeeId
-                    newEmployee.EmployeeId = newEmployeeId;
+                    // Format the employee ID based on the selected role
+                    string formattedEmployeeId;
+                    switch (newEmployee.RolesId)
+                    {
+                        case 3: // Helpdesk Agent
+                            formattedEmployeeId = (newEmployeeId).ToString();
+                            break;
+                        case 4: // Support Engineer
+                            formattedEmployeeId = (newEmployeeId).ToString();
+                            break;
+                        case 5: // Administrator
+                            formattedEmployeeId = (newEmployeeId).ToString();
+                            break;
+                        default:
+                            // Handle any other roles as per your requirement
+                            formattedEmployeeId = newEmployeeId.ToString();
+                            break;
+                    }
 
                     // Insert the new employee into the database
-                    string insertQuery = @"
-                INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets)
-                VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, @Password, 0, 0);";
+                    string insertQuery = $"INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets, acc_status) VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, {hashedPassword}, 0, 0, 'active');";
 
                     connection.Execute(insertQuery, new
                     {
-                        newEmployee.EmployeeId,
+                        EmployeeId = formattedEmployeeId,
                         newEmployee.RolesId,
                         newEmployee.Name,
                         newEmployee.Email,
                         PhoneNo = newEmployee.PhoneNo.ToString(),
-                        Password = Encoding.Unicode.GetBytes(hashedPassword)
+                        newEmployee.Password,
                     });
                 }
 
@@ -656,5 +670,8 @@ namespace FYP.Controllers
 
 
 
+
     }
 }
+
+
