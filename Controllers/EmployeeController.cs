@@ -647,7 +647,9 @@ namespace FYP.Controllers
                     }
 
                     // Insert the new employee into the database
-                    string insertQuery = $"INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets, acc_status) VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, {hashedPassword}, 0, 0, 'active');";
+                    string insertQuery = @"
+                INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets)
+                VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, @Password, 0, 0);";
 
                     connection.Execute(insertQuery, new
                     {
@@ -667,7 +669,6 @@ namespace FYP.Controllers
             // If the model state is invalid, return the view with validation errors
             return View("NewEmployee", newEmployee);
         }
-
 
 
 

@@ -9,7 +9,10 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <style>
-
+        .container {
+            margin-top: 150px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -91,7 +94,7 @@
         <div>
             <p>
                 <label>Escalate In-Charge: </label>
-                @if (@Model.Escalate_SE == null)
+                @if (@Model.Escalate_SE == 0)
                 {
                     <span>-</span>
                 }
@@ -119,7 +122,7 @@
 
         <h2>Update Ticket</h2>
 
-        <form method="post" action="/Ticket/HAUpdateTicket">
+        <form method="post" action="/Ticket/SEResolution">
 
             <input type="hidden" name="TicketId" value="@Model.TicketId">
 
