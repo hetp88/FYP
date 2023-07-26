@@ -1,4 +1,5 @@
 ﻿@model List<FYP.Models.News>
+
 @{
     Layout = "_Ticket";
 }
@@ -91,6 +92,17 @@
             left: 0;
             right: 0;
         }
+
+        #clock {
+            font-size: 2em;
+            color: #333;
+        }
+
+        #date {
+            font-size: 1.2em;
+            color: #666;
+            margin-top: 10px;
+        }
         .card3 .button{
             color: black;
         }
@@ -123,12 +135,20 @@
         </div>
 
         <div class="card2">
-            <h1>Welcome to IT Helper</h1>
-            <p>
-                <br />IT Helper will be your one-stop solution for the technical problems you face, software and hardware.<br />
-                <br />Our application will help you to conveniently report your problems or even provide you with solutions you might need under the FAQ section.<br />
-                <br />We will ensure that your problems will be settled as soon as possible and provide you with the best troubleshooting experience.
-            </p>
+            @if (User.IsInRole("administrator"))
+            {
+                <div id="date"></div>
+                <div id="clock"></div>
+            }
+            else
+            {
+                <h1>Welcome to IT Helper</h1>
+                <p>
+                    <br />IT Helper will be your one-stop solution for the technical problems you face, software and hardware.<br />
+                    <br />Our application will help you to conveniently report your problems or even provide you with solutions you might need under the FAQ section.<br />
+                    <br />We will ensure that your problems will be settled as soon as possible and provide you with the best troubleshooting experience.
+                </p>
+            }
         </div>
 
         <div class="card3">
@@ -142,4 +162,20 @@
 
     </div>
 </body>
+<script>
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const timeString = `${hours}:${minutes}:${seconds}`;
+        document.getElementById('clock').textContent = timeString;
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateString = now.toLocaleDateString('en-US', options);
+        document.getElementById('date').textContent = dateString;
+    }
+
+    setInterval(updateTime, 1000); // Update every second
+</script>
 </html>
