@@ -59,7 +59,7 @@ namespace FYP.Controllers
                 // Unauthorized actions for other roles
                 return View("Forbidden");
             }
-            
+
         }
 
         public IActionResult UpdateEmployee(int employeeId)
@@ -195,7 +195,7 @@ namespace FYP.Controllers
 
         public IActionResult Schedule()
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator")) 
+            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
             {
                 bool isAdmin = User.IsInRole("administrator");
 
@@ -251,7 +251,7 @@ namespace FYP.Controllers
                 return View("Forbidden");
             }
             // Check if the logged-in user is an admin
-            
+
         }
 
         public IActionResult ApplyLeave()
@@ -647,9 +647,7 @@ namespace FYP.Controllers
                     }
 
                     // Insert the new employee into the database
-                    string insertQuery = @"
-                INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets)
-                VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, @Password, 0, 0);";
+                    string insertQuery = $"INSERT INTO employee (employee_id, roles_id, name, email, phone_no, employee_pw, tickets, closed_tickets, acc_status) VALUES (@EmployeeId, @RolesId, @Name, @Email, @PhoneNo, {hashedPassword}, 0, 0, 'active');";
 
                     connection.Execute(insertQuery, new
                     {
@@ -669,6 +667,7 @@ namespace FYP.Controllers
             // If the model state is invalid, return the view with validation errors
             return View("NewEmployee", newEmployee);
         }
+
 
 
 
