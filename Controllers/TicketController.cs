@@ -85,45 +85,37 @@ namespace FYP.Controllers
 
         public IActionResult Notification()
         {
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+            int id = 0;
+            string d = "";
+
+            int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                int id = 0;
-                string d = "";
+                string equery = $"SELECT t.ticket_id AS TicketId, t.description " +
+                                $"FROM ticket t " +
+                                $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
+                                $"WHERE (status = 'submitted' AND t.employee_id ='{currentuser}') " +
+                                $"OR (status = 'submitted' AND t.escalation_SE = '{currentuser}')";
 
-                int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
+                connection.Open();
+                List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                foreach (Ticket n in tickets)
                 {
-                    string equery = $"SELECT t.ticket_id AS TicketId, t.description " +
-                                    $"FROM ticket t " +
-                                    $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
-                                    $"WHERE (status = 'submitted' AND t.employee_id ='{currentuser}') " +
-                                    $"OR (status = 'submitted' AND t.escalation_SE = '{currentuser}')";
-
-                    connection.Open();
-                    List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
-
-                    foreach (Ticket n in tickets)
-                    {
-                        id = n.TicketId;
-                        d = n.Description;
-                    }
-
-                    List<Ticket> noti = new List<Ticket>
-                    {
-                        new Ticket { TicketId = id, Description = d}
-                    };
-
-                    ViewBag.Notification = noti;
-
-                    return View();
+                    id = n.TicketId;
+                    d = n.Description;
                 }
-            }
-            else
-            {
-                // Unauthorized actions for other roles
-                return View("Forbidden");
-            }
+
+                List<Ticket> noti = new List<Ticket>
+                {
+                    new Ticket { TicketId = id, Description = d}
+                };
+
+                ViewBag.Notification = noti;
+
+                return View();
+            }            
         }
 
         public IActionResult ViewTicket()

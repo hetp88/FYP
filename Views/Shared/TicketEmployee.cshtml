@@ -173,27 +173,41 @@
         </nav>
 
         <ul class="navbar_links"> 
-            <li class="dropdown" style="list-style-type: none; display: flex; align-items: center;">
-                <a class="dropdown-item bi bi-bell" style="margin-right: 20px;" asp-controller="Ticket" asp-action="Notification"></a>
-                <div class="dropdown-content">
-                    @if (ViewBag.Notification != null)
-                    {
-                        
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = @ViewBag.Notification.TicketId })">
-                                    @ViewBag.Notification.TicketId. @ViewBag.Notification.Description
-                                </a>
-                            </li>
-                        </ul>
-                        
-                    }
-                    else
-                    {
-                        <div>No newly assigned tickets</div>
-                    }
-                </div>
-            </li>
+            @if(User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+            {
+                <li class="dropdown" style="list-style-type: none; display: flex; align-items: center;">
+                    <a class="dropdown-item bi bi-bell" style="margin-right: 20px;" asp-controller="Ticket" asp-action="Notification"></a>
+                    <div class="dropdown-content">
+                        @if (ViewBag.Notification != null)
+                        {
+                            if (User.IsInRole("helpdesk agent"))
+                            {
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = @ViewBag.Notification.TicketId })">
+                                            @ViewBag.Notification.TicketId. @ViewBag.Notification.Description
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
+                            else if (User.IsInRole("support engineer"))
+                            {
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("SEResolution", "Ticket", new { TicketId = @ViewBag.Notification.TicketId })">
+                                            @ViewBag.Notification.TicketId. @ViewBag.Notification.Description
+                                        </a>
+                                    </li>
+                                </ul>
+                            }
+                        }
+                        else
+                        {
+                            <div>No newly assigned tickets</div>
+                        }
+                    </div>
+                </li>
+            }            
 
             <li class="nav-item" style="list-style-type: none; display: flex; align-items: center;">
                 <a class="nav-link" asp-controller="Account" asp-action="EmpProfile">
