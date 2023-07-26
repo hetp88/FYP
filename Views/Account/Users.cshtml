@@ -9,11 +9,10 @@
 <head>
     <title>Tickets</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-    <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .card {
-            margin-top: 60px;
+            margin-top: 140px;
             width: auto;
             background: #FFFFFF;
             border-radius: 20px;
@@ -70,6 +69,29 @@
                 .table td:last-child {
                     border-right: none;
                 }
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .pagination button {
+            padding: 6px 12px; 
+            margin: 0 2px;
+            background-color: #3A71FF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .pagination button:hover {
+            background-color: #555555;
+        }
+        .pagination button[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     </style>
     <script>
         window.onload = function () {
@@ -148,6 +170,43 @@
                     </tr>
                 }
             </table>
+            <div class="pagination">
+                <button onclick="prevPage()">Previous</button>
+                <span id="currentPage">Page 1</span>
+                <button onclick="nextPage()">Next</button>
+            </div>
+            <script>
+                var currentPage = 1;
+                var pageSize = 50;
+                var totalPages = Math.ceil(@Model.Count / pageSize);
+
+                                                function displayPage(page) {
+                        var rows = document.getElementsByTagName('tr');
+                        var startIndex = (page - 1) * pageSize + 1;
+                        var endIndex = Math.min(startIndex + pageSize, @Model.Count);
+
+                        for (var i = 1; i < rows.length; i++) {
+                            rows[i].style.display = (i >= startIndex && i <= endIndex) ? 'table-row' : 'none';
+                        }
+
+                        document.getElementById('currentPage').textContent = 'Page ' + page;
+                        currentPage = page;
+                    }
+
+                                                function prevPage() {
+                        if (currentPage > 1) {
+                            displayPage(currentPage - 1);
+                        }
+                    }
+
+                                                function nextPage() {
+                        if (currentPage < totalPages) {
+                            displayPage(currentPage + 1);
+                        }
+                    }
+
+                                                displayPage(1); // Display the initial page
+            </script>
         }
     </div>
 </body>
