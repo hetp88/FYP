@@ -77,8 +77,8 @@
         .pagination button {
             padding: 6px 12px; 
             margin: 0 2px;
-            background-color: #3A71FF;
-            color: white;
+            background-color: white;
+            color: black;
             border: none;
             cursor: pointer;
             border-radius: 4px;
@@ -98,7 +98,7 @@
         window.onload = function () {
             document.getElementsByName("faqIdQuery")[0].value = "";
             document.getElementsByName("questionQuery")[0].value = "";
-            document.getElementsByName("solutionQuery")[0].value = "";
+           
             document.getElementsByName("categoryQuery")[0].value = "";
         };
     </script>
@@ -108,7 +108,6 @@
         <form method="get" action="/FAQ/Details" class="search-form">
             
                 <input type="text" name="questionQuery" placeholder="Question" />
-                <input type="text" name="solutionQuery" placeholder="Solution" />
                 <select name="categoryQuery">
                     <option value="">Select a category</option>
                     <option value="1">Software</option>
