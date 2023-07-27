@@ -1,8 +1,5 @@
 ﻿using FYP.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 
@@ -90,57 +87,11 @@ namespace FYP.Controllers
                 }
             }
 
-            //Calculate the closed ticket count for each employee
-            Dictionary<string, int> employeeClosedTicketCount = CalculateEmployeeClosedTicketCount(tickets, startDate, endDate);
-
-            // Update the ClosedTicketCount property for each ticket
-            foreach (Ticket ticket in tickets)
-            {
-                ticket.ClosedTicketCount = employeeClosedTicketCount.TryGetValue(ticket.EmployeeName, out int count) ? count : 0;
-            }
             //Adding up the counts for charts
             counts(tickets);
 
             return tickets;
         }
-
-        private void counts(List<Ticket> tickets, out int incrementalSum)
-        {
-            incrementalSum = 0;
-            foreach (Ticket ticket in tickets)
-            {
-                incrementalSum += ticket.ClosedTicketCount;
-            }
-        }
-
-        private Dictionary<string, int> CalculateEmployeeClosedTicketCount(List<Ticket> tickets, DateTime startDate, DateTime endDate)
-        {
-            Dictionary<string, int> employeeClosedTicketCount = new Dictionary<string, int>();
-
-            foreach (Ticket ticket in tickets)
-            {
-                // Check if the ticket is closed, has an employee name, and falls within the date range
-                if (ticket.Status == "Closed" && ticket.EmployeeName != null && ticket.DateTime >= startDate && ticket.DateTime <= endDate)
-                {
-                    // If the employee already exists in the dictionary, increment the count
-                    if (employeeClosedTicketCount.ContainsKey(ticket.EmployeeName))
-                    {
-                        employeeClosedTicketCount[ticket.EmployeeName]++;
-                    }
-                    else
-                    {
-                        // If the employee does not exist in the dictionary, add a new entry with count 1
-                        employeeClosedTicketCount[ticket.EmployeeName] = 1;
-                    }
-                }
-            }
-
-            return employeeClosedTicketCount;
-        }
-
-
-
-
 
         private void counts(List<Ticket> tickets)
         {
