@@ -24,7 +24,7 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult UserTicket()
+        public IActionResult UserTicket() //for user and staff <view only their own submitted tickets>
         {
             if ( User.IsInRole("student") || User.IsInRole("staff"))
             {
@@ -53,7 +53,7 @@ namespace FYP.Controllers
             
         }
 
-        public IActionResult ToDoTicket()
+        public IActionResult ToDoTicket() //for helpdesk agent and support engineer <view only their assigned tickets>
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
             {
@@ -83,7 +83,9 @@ namespace FYP.Controllers
             }
         }
 
-        public IActionResult Notification()
+        public IActionResult Notification() 
+            //currently not working due to passing of data
+            //for helpdesk agent and suport engineer --> tickets that are newly assigned based on status = submitted, on click, update page of ticket id will be redirected
         {
             int id = 0;
             string d = "";
@@ -96,7 +98,7 @@ namespace FYP.Controllers
                                 $"FROM ticket t " +
                                 $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
                                 $"WHERE (status = 'submitted' AND t.employee_id ='{currentuser}') " +
-                                $"OR (status = 'submitted' AND t.escalation_SE = '{currentuser}')";
+                                $"OR (status = 'waiting for resolution' AND t.escalation_SE = '{currentuser}')";
 
                 connection.Open();
                 List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
@@ -118,7 +120,7 @@ namespace FYP.Controllers
             }            
         }
 
-        public IActionResult ViewTicket()
+        public IActionResult ViewTicket() //for admin <view all tickets>
         {
             if (User.IsInRole("administrator"))
             {
@@ -195,6 +197,7 @@ namespace FYP.Controllers
 
         [HttpPost]
         public IActionResult AddTicket(Ticket ticket)
+            //if user or staff add ticket, it is based on their user id they used to sign in. if helpdesk agent add ticket, user id must be keyed in manually
         {
             int ticketid = 0;
             int? userid = 0;
@@ -270,7 +273,7 @@ namespace FYP.Controllers
                 string query = @"INSERT INTO ticket (ticket_id, userid, type, description, category_id, status, datetime, priority, employee_id, devices_involved, additional_details, resolution, escalate_reason, escalation_SE) 
                                 VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, @DateTime, @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution, @Escalate_Reason, @Escalate_SE)";
 
-                string update = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{eid}'";
+                string update = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{eid}'"; //update of no. of tickets assigned to the generated helpdesk agent employee id
 
                 string getUserinfo = $"SELECT u.username, u.email " +
                                         $"FROM users u " +
@@ -285,6 +288,7 @@ namespace FYP.Controllers
                 }
 
                 if (connection.Execute(query, newTicket) == 1 && connection.Execute(update) == 1)
+                    //email will be sent to notify user
                 {
                     string link = "https://localhost:44397/Account/Login";
                     string delete = "https://localhost:44397/Ticket/Terminate/" + newTicket.TicketId;
@@ -323,7 +327,7 @@ namespace FYP.Controllers
                     TempData["MsgType"] = "danger";
                 }
             }
-            if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
+            if (User.IsInRole("helpdesk agent"))
             {
                 return RedirectToAction("ToDoTicket", "Ticket");
             }
@@ -339,7 +343,7 @@ namespace FYP.Controllers
             
         }
 
-        public IActionResult EscalateTicket(int ticketid)
+        public IActionResult EscalateTicket(int ticketid) //view ticket full details 
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -375,6 +379,7 @@ namespace FYP.Controllers
 
         [HttpPost]
         public IActionResult EscalateTicket(Ticket ticket)
+            //helpdesk agent can escalate ticket when they are unable to solve
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -418,7 +423,7 @@ namespace FYP.Controllers
                         assignedticket = id + 1;
                     }
 
-                    string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'";
+                    string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'"; //update no. of assigned tickets for support engineer based on support engineer employee id
 
                     if (connection.Execute(update, escalation) == 1 && connection.Execute(assign) == 1)
                     {
@@ -439,6 +444,7 @@ namespace FYP.Controllers
         }
 
         public IActionResult HAUpdateTicket(int ticketid)
+            //view ticket full details
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -473,6 +479,7 @@ namespace FYP.Controllers
 
         [HttpPost]
         public IActionResult HAUpdateTicket(Ticket tickets)
+            //helpdesk agent update status 
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -569,8 +576,9 @@ namespace FYP.Controllers
 
                     //
                     if (tupdate.newStatus == "closed" && tupdate.Escalate_SE == 0)
+                        //if no support engineer assigned, no escalation made
+                        //email to notify user
                     {
-
                         if (connection.Execute(updateticket, tupdate) == 1 && connection.Execute(updateHA) == 1)
                         {
                             string link = "https://localhost:44397/Account/Login";
@@ -610,6 +618,8 @@ namespace FYP.Controllers
 
                     //
                     else if (tupdate.newStatus == "closed" && tupdate.Escalate_SE > 0)
+                        //if support engineer is assigned, escalation is made
+                        //email to notify user
                     {
                         string updateSE = $"UPDATE e " +
                                           $"SET e.tickets = '{SEassigned}', e.closed_tickets = '{SEclosed}' " +
@@ -676,6 +686,7 @@ namespace FYP.Controllers
         }
 
         public IActionResult SEResolution(int ticketid)
+            //view ticket full details
         {
             if (User.IsInRole("support engineer"))
             {
@@ -709,6 +720,7 @@ namespace FYP.Controllers
 
         [HttpPost]
         public IActionResult SEResolution(Ticket tickets)
+            //support engineer can only update status to resolved after solution is found, solution must be stated in the textbox 
         {
             if (User.IsInRole("support engineer"))
             {
