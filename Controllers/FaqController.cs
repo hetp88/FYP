@@ -23,7 +23,7 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-
+        //========================================FAQ Details================================================//
         public IActionResult Details(string faqIdQuery, string questionQuery, string solutionQuery, string categoryQuery)
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff"))
@@ -41,7 +41,6 @@ namespace FYP.Controllers
                                    AND f.faq_id > 0";
 
 
-                    // Retrieve the category ID based on the selected category name
                     int categoryId = 0;
                     if (!string.IsNullOrEmpty(categoryQuery))
                     {
@@ -63,11 +62,12 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
 
         }
+        //========================================Solution Extention of details================================================//
+
         public IActionResult Solution(int FaqId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -87,6 +87,7 @@ namespace FYP.Controllers
             }
             return RedirectToAction("Details");
         }
+        //==========================================Search Function==============================================//
 
         public IActionResult Search(string query)
         {
@@ -105,6 +106,7 @@ namespace FYP.Controllers
             return View("Details", faqs);
         }
 
+        //===========================================Create New FAQ=============================================//
 
         public IActionResult CreateFAQ()
         {
@@ -171,6 +173,7 @@ namespace FYP.Controllers
 
         }
 
+        //===========================================Delete FAQ=============================================//
 
         public IActionResult Delete(int faqId)
         {

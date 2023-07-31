@@ -31,7 +31,7 @@ namespace FYP.Controllers
         {
             return View();
         }
- 
+        //============================================View Home Page ============================================//
         public IActionResult Index()
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator") || User.IsInRole("student") || User.IsInRole("staff")) 
@@ -52,6 +52,7 @@ namespace FYP.Controllers
             }
             
         }
+
         public IActionResult Editor()
         {
             if (User.IsInRole("administrator") )
@@ -64,7 +65,6 @@ namespace FYP.Controllers
                 return View("Forbidden");
             }
         }
-
         [HttpPost]
         public IActionResult Editor(News news)
         {

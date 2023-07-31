@@ -62,7 +62,7 @@ public class AccountController : Controller
         return View();
 
     }
-
+    //========================================Login & Logout================================================//
     [AllowAnonymous]
     [HttpPost]
     public IActionResult Login(UserLogin account)
@@ -122,14 +122,14 @@ public class AccountController : Controller
 
         return RedirectToAction("Login", "Account");
     }
-
+    //============================================Forbidden Page============================================//
     [AllowAnonymous]
     public IActionResult Forbidden()
     {
         return View();
     }
 
-
+    //========================================Register New User================================================//
 
     [AllowAnonymous]
     [HttpPost]
@@ -137,13 +137,11 @@ public class AccountController : Controller
     {
         if (!ModelState.IsValid)
         {
-            //Validation Check
             ViewData["MsgType"] = "danger";
             return View("Register");
         }
         else
         {
-            // Save the user registration data to the database
             string[] NumArray = newUser.Email.Split("@");
             string numbers = NumArray[0];
             int UserID = int.Parse(numbers);
@@ -218,10 +216,9 @@ public class AccountController : Controller
                 }
             }
         }
-        // Redirect the user to the login page after successful registration
         return RedirectToAction("Login", "Account");
     }
-
+    //========================================List Users================================================//
     public IActionResult Users(string searchUserID, string searchRole, string searchName, string searchSchool, string searchEmail, string searchPhone, string searchLastLogin)
     {
         if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer") || User.IsInRole("administrator"))
@@ -234,7 +231,6 @@ public class AccountController : Controller
 
                 StringBuilder whereClause = new StringBuilder();
 
-                // Build the WHERE clause based on the provided search values
                 if (!string.IsNullOrEmpty(searchUserID))
                 {
                     whereClause.Append("u.userid = @SearchUserID AND ");
@@ -263,11 +259,9 @@ public class AccountController : Controller
                 {
                     whereClause.Append("u.last_login = @SearchLastLogin AND ");
                 }
-
-                // Remove the trailing "AND" from the WHERE clause
                 if (whereClause.Length > 0)
                 {
-                    whereClause.Remove(whereClause.Length - 5, 5); // Remove the last " AND "
+                    whereClause.Remove(whereClause.Length - 5, 5);
                     query += " WHERE " + whereClause.ToString();
                 }
 
@@ -289,11 +283,10 @@ public class AccountController : Controller
         }
         else
         {
-            // Unauthorized actions for other roles
             return View("Forbidden");
         }
     }
-
+    //==========================================Policy & T&C==============================================//
     [AllowAnonymous]
     public IActionResult Policy()
     {
@@ -304,7 +297,7 @@ public class AccountController : Controller
     {
         return View();
     }
-
+    //=======================================Employee & User Profile=================================================//
     public IActionResult Profile()
     {
         if (User.IsInRole("student") || User.IsInRole("staff"))
@@ -315,13 +308,11 @@ public class AccountController : Controller
                 string query = $"SELECT userid, email, phone_no AS phoneNo, username, school FROM users WHERE userid='{currentuser}'";
                 connection.Open();
                 List<Users> u = connection.Query<Users>(query).AsList();
-                //Console.WriteLine(currentuser);
                 return View(u);
             }
         }
         else
         {
-            // Unauthorized actions for other roles
             return View("Forbidden");
         }
     }
@@ -336,13 +327,11 @@ public class AccountController : Controller
 
                 connection.Open();
                 List<Employee> f = connection.Query<Employee>(query2).AsList();
-                //Console.WriteLine(currentuser);
                 return View(f);
             }
         }
         else
         {
-            // Unauthorized actions for other roles
             return View("Forbidden");
         }
     }
@@ -350,6 +339,7 @@ public class AccountController : Controller
     {
         return View();
     }
+    //=========================================Edit Profile (Update phone number &/OR password)===============================================//
     [HttpGet]
     public IActionResult UpdatePassword()
     {
@@ -397,11 +387,11 @@ public class AccountController : Controller
             connection.Open();
             NewEmployee pl = new NewEmployee()
             {
-                EmpPw = np.EmpPw, // Assuming np.EmpPw is the plain text password
+                EmpPw = np.EmpPw, 
                 EmployeeId = (int)currentuser,
             };
 
-            // Convert the plain text password to varbinary using SHA1 hashing
+            //Convert the plain text password to varbinary using SHA1 hashing
             byte[] passwordBytes = Encoding.UTF8.GetBytes(np.EmpPw);
             byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
             string hashedPassword = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
@@ -428,7 +418,7 @@ public class AccountController : Controller
             }
         }
     }
-    //========================================================================================//
+    //========================================Forget Password================================================//
 
     [HttpGet]
     public IActionResult ForgetPw()
@@ -464,9 +454,8 @@ public class AccountController : Controller
 
                         if (EmailUtl.SendEmail(user, subject, message, out error))
                         {
-                            // Store verification code in session
                             HttpContext.Session.SetInt32("VerificationCode", code);
-                            HttpContext.Session.SetString("UserEmail", user); // Store user email in session
+                            HttpContext.Session.SetString("UserEmail", user); //Set the email in session
                             return RedirectToAction("VerifyCode", new { email = user });
                         }
                         else
@@ -498,11 +487,9 @@ public class AccountController : Controller
     public IActionResult VerifyCode(int code, string email)
     {
         int? storedCode = HttpContext.Session.GetInt32("VerificationCode");
-        string userEmail = HttpContext.Session.GetString("UserEmail"); // Retrieve user email from session
-
+        string userEmail = HttpContext.Session.GetString("UserEmail");
         if (storedCode.HasValue && code == storedCode && userEmail == email)
         {
-            // Code is correct, store the user email in TempData and redirect to the change password action
             HttpContext.Session.SetString("UserEmail", userEmail);
             return RedirectToAction("ChangePassword", new { email = userEmail });
         }
@@ -511,7 +498,6 @@ public class AccountController : Controller
             TempData["Message"] = "Verification Incorrect";
             TempData["MsgType"] = "danger";
             return RedirectToAction("VerifyCode", new { email = email });
-            // Code is incorrect, handle the error
         }
     }
 
@@ -525,7 +511,7 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult ChangePassword(NewEmployee vm, string email)
     {
-        string userEmail = HttpContext.Session.GetString("UserEmail"); // Retrieve user email from session
+        string userEmail = HttpContext.Session.GetString("UserEmail"); //Retrieve email from session
 
         using (SqlConnection connection = new SqlConnection(GetConnectionString()))
         {
@@ -535,7 +521,7 @@ public class AccountController : Controller
                 EmpPw = vm.EmpPw,
                 Email = (string)userEmail,
             };
-            // Convert the plain text password to varbinary using SHA1 hashing
+            //Convert the plain text password to varbinary using SHA1 hashing
             byte[] passwordBytes = Encoding.UTF8.GetBytes(vm.EmpPw);
             byte[] hashedPasswordBytes = SHA1.Create().ComputeHash(passwordBytes);
             string hashedPassword1 = "0x" + BitConverter.ToString(hashedPasswordBytes).Replace("-", "");
@@ -582,7 +568,7 @@ public class AccountController : Controller
             }
         }
     }
-
+    //=========================================Authentication==============================================//
     private static bool AuthenticateUser(string uid, string pw, out ClaimsPrincipal principal)
     {
         principal = null!;
@@ -592,7 +578,6 @@ public class AccountController : Controller
 
         if (ds.Rows.Count == 1 && IsUserInValidRole(ds.Rows[0]["roles_type"].ToString()))
         {
-            // For staff and student roles, skip account status check and allow login
             if (IsUserStaffOrStudent(ds.Rows[0]["roles_type"].ToString()))
             {
                 principal =
@@ -606,8 +591,6 @@ public class AccountController : Controller
                     );
                 return true;
             }
-
-            // For other roles, check the account status
             if (IsUserInActiveStatus(ds.Rows[0]["roles_type"].ToString(), ds.Rows[0]["acc_Status"].ToString()))
             {
                 principal =
@@ -622,10 +605,8 @@ public class AccountController : Controller
                 return true;
             }
         }
-        // Check if the employee is an "Active" user with "roles_type" as "Helpdesk Agent," "Support Engineer," or "Administrator"
         else if (de.Rows.Count == 1 && IsUserInValidRole(de.Rows[0]["roles_type"].ToString()))
         {
-            // For "staff" and "student" roles, skip account status check and allow login
             if (IsUserStaffOrStudent(de.Rows[0]["roles_type"].ToString()))
             {
                 principal =
@@ -639,8 +620,6 @@ public class AccountController : Controller
                     );
                 return true;
             }
-
-            // For other roles, check the account status
             if (IsUserInActiveStatus(de.Rows[0]["roles_type"].ToString(), de.Rows[0]["acc_Status"].ToString()))
             {
                 principal =
@@ -673,18 +652,11 @@ public class AccountController : Controller
 
     private static bool IsUserInActiveStatus(string role, string accStatus)
     {
-        // Check the account status only for the specified roles
         string[] rolesWithAccStatusCheck = { "helpdesk agent", "support engineer", "administrator" };
         if (rolesWithAccStatusCheck.Contains(role.ToLower()))
         {
             return accStatus.Equals("active", StringComparison.OrdinalIgnoreCase);
         }
-        return true; // For other roles, skip account status check
+        return true; 
     }
-
-
-
-
-
-
 }
