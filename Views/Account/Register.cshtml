@@ -19,8 +19,10 @@
 </script>
     <style>
         body {
-            background-color: #2E61E4;
-            color: #FFFFFF;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            height: 100vh;
         }
 
         .container {
@@ -71,7 +73,7 @@
             }
     </style>
 </head>
-<body>
+<body background="\Images\MainBackground.jpg">
     <div class="container">
         <div class="card-body">
             <form method="post" asp-controller="Account" asp-action="Register">
