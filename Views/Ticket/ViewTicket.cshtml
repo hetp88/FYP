@@ -225,13 +225,13 @@
                             <td>@ticket.Escalate_Reason</td>
                         }
 
-                        @if (ticket.Escalate_SE == 0)
+                        @if (ticket.SEname == null)
                         {
                             <td>-</td>
                         }
                         else
                         {
-                            <td>@ticket.Escalate_SE</td>
+                            <td>@ticket.SEname</td>
                         }
 
                         @if(ticket.Status == "terminated")
@@ -259,7 +259,7 @@
     </div>
     <script>
         var currentPage = 1;
-        var pageSize = 50;
+        var pageSize = 3;
         var totalPages = Math.ceil(@Model.Count / pageSize);
 
                                         function displayPage(page) {

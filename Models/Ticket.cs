@@ -51,6 +51,8 @@ namespace FYP.Models
 
         public int Escalate_SE { get; set; }
 
+        public string SEname { get; set; } = null!;
+
         //For Data Collection
         public int StatusCount { get; set; }
 

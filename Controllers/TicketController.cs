@@ -61,15 +61,27 @@ namespace FYP.Controllers
 
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, " +
-                                         $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason " +
+                    //string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, " +
+                    //                     $"t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason " +
+                    //                $"FROM ticket t " +
+                    //                $"INNER JOIN users u ON u.userid = t.userid " +
+                    //                $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
+                    //                $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
+                    //                $"WHERE t.employee_id='{currentuser}'" +
+                    //                $"OR t.escalation_SE = '{currentuser}'";
+
+                    string equery = $"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, t.datetime, t.priority, t.employee_id, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, " +
+                                    $"t.escalate_reason, " +
+                                    $"(SELECT e.name " +
+                                    $"FROM employee e " +
+                                    $"WHERE employee_id = t.escalation_SE) AS SEname " +
                                     $"FROM ticket t " +
                                     $"INNER JOIN users u ON u.userid = t.userid " +
                                     $"INNER JOIN ticket_categories tc ON tc.category_id = t.category_id " +
-                                    $"INNER JOIN employee e ON e.employee_id = t.employee_id  " +
-                                    $"WHERE t.employee_id='{currentuser}'" +
-                                    $"OR t.escalation_SE = '{currentuser}'";
-                   
+                                    $"INNER JOIN employee e ON e.employee_id = t.employee_id " +
+                                    $"WHERE t.employee_id = '{currentuser}' " +
+                                    $"OR t.escalation_SE = '{currentuser}';";
+
                     connection.Open();
                     List<Ticket> tickets = connection.Query<Ticket>(equery).AsList();
                     
@@ -129,7 +141,10 @@ namespace FYP.Controllers
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
-                                       t.datetime, t.priority, e.name AS EmployeeName, t.employee_id AS Employee, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
+                                     t.datetime, t.priority, e.name AS EmployeeName, t.employee_id AS Employee, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalate_reason, 
+                                     (SELECT e.name
+                                        FROM employee e 
+                                        WHERE employee_id = t.escalation_SE) AS SEname 
                                 FROM ticket t
                                 INNER JOIN users u ON u.userid = t.userid
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
@@ -155,7 +170,10 @@ namespace FYP.Controllers
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
-                                       t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalate_reason
+                                       t.datetime, t.priority, e.name AS EmployeeName, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalate_reason,
+                                       (SELECT e.name
+                                        FROM employee e 
+                                        WHERE employee_id = t.escalation_SE) AS SEname
                                 FROM ticket t
                                 INNER JOIN users u ON u.userid = t.userid
                                 INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
