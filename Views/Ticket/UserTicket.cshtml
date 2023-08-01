@@ -9,7 +9,7 @@
     <title>Tickets </title>
     <style>
         .card{
-            margin-top: 225px;
+            margin-top: 120px;
             width: auto;
             background: #FFFFFF;
         }
@@ -79,7 +79,7 @@
                         <td style="text-align:center">@ticket.Priority</td>
                         <td style="text-align:center">@ticket.DevicesInvolved</td>
                         <td style="text-align:center">@ticket.Additional_Details</td>
-                        <td style="text-align:center">@ticket.Resolution</td>
+                        <td style="text-align:center"><a href="@Url.Action("Solution", "Ticket", new {TicketId = ticket.TicketId})" class="btn btn-primary">Resolution</a></td>
                         <td style="text-align:center">@ticket.EmployeeName</td>
                     </tr>
                 }

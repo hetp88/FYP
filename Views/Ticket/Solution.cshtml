@@ -1,0 +1,32 @@
+﻿@model FYP.Models.Ticket
+@{
+    Layout = "_Ticket";
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resolution</title>
+    <style>
+        .card {
+            margin-top: 130px;
+            background: #FFFFFF;
+            padding: 20px;
+            margin-top: 150px;
+        }
+
+        .card {
+            border: 10px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="card">
+        <strong>ID: @Model.TicketId</strong>
+        <strong>Resolution: </strong>
+        <p>@Model.Resolution;</p>
+    </div>
+</body>
+</html>

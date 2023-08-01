@@ -211,7 +211,9 @@
                         }
                         else
                         {
-                            <td>@ticket.Resolution</td>
+                            <td>
+                                <a href="@Url.Action("Solution", "Ticket", new {TicketId = ticket.TicketId})" class="btn btn-primary">Resolution</a>
+                            </td>
                         }
 
                         <td>@ticket.EmployeeName</td>
@@ -259,7 +261,7 @@
     </div>
     <script>
         var currentPage = 1;
-        var pageSize = 3;
+        var pageSize = 50;
         var totalPages = Math.ceil(@Model.Count / pageSize);
 
                                         function displayPage(page) {

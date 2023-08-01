@@ -132,6 +132,42 @@ namespace FYP.Controllers
             }            
         }
 
+        public IActionResult Solution(int TicketId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
+                                       t.datetime, t.priority, e.name AS EmployeeName, t.employee_id AS Employee, t.devices_involved AS DevicesInvolved, t.additional_details, t.resolution, t.escalation_SE AS Escalate_SE, t.escalate_reason
+                                FROM ticket t
+                                INNER JOIN users u ON u.userid = t.userid
+                                INNER JOIN ticket_categories tc ON tc.category_id = t.category_id
+                                INNER JOIN employee e ON e.employee_id = t.employee_id
+                                WHERE t.ticket_id = @TicketId;";
+                connection.Open();
+                Ticket sol = connection.QueryFirstOrDefault<Ticket>(query, new {TicketId = TicketId});
+                if(sol != null)
+                {
+                    return View(sol);
+                }
+            }
+            if (User.IsInRole("administrator"))
+            {
+                return RedirectToAction("ViewTicket");
+            }
+            else if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
+            {
+                return RedirectToAction("ToDoTicket");
+            }
+            else if (User.IsInRole("staff") || User.IsInRole("support engineer"))
+            {
+                return RedirectToAction("UserTicket");
+            }
+            else
+            {
+                return RedirectToAction("Forbidden");
+            }
+        }
+
         public IActionResult ViewTicket() //for admin <view all tickets>
         {
             if (User.IsInRole("administrator"))
