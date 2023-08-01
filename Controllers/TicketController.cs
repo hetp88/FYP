@@ -158,7 +158,7 @@ namespace FYP.Controllers
             {
                 return RedirectToAction("ToDoTicket");
             }
-            else if (User.IsInRole("staff") || User.IsInRole("support engineer"))
+            else if (User.IsInRole("staff") || User.IsInRole("student"))
             {
                 return RedirectToAction("UserTicket");
             }
