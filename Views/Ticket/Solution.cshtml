@@ -8,6 +8,30 @@
 <html>
 <head>
     <title>Resolution</title>
+    @*<script>
+        function showMessage() {
+            var confirmation = confirm("Return back to the previous page. Do you want to proceed?");
+
+            if (confirmation) 
+            {
+                if (@User.IsInRole("administrator")) 
+                {
+                    window.location.href = "/Ticket/ViewTicket";
+                }
+                else if (@User.IsInRole("helpdesk agent") || @User.IsInRole("support engineer")) 
+                {
+                    window.location.href = "/Ticket/ToDoTicket";
+                }
+                else if (@User.IsInRole("staff") || @User.IsInRole("student"))
+                {
+                    window.location.href = "/Ticket/UserTicket";
+                }
+            } 
+            else {
+                // User chose to cancel will just get back to the form
+            }
+        }
+    </script>*@
     <style>
         .card {
             margin-top: 130px;
@@ -27,6 +51,11 @@
         <strong>ID: @Model.TicketId</strong>
         <strong>Resolution: </strong>
         <p>@Model.Resolution;</p>
+
+        @*<div class="mb-3">
+            <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Back</button>
+        </div>*@
     </div>
+    
 </body>
 </html>

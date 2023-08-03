@@ -66,8 +66,6 @@
     <script>
         $(document).ready(function () {
             var calendar = $('#calendar').fullCalendar({
-                // Add your other calendar options here
-
                 events: @Html.Raw(Json.Serialize(ViewBag.LeaveEvents)),
 
                 viewRender: function (view, element) {
@@ -76,17 +74,12 @@
                 },
 
                 eventRender: function (event, element) {
-                    // Highlight the start date and end date of the leave event
                     if (event.start.isSame(event.end, 'day')) {
-                        // Single-day leave event
                         element.addClass('leave-event');
                     } else {
-                        // Multi-day leave event
                         element.addClass('leave-event start-date');
                         element.nextUntil(event.end, '.fc-day').addClass('leave-event end-date');
                     }
-
-                    // Display the employee ID and name in the colored bar
                     element.find('.fc-title').html('<span class="employee-id">' + event.title + '</span>');
                     element.attr('data-toggle', 'tooltip');
                     element.attr('title', getLeaveInfo(event));
@@ -104,7 +97,6 @@
 
                 
             });
-
             function getLeaveInfo(event) {
                 var employeeId = event.title;
                 var startDate = event.start.format('MMM D, YYYY');

@@ -178,17 +178,17 @@
                         }
 
                         <td>@ticket.EmployeeName</td>
-                                                
-                        @if (ticket.Escalate_SE == 0)
+
+                        @if (ticket.SEname == null)
                         {
                             <td>-</td>
                         }
                         else
                         {
-                            <td>@ticket.Escalate_SE</td>
+                            <td>@ticket.SEname</td>
                         }
 
-                        @if (((User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Escalate_SE == 0) || ((User.IsInRole("helpdesk agent")) && ticket.Status == "resolved" && ticket.Escalate_SE > 0))
+                        @if (((User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.SEname == null) || ((User.IsInRole("helpdesk agent")) && ticket.Status == "resolved" && ticket.SEname != null))
                         {
                             <td>
                                 <a href=@Url.Action("HAUpdateTicket", "Ticket", new { TicketId = ticket.TicketId })
@@ -211,7 +211,7 @@
                             <td></td>
                         }
 
-                        @if ((User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Escalate_SE == 0)
+                        @if ((User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.SEname == null)
                         {
                             <td>
                                 <a href=@Url.Action("EscalateTicket", "Ticket", new { TicketId = ticket.TicketId }) 

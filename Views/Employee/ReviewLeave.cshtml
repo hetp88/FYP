@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
 
     <style>
-        /* Add your custom styles here */
         .container {
             margin-top: 70px;
             display: flex;
@@ -108,7 +107,6 @@
         </div>
     </div>
 
-    <!-- Modal for updating leave details -->
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -117,7 +115,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Leave details update form -->
                     <form action="@Url.Action("UpdateLeaveDetails", "Employee")" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="LeaveId" value="@Model.LeaveId">
                         <div class="form-group">

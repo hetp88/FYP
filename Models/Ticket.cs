@@ -41,15 +41,21 @@ namespace FYP.Models
 
         public string EmployeeName { get; set; } = null!;
 
+        [Required(ErrorMessage = "Please enter devices involved")]
         public string? DevicesInvolved { get; set; } = null;
 
+        [Required(ErrorMessage = "Please enter additional details, if no additional details, enter -")]
         public string? Additional_Details { get; set; } = null;
 
+        [Required(ErrorMessage = "Please enter resolution if status is updating to resolved otherwise enter -")]
         public string? Resolution { get; set; } = null;
 
+        [Required(ErrorMessage = "Please enter escalate reason")]
         public string? Escalate_Reason { get; set; } = null;
 
         public int Escalate_SE { get; set; }
+
+        public string SEname { get; set; } = null!;
 
         //For Data Collection
         public int StatusCount { get; set; }

@@ -8,6 +8,17 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+    <script>
+        function showMessage() {
+            var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+
+            if (confirmation) {
+                window.location.href = "/Ticket/ToDoTicket";
+            } else {
+                // User chose to cancel will just get back to the form
+            }
+        }
+    </script>
     <style>
         .container {
             margin-top: 150px;
@@ -166,8 +177,9 @@
                 <textarea id="Resolution" class="form-control" name="Resolution"></textarea>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 offset-md-4">
                 <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
             </div>
         </form>
     </div>

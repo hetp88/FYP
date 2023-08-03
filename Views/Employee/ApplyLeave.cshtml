@@ -39,22 +39,22 @@
             padding: 38px;
             margin: 5px;
             flex: 1;
-            width: 450px; /* Adjust the width as needed */
-            height: auto; /* Remove fixed height */
+            width: 450px; 
+            height: auto; 
             margin-top:40px;
         }
 
         .form-group {
-            margin-bottom: 1rem; /* Increase margin-bottom for spacing */
+            margin-bottom: 1rem;
         }
 
         .form-label {
-            color: #000000; /* Change label color to black */
+            color: #000000; 
         }
 
         .form-control {
             background-color: #FFFFFF;
-            color: #000000; /* Change input text color to black */
+            color: #000000; 
             border: none;
             border-radius: 0;
             height: calc(1.5em + 0.75rem + 2px);
@@ -66,7 +66,7 @@
 
             .form-control:focus {
                 background-color: #FFFFFF;
-                color: #000000; /* Change focused input text color to black */
+                color: #000000; 
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 border-color: #FFFFFF;
                 outline: 0;
@@ -87,20 +87,13 @@
             height: auto;
         }
 
-        
     </style>
-
 </head>
 <body background="\Images\MainBackground.jpg">
     <div class="container">
         <div class="card">
             <h3 class="mb-4">Apply Leave</h3>
             <form action="@Url.Action("ApplyLeave", "Employee")" method="POST" enctype="multipart/form-data">
-                @*<div class="form-group">
-                    <label for="EmployeeId" class="form-label">Employee ID:</label>
-                    <input type="text" class="form-control" id="EmployeeId" name="" required>
-                </div>*@
-
                 <div class="form-group">
                     <label for="leave_type" class="form-label">Leave Type:</label>
                     <select class="form-control" id="leave_type" name="leave_type" required>
@@ -128,16 +121,36 @@
 
                 <div class="form-group">
                     <label for="ProofProvided" class="form-label">PDF Attachment:</label>
-                    <input type="file" class="form-control-file" id="ProofProvided" name="ProofProvided" accept="application/pdf">
+                    <input type="file" class="form-control-file" id="ProofProvided" name="ProofProvided" accept="application/pdf" required>
                 </div>
 
                 <div class="form-group mb-3 offset-md-4">
                     <button type="submit" class="btn btn-primary" style="margin-left: 50px">Submit</button>
-                    <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
+                    <button type="button" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <script>
+        function showMessage() {
+            var leaveType = document.getElementById("leave_type").value;
+            var startDate = document.getElementById("StartDate").value;
+            var endDate = document.getElementById("EndDate").value;
+            var reason = document.getElementById("Reason").value;
+            var proofProvided = document.getElementById("ProofProvided").value;
+
+            if (leaveType === "" || startDate === "" || endDate === "" || reason === "" || proofProvided === "") {
+                alert("Please fill in all required fields and attach a PDF file for Proof Provided.");
+            } else {
+                var confirmation = confirm("Your unsaved edits will be discarded. Do you want to proceed?");
+                if (confirmation) {
+                    window.location.href = "/Home/Index";
+                } else {
+                    
+                }
+            }
+        }
+    </script>
 </body>
 </html>
