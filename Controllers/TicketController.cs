@@ -247,6 +247,7 @@ namespace FYP.Controllers
             DateTime created = DateTime.Now;
             string user_email = "";
             string user_name = "";
+            string add = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -291,6 +292,21 @@ namespace FYP.Controllers
                     userid = contextAccessor.HttpContext.Session.GetInt32("userID");
                 }
 
+                Ticket additional = new Ticket
+                {
+                    Additional_Details = ticket.Additional_Details,
+                };
+
+                if(additional != null)
+                {
+                    add = ticket.Additional_Details;
+                }
+
+                else
+                {
+                    add = null;
+                }
+
                 Ticket UnewTicket = new Ticket
                 {
                     TicketId = ticketid + 1,
@@ -303,7 +319,7 @@ namespace FYP.Controllers
                     Priority = "not set",
                     Employee = empid[emp],
                     DevicesInvolved = ticket.DevicesInvolved,
-                    Additional_Details = ticket.Additional_Details,
+                    Additional_Details = add,
                     Resolution = null,
                     Escalate_Reason = null,
                     Escalate_SE = 0,
@@ -321,7 +337,7 @@ namespace FYP.Controllers
                     Priority = ticket.Priority,
                     Employee = empid[emp],
                     DevicesInvolved = ticket.DevicesInvolved,
-                    Additional_Details = ticket.Additional_Details,
+                    Additional_Details = add,
                     Resolution = null,
                     Escalate_Reason = null,
                     Escalate_SE = 0,
