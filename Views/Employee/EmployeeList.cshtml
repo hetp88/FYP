@@ -54,7 +54,7 @@
                 right: 10px;
                 transform: translateY(-50%);
                 cursor: pointer;
-                color: #aaa; /* Light grey color for the X icon */
+                color: #aaa; 
                 display: none;
             }
 
@@ -168,7 +168,7 @@
                     <th style="text-align:center">Number of Tickets Assigned</th>
                     <th style="text-align:center">Number of Tickets Closed</th>
                     <th style="text-align:center">Account Status</th>
-                    <th style="text-align:center">Update</th> <!-- New column header -->
+                    <th style="text-align:center">Update</th>
                 </tr>
                 @foreach (var employee in Model)
                 {
@@ -182,7 +182,6 @@
                         <td style="text-align:center">@employee.closed_tickets</td>
                         <td style="text-align:center">@employee.AccStatus</td>
                         <td style="text-align:center">
-                            <!-- Add the update button/icon in the last column -->
                             <span class="btn btn-primary" onclick="redirectToUpdatePage('@employee.EmployeeId')">Update</span>
                         </td>
                     </tr>
