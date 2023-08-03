@@ -1,14 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using FYP.Models;
 using Dapper;
-using System.Security.Cryptography;
-using System;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using XAct.Users;
 using XAct;
 
 namespace FYP.Controllers
@@ -25,11 +19,10 @@ namespace FYP.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult UserTicket() //for user and staff <view only their own submitted tickets>
+        public IActionResult UserTicket()
         {
             if ( User.IsInRole("student") || User.IsInRole("staff"))
             {
-                //GET CURRENT USER ID
                 int? currentuser = contextAccessor.HttpContext.Session.GetInt32("userID");
 
                 using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -48,13 +41,12 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
             
         }
 
-        public IActionResult ToDoTicket() //for helpdesk agent and support engineer <view only their assigned tickets>
+        public IActionResult ToDoTicket()
         {
             if (User.IsInRole("helpdesk agent") || User.IsInRole("support engineer"))
             {
@@ -91,7 +83,6 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
         }
@@ -169,12 +160,10 @@ namespace FYP.Controllers
             }
         }
 
-        public IActionResult ViewTicket() //for admin <view all tickets>
+        public IActionResult ViewTicket()
         {
             if (User.IsInRole("administrator"))
             {
-                // Retrieve ticket data from the database
-
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     string query = @"SELECT t.ticket_id AS TicketId, t.userid, t.type, t.description, tc.category, t.status, 
@@ -195,7 +184,6 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
         }
@@ -239,7 +227,6 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
             
@@ -252,7 +239,6 @@ namespace FYP.Controllers
 
         [HttpPost]
         public IActionResult AddTicket(Ticket ticket)
-            //if user or staff add ticket, it is based on their user id they used to sign in. if helpdesk agent add ticket, user id must be keyed in manually
         {
             int ticketid = 0;
             int? userid = 0;
@@ -354,7 +340,7 @@ namespace FYP.Controllers
                 string query = @"INSERT INTO ticket (ticket_id, userid, type, description, category_id, status, datetime, priority, employee_id, devices_involved, additional_details, resolution, escalate_reason, escalation_SE) 
                                 VALUES (@TicketId, @UserId, @Type, @Description, @Category, @Status, @DateTime, @Priority, @Employee, @DevicesInvolved, @Additional_Details, @Resolution, @Escalate_Reason, @Escalate_SE)";
 
-                string update = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{eid}'"; //update of no. of tickets assigned to the generated helpdesk agent employee id
+                string update = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{eid}'"; 
 
                 string getUserinfo = $"SELECT u.username, u.email " +
                                         $"FROM users u " +
@@ -372,7 +358,6 @@ namespace FYP.Controllers
                 if (User.IsInRole("student") || User.IsInRole("staff"))
                 {
                     if (connection.Execute(query, UnewTicket) == 1 && connection.Execute(update) == 1)
-                    //email will be sent to notify user
                     {
                         string link = "https://localhost:44397/Account/Login";
                         string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
@@ -415,7 +400,6 @@ namespace FYP.Controllers
                 else if (User.IsInRole("helpdesk agent"))
                 {
                     if (connection.Execute(query, HAnewTicket) == 1 && connection.Execute(update) == 1)
-                    //email will be sent to notify user
                     {
                         string link = "https://localhost:44397/Account/Login";
                         string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
@@ -468,12 +452,11 @@ namespace FYP.Controllers
 
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }            
         }
 
-        public IActionResult EscalateTicket(int ticketid) //view ticket full details 
+        public IActionResult EscalateTicket(int ticketid)
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -489,8 +472,6 @@ namespace FYP.Controllers
 
                     connection.Open();
 
-                    //Ticket leaveRequest = connection.QueryFirstOrDefault<Ticekt>(query, new { LeaveId = leaveId });
-
                     Ticket tickets = connection.QueryFirstOrDefault<Ticket>(tquery, new { TicketId = ticketid });
 
                     if (tickets != null)
@@ -502,14 +483,12 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
         }
 
         [HttpPost]
         public IActionResult EscalateTicket(Ticket ticket)
-            //helpdesk agent can escalate ticket when they are unable to solve
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -553,7 +532,7 @@ namespace FYP.Controllers
                         assignedticket = id + 1;
                     }
 
-                    string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'"; //update no. of assigned tickets for support engineer based on support engineer employee id
+                    string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'"; 
 
                     if (connection.Execute(update, escalation) == 1 && connection.Execute(assign) == 1)
                     {
@@ -568,13 +547,11 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
         }
 
         public IActionResult HAUpdateTicket(int ticketid)
-            //view ticket full details
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -601,7 +578,6 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
             
@@ -609,7 +585,6 @@ namespace FYP.Controllers
 
         [HttpPost]
         public IActionResult HAUpdateTicket(Ticket tickets)
-            //helpdesk agent update status 
         {
             if (User.IsInRole("helpdesk agent"))
             {
@@ -653,7 +628,6 @@ namespace FYP.Controllers
 
                     if (tickets.newStatus == "resolved")
                     {
-                        //update ticket status, resolution
                         updateticket = @"UPDATE Ticket 
                                             SET status = @newStatus, resolution = @Resolution 
                                             WHERE ticket_id = @TicketId";
@@ -671,20 +645,15 @@ namespace FYP.Controllers
                                             WHERE ticket_id = @TicketId";
                     }
 
-                    //updating the number of assigned and closed tickets
-                    //assignedHAticket --> to minus of 1 from current number of tickets assgined for helpdesk agent if status is updated to 'closed'
                     string assignedHAticket = $"SELECT tickets FROM employee WHERE employee_id = '{tupdate.Employee}'";
 
-                    //closedHAticket --> to add 1 from current number of tickets closed for helpdesk agent if status is updated to 'closed'
                     string closedHAticket = $"SELECT closed_tickets FROM employee WHERE employee_id = '{tupdate.Employee}'";
 
-                    //assignedSEticket --> to minus of 1 from current number of tickets escalated/assigned for support engineer if status is updated to 'closed'
                     string assignedSEticket = $"SELECT e.tickets " +
                                               $"FROM employee e " +
                                               $"INNER JOIN ticket t ON t.escalation_SE = e.employee_id " +
                                               $"WHERE e.employee_id = '{tupdate.Escalate_SE}'";
 
-                    //closedSEticket --> to add 1 from current number of tickets closed for support engineer if status is updated to 'closed'
                     string closedSEticket = $"SELECT e.closed_tickets " +
                                             $"FROM employee e " +
                                             $"INNER JOIN ticket t ON t.escalation_SE = e.employee_id " +
@@ -728,10 +697,7 @@ namespace FYP.Controllers
                         user_email = info.Email;
                     }
 
-                    //
                     if (tupdate.newStatus == "closed" && tupdate.Escalate_SE == 0)
-                        //if no support engineer assigned, no escalation made
-                        //email to notify user
                     {
                         if (connection.Execute(updateticket, tupdate) == 1 && connection.Execute(updateHA) == 1)
                         {
@@ -770,10 +736,7 @@ namespace FYP.Controllers
                         }
                     }
 
-                    //
                     else if (tupdate.newStatus == "closed" && tupdate.Escalate_SE > 0)
-                        //if support engineer is assigned, escalation is made
-                        //email to notify user
                     {
                         string updateSE = $"UPDATE e " +
                                           $"SET e.tickets = '{SEassigned}', e.closed_tickets = '{SEclosed}' " +
@@ -834,13 +797,11 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }
         }
 
         public IActionResult SEResolution(int ticketid)
-            //view ticket full details
         {
             if (User.IsInRole("support engineer"))
             {
@@ -867,14 +828,12 @@ namespace FYP.Controllers
             }
             else
             {
-                // Unauthorized actions for other roles
                 return View("Forbidden");
             }  
         }
 
         [HttpPost]
         public IActionResult SEResolution(Ticket tickets)
-            //support engineer can only update status to resolved after solution is found, solution must be stated in the textbox 
         {
             if (User.IsInRole("support engineer"))
             {
@@ -903,8 +862,7 @@ namespace FYP.Controllers
                 return View("ToDoTicket");
             }
             else
-            {
-                // Unauthorized actions for other roles
+            {                
                 return View("Forbidden");
             }
         }
