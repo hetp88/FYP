@@ -1,24 +1,53 @@
-﻿
-@{
+﻿@{
     string email = ViewBag.Email;
 }
 <style>
-    .center-form {
+    body {
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100vh;
-        text-align: center;
-        margin-top: 120px;
-        border: none;
+        margin: 0;
+        padding: 0;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
     }
+
+    .card {
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: lightsteelblue;
+        color: black;
+        margin-top: 110px;
+        font-size: 22px; 
+        font-family: Arial, sans-serif; 
+    }
+    .btn-primary{
+        font-size: 14px;
+        padding: 4px;
+        background-color: #007bff;
+        color: white;
+        width: 100px;
+        margin-top: 10px;
+    }
+    .btn-primary:hover{
+        background-color: grey;
+    }
+
 </style>
-<form asp-controller="Account" asp-action="VerifyCode" method="post">
-    <div class="form-group">
-        <label for="code">Verification Code:</label>
-        <input type="text" class="form-control" id="code" name="Code" required>
-    </div>
-    <input type="hidden" name="Email" value="@email">
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<body background="\Images\MainBackground.jpg">
+    <form asp-controller="Account" asp-action="VerifyCode" method="post">
+        <div class="card">
+            <label for="code">Verification Code:</label>
+            <input type="text" class="form-control" id="code" name="Code" required>
+            <input type="hidden" name="Email" value="@email">
+            <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</body>

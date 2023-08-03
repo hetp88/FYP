@@ -1,21 +1,50 @@
 ﻿@model ForgetPw
 
-
-<h2>Forget Password</h2>
 <style>
-    .center-form {
+    body {
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         height: 100vh;
-        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    .card {
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: lightsteelblue;
+        color: black;
+        margin-top: 110px;
+        font-size: 22px; 
+        font-family: Arial, sans-serif; 
+    }
+    .btn-primary{
+        font-size: 14px;
+        padding: 4px;
+        background-color: #007bff;
+        color: white;
+        width: 150px;
+        margin-top: 10px;
+    }
+    .btn-primary:hover{
+        background-color: grey;
     }
 </style>
-<form asp-controller="Account" asp-action="ForgetPw" method="post">
-    <div class="form-group">
+<body background="\Images\MainBackground.jpg">
+    <form asp-controller="Account" asp-action="ForgetPw" method="post">
+    <div class="card">
         <label for="email">Email:</label>
         <input type="email" class="form-control" id="email" name="Email" required>
+        <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+
 </form>
+</body>
