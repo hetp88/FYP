@@ -487,55 +487,101 @@ namespace FYP.Controllers
             return RedirectToAction("LeaveRequests");
         }
 
+        //[HttpPost]
+        //public IActionResult UpdateLeaveDetails(EmployeeSchedule updatedLeave)
+        //{
+        //    using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+        //    {
+        //        connection.Open();
+        //        string updateQuery = @"UPDATE leave 
+        //                      SET";
+        //        var parameters = new DynamicParameters();
+        //        parameters.Add("LeaveId", updatedLeave.LeaveId);
+
+        //        if (updatedLeave.StartDate != default(DateTime))
+        //        {
+        //            updateQuery += " startDate = @StartDate,";
+        //            parameters.Add("StartDate", updatedLeave.StartDate);
+        //        }
+
+        //        if (updatedLeave.EndDate != default(DateTime))
+        //        {
+        //            updateQuery += " end_date = @EndDate,";
+        //            parameters.Add("EndDate", updatedLeave.EndDate);
+        //        }
+
+        //        if (!string.IsNullOrEmpty(updatedLeave.Reason))
+        //        {
+        //            updateQuery += " reason = @Reason,";
+        //            parameters.Add("Reason", updatedLeave.Reason);
+        //        }
+
+        //        if (updatedLeave.ProofProvided != null)
+        //        {
+        //            byte[] proofBytes;
+        //            using (var memoryStream = new MemoryStream())
+        //            {
+        //                updatedLeave.ProofProvided.CopyTo(memoryStream);
+        //                proofBytes = memoryStream.ToArray();
+        //            }
+
+        //            string proof = Convert.ToBase64String(proofBytes);
+        //            updateQuery += " proof_provided = @ProofProvided,";
+        //            parameters.Add("ProofProvided", proof);
+        //        }
+        //        updateQuery = updateQuery.TrimEnd(',');
+        //        updateQuery += " WHERE leave_id = @LeaveId;";
+
+        //        connection.Execute(updateQuery, parameters);
+        //    }
+        //    return RedirectToAction("LeaveRequests");
+        //}
         [HttpPost]
         public IActionResult UpdateLeaveDetails(EmployeeSchedule updatedLeave)
         {
             using (SqlConnection connection = new SqlConnection(GetConnectionString()))
             {
                 connection.Open();
+
+                string getStatusQuery = "SELECT proof_provided FROM leave WHERE leave_id = @LeaveId;";
+                string currentProof = connection.QueryFirstOrDefault<string>(getStatusQuery, new { LeaveId = updatedLeave.LeaveId });
+
                 string updateQuery = @"UPDATE leave 
-                              SET";
-                var parameters = new DynamicParameters();
-                parameters.Add("LeaveId", updatedLeave.LeaveId);
+                              SET startDate = @StartDate,
+                                  end_date = @EndDate,
+                                  reason = @Reason,
+                                  proof_provided = @ProofProvided
+                              WHERE leave_id = @LeaveId;";
 
-                if (updatedLeave.StartDate != default(DateTime))
-                {
-                    updateQuery += " startDate = @StartDate,";
-                    parameters.Add("StartDate", updatedLeave.StartDate);
-                }
-
-                if (updatedLeave.EndDate != default(DateTime))
-                {
-                    updateQuery += " end_date = @EndDate,";
-                    parameters.Add("EndDate", updatedLeave.EndDate);
-                }
-
-                if (!string.IsNullOrEmpty(updatedLeave.Reason))
-                {
-                    updateQuery += " reason = @Reason,";
-                    parameters.Add("Reason", updatedLeave.Reason);
-                }
-
+                byte[] proofBytes;
                 if (updatedLeave.ProofProvided != null)
                 {
-                    byte[] proofBytes;
                     using (var memoryStream = new MemoryStream())
                     {
                         updatedLeave.ProofProvided.CopyTo(memoryStream);
                         proofBytes = memoryStream.ToArray();
                     }
-
-                    string proof = Convert.ToBase64String(proofBytes);
-                    updateQuery += " proof_provided = @ProofProvided,";
-                    parameters.Add("ProofProvided", proof);
                 }
-                updateQuery = updateQuery.TrimEnd(',');
-                updateQuery += " WHERE leave_id = @LeaveId;";
+                else
+                {
+                    proofBytes = Convert.FromBase64String(currentProof);
+                }
 
-                connection.Execute(updateQuery, parameters);
+                string proof = Convert.ToBase64String(proofBytes);
+
+                connection.Execute(updateQuery, new
+                {
+                    LeaveId = updatedLeave.LeaveId,
+                    StartDate = updatedLeave.StartDate,
+                    EndDate = updatedLeave.EndDate,
+                    Reason = updatedLeave.Reason,
+                    ProofProvided = proof
+                });
             }
+
             return RedirectToAction("LeaveRequests");
         }
+
 
         public IActionResult NewEmployee()
         {
@@ -543,7 +589,7 @@ namespace FYP.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateNewEmployee(NewEmployeeViewModel newEmployee)
+        public IActionResult NewEmployee(NewEmployeeViewModel newEmployee)
         {
             if (ModelState.IsValid)
             {
