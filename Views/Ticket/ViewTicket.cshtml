@@ -264,32 +264,33 @@
         var pageSize = 4;
         var totalPages = Math.ceil(@Model.Count / pageSize);
 
-                                        function displayPage(page) {
-                var rows = document.getElementsByTagName('tr');
-                var startIndex = (page - 1) * pageSize + 1;
-                var endIndex = Math.min(startIndex + pageSize, @Model.Count);
+        function displayPage(page) 
+        {
+            var rows = document.getElementsByTagName('tr');
+            var startIndex = (page - 1) * pageSize + 1;
+            var endIndex = Math.min(startIndex + pageSize, @Model.Count);
 
-                for (var i = 1; i < rows.length; i++) {
-                    rows[i].style.display = (i >= startIndex && i <= endIndex) ? 'table-row' : 'none';
-                }
-
-                document.getElementById('currentPage').textContent = 'Page ' + page;
-                currentPage = page;
+            for (var i = 1; i < rows.length; i++) {
+                rows[i].style.display = (i >= startIndex && i <= endIndex) ? 'table-row' : 'none';
             }
 
-                                        function prevPage() {
-                if (currentPage > 1) {
-                    displayPage(currentPage - 1);
-                }
-            }
+            document.getElementById('currentPage').textContent = 'Page ' + page;
+            currentPage = page;
+        }
 
-                                        function nextPage() {
-                if (currentPage < totalPages) {
-                    displayPage(currentPage + 1);
-                }
+        function prevPage() {
+            if (currentPage > 1) {
+                displayPage(currentPage - 1);
             }
+        }
 
-                                        displayPage(1); // Display the initial page
+        function nextPage() {
+            if (currentPage < totalPages) {
+                displayPage(currentPage + 1);
+            }
+        }
+            
+        displayPage(1); // Display the initial page
     </script>
 </body>
 </html>

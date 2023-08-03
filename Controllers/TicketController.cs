@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using XAct.Users;
+using XAct;
 
 namespace FYP.Controllers
 {
@@ -278,10 +279,18 @@ namespace FYP.Controllers
 
                 connection.Open();
 
-                List<int> tid = connection.Query<int>(idQuery).AsList();
-                foreach (int id in tid)
+                List<string> tid = connection.Query<string>(idQuery).AsList();
+                foreach (string id in tid)
                 {
-                    ticketid = id;
+                    if (id == null)
+                    {
+                        ticketid = 0;
+
+                    }
+                    else
+                    {
+                        ticketid = id.ToInt32();
+                    }
                 }
 
                 List<int> empid = connection.Query<int>(empquery).AsList();
@@ -296,14 +305,32 @@ namespace FYP.Controllers
                     userid = contextAccessor.HttpContext.Session.GetInt32("userID");
                 }
 
-                Ticket newTicket = new Ticket
+                Ticket UnewTicket = new Ticket
+                {
+                    TicketId = ticketid + 1,
+                    UserId = userid,
+                    Type = "not set",
+                    Description = ticket.Description,
+                    Category = ticket.Category,
+                    Status = "pending",
+                    DateTime = Convert.ToDateTime(created),
+                    Priority = "not set",
+                    Employee = empid[emp],
+                    DevicesInvolved = ticket.DevicesInvolved,
+                    Additional_Details = ticket.Additional_Details,
+                    Resolution = null,
+                    Escalate_Reason = null,
+                    Escalate_SE = 0,
+                };
+
+                Ticket HAnewTicket = new Ticket
                 {
                     TicketId = ticketid + 1,
                     UserId = userid,
                     Type = ticket.Type,
                     Description = ticket.Description,
                     Category = ticket.Category,
-                    Status = "submitted",
+                    Status = "pending",
                     DateTime = Convert.ToDateTime(created),
                     Priority = ticket.Priority,
                     Employee = empid[emp],
@@ -332,7 +359,8 @@ namespace FYP.Controllers
                 string getUserinfo = $"SELECT u.username, u.email " +
                                         $"FROM users u " +
                                         $"INNER JOIN ticket t ON t.userid = u.userid " +
-                                        $"WHERE u.userid = '{newTicket.UserId}'";
+                                        $"WHERE u.userid = '{UnewTicket.UserId}'" +
+                                        $"OR u.userid = '{HAnewTicket.UserId}'";
 
                 List<Ticket> userinfo = connection.Query<Ticket>(getUserinfo).AsList();
                 foreach (Ticket info in userinfo)
@@ -341,60 +369,108 @@ namespace FYP.Controllers
                     user_email = info.Email;
                 }
 
-                if (connection.Execute(query, newTicket) == 1 && connection.Execute(update) == 1)
-                    //email will be sent to notify user
+                if (User.IsInRole("student") || User.IsInRole("staff"))
                 {
-                    string link = "https://localhost:44397/Account/Login";
-                    string delete = "https://localhost:44397/Ticket/Terminate/" + newTicket.TicketId;
-
-                    string template = "Hello {0}, " +
-                                        "<br>" +
-                                        "<br>We have received your {1} ticket. " +
-                                        "<br>" +
-                                        "<br>Ticket id: <b>{2}</b>" +
-                                        "<br>Description of ticket is <b>{3}</b>. " +
-                                        "<br>" +
-                                        "<br>Status of ticket can be checked when you <a href =\"" + link + "\">login</a>" +
-                                        "<br>We will get back you as soon as possible. " +
-                                        "<br>" +
-                                        "<br>Thank you, " +
-                                        "<br>RP IT HelpDesk";
-
-                    string title = "Ticket Submitted Successful";
-
-                    string message = String.Format(template, user_name, newTicket.Type, newTicket.TicketId, newTicket.Description);
-
-                    if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                    if (connection.Execute(query, UnewTicket) == 1 && connection.Execute(update) == 1)
+                    //email will be sent to notify user
                     {
-                        ViewData["Message"] = "Ticket submitted successfully";
-                        ViewData["MsgType"] = "success";
+                        string link = "https://localhost:44397/Account/Login";
+                        string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
+
+                        string template = "Hello {0}, " +
+                                            "<br>" +
+                                            "<br>We have received your ticket. " +
+                                            "<br>" +
+                                            "<br>Ticket id: <b>{1}</b>" +
+                                            "<br>Description of ticket is <b>{2}</b>. " +
+                                            "<br>" +
+                                            "<br>Status of ticket can be checked when you <a href =\"" + link + "\">login</a>" +
+                                            "<br>We will get back you as soon as possible. " +
+                                            "<br>" +
+                                            "<br>Thank you, " +
+                                            "<br>RP IT HelpDesk";
+
+                        string title = "Ticket Submitted Successful";
+
+                        string message = String.Format(template, user_name, UnewTicket.TicketId, UnewTicket.Description);
+
+                        if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                        {
+                            ViewData["Message"] = "Ticket submitted successfully";
+                            ViewData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            ViewData["Message"] = result;
+                            ViewData["MsgType"] = "warning";
+                        }
                     }
                     else
                     {
-                        ViewData["Message"] = result;
-                        ViewData["MsgType"] = "warning";
+                        TempData["Message"] = "Ticket submit failed";
+                        TempData["MsgType"] = "danger";
                     }
                 }
-                else
+
+                else if (User.IsInRole("helpdesk agent"))
                 {
-                    TempData["Message"] = "Ticket submit failed";
-                    TempData["MsgType"] = "danger";
+                    if (connection.Execute(query, HAnewTicket) == 1 && connection.Execute(update) == 1)
+                    //email will be sent to notify user
+                    {
+                        string link = "https://localhost:44397/Account/Login";
+                        string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
+
+                        string template = "Hello {0}, " +
+                                            "<br>" +
+                                            "<br>We have received your ticket. " +
+                                            "<br>" +
+                                            "<br>Ticket id: <b>{1}</b>" +
+                                            "<br>Description of ticket is <b>{2}</b>. " +
+                                            "<br>" +
+                                            "<br>Status of ticket can be checked when you <a href =\"" + link + "\">login</a>" +
+                                            "<br>We will get back you as soon as possible. " +
+                                            "<br>" +
+                                            "<br>Thank you, " +
+                                            "<br>RP IT HelpDesk";
+
+                        string title = "Ticket Submitted Successful";
+
+                        string message = String.Format(template, user_name, UnewTicket.TicketId, UnewTicket.Description);
+
+                        if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                        {
+                            ViewData["Message"] = "Ticket submitted successfully";
+                            ViewData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            ViewData["Message"] = result;
+                            ViewData["MsgType"] = "warning";
+                        }
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Ticket submit failed";
+                        TempData["MsgType"] = "danger";
+                    }
                 }
+                
             }
             if (User.IsInRole("helpdesk agent"))
             {
                 return RedirectToAction("ToDoTicket", "Ticket");
             }
+
             else if (User.IsInRole("student") || User.IsInRole("staff"))
             {
                 return RedirectToAction("UserTicket", "Ticket");
             }
+
             else
             {
                 // Unauthorized actions for other roles
                 return View("Forbidden");
-            }
-            
+            }            
         }
 
         public IActionResult EscalateTicket(int ticketid) //view ticket full details 
@@ -542,6 +618,9 @@ namespace FYP.Controllers
                 int HAclosed = 0;
                 int SEclosed = 0;
 
+                string t = "";
+                string p = "";
+
                 string updateticket = "";
                 string user_name = "";
                 string user_email = "";
@@ -556,19 +635,40 @@ namespace FYP.Controllers
                         UserId = tickets.UserId,
                         Employee = tickets.Employee,
                         Description = tickets.Description,
+                        Type = tickets.Type,
+                        Priority = tickets.Priority,
                         Escalate_SE = tickets.Escalate_SE,
                         newStatus = tickets.newStatus,
                         Resolution = tickets.Resolution,
                     };
 
+                    string typeNpriority = $"SELECT type, priority FROM ticket WHERE ticket_id = '{tickets.TicketId}'";
+
+                    List<Ticket> get = connection.Query<Ticket>(typeNpriority).AsList();
+                    foreach (Ticket n in get)
+                    {
+                        t = n.Type;
+                        p = n.Priority;
+                    }
+
                     if (tickets.newStatus == "resolved")
                     {
                         //update ticket status, resolution
-                        updateticket = @"UPDATE Ticket SET status = @newStatus, resolution = @Resolution WHERE ticket_id = @TicketId";
+                        updateticket = @"UPDATE Ticket 
+                                            SET status = @newStatus, resolution = @Resolution 
+                                            WHERE ticket_id = @TicketId";
+                    }
+                    else if (t != "not set" && p != "not set")
+                    {
+                        updateticket = @"UPDATE Ticket 
+                                            SET status = @newStatus 
+                                            WHERE ticket_id = @TicketId";
                     }
                     else
-                    {
-                        updateticket = @"UPDATE Ticket SET status = @newStatus WHERE ticket_id = @TicketId";
+                    {                   
+                        updateticket = @"UPDATE Ticket 
+                                            SET type = @Type, priority = @Priority, status = @newStatus 
+                                            WHERE ticket_id = @TicketId";
                     }
 
                     //updating the number of assigned and closed tickets

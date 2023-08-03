@@ -21,168 +21,278 @@
     </script>
     <style>
         .container {
-            margin-top: 150px;
-            margin-bottom:20px;
+            margin-top: 70px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card1 {
+            background-color: #FFFFFF;
+            color: #000000;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 5px;
+            flex-grow: 1;
+            border-radius: 20px;            
+        }
+
+        .card2 {
+            background-color: #FFFFFF;
+            color: #000000;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 5px;
+            flex-grow: 1;
+            border-radius: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .form-control {
+            background-color: #F7F7F7;
+            color: #000000;
+            border: none;
+            border-radius: 6px;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Ticket Details</h1>
-        <div>
-            <p>
-                <label>Ticket ID: </label>
-                <span>@Model.TicketId</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>User ID: </label>
-                <span>@Model.UserId</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Type: </label>
-                <span>@Model.Type</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Description: </label>
-                <span>@Model.Description</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Category: </label>
-                <span>@Model.Category</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Current Status: </label>
-                <span>@Model.Status</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>DateTime: </label>
-                <span>@Model.DateTime</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Priority: </label>
-                <span>@Model.Priority</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Employee Name: </label>
-                <span>@Model.EmployeeName (@Model.Employee)</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Devices Involved: </label>
-                <span>@Model.DevicesInvolved</span>
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Additional Details: </label>
-                @if (Model.Additional_Details == null)
-                {
-                    <span>-</span>
-                }
-                else
-                {
-                    <span>@Model.Additional_Details</span>
-                }
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Escalate In-Charge: </label>
-                @if (Model.Escalate_SE == 0)
-                {
-                    <span>-</span>
-                }
-                else
-                {
-                    <span>@Model.Escalate_SE</span>
-                }
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Escalate Reason: </label>
-                @if (Model.Escalate_Reason == null)
-                {
-                    <span>-</span>
-                }
-                else
-                {
-                    <span>@Model.Escalate_Reason</span>
-                }
-            </p>
-        </div>
-        <div>
-            <p>
-                <label>Resolution: </label>
-                @if (Model.Resolution == null)
-                {
-                    <span>-</span>
-                }
-                else
-                {
-                    <span>@Model.Resolution</span>
-                }
-            </p>
+        <div class="card1">
+            <h1>Ticket Details</h1>
+            <br />
+            <div>
+                <p>
+                    <label>Ticket ID: </label>
+                    <span>@Model.TicketId</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>User ID: </label>
+                    <span>@Model.UserId</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Type: </label>
+                    <span>@Model.Type</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Description: </label>
+                    <span>@Model.Description</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Category: </label>
+                    <span>@Model.Category</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Current Status: </label>
+                    <span>@Model.Status</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>DateTime: </label>
+                    <span>@Model.DateTime</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Priority: </label>
+                    <span>@Model.Priority</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Employee Name: </label>
+                    <span>@Model.EmployeeName (@Model.Employee)</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Devices Involved: </label>
+                    <span>@Model.DevicesInvolved</span>
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Additional Details: </label>
+                    @if (Model.Additional_Details == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Additional_Details</span>
+                    }
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Escalate In-Charge: </label>
+                    @if (Model.Escalate_SE == 0)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Escalate_SE</span>
+                    }
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Escalate Reason: </label>
+                    @if (Model.Escalate_Reason == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Escalate_Reason</span>
+                    }
+                </p>
+            </div>
+            <div>
+                <p>
+                    <label>Resolution: </label>
+                    @if (Model.Resolution == null)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.Resolution</span>
+                    }
+                </p>
+            </div>
         </div>
         
-        <hr />
+        <div class="card2">
 
-        <h2>Update Ticket</h2>
-
-        <form method="post" action="/Ticket/HAUpdateTicket">
+            <h1>Update Ticket</h1>
+            <br />
+            <form method="post" action="/Ticket/HAUpdateTicket">
            
-            <input type="hidden" name="TicketId" value="@Model.TicketId">
+                <input type="hidden" name="TicketId" value="@Model.TicketId">
 
-            <input type="hidden" name="UserId" value="@Model.UserId" />
+                <input type="hidden" name="UserId" value="@Model.UserId" />
 
-            <input type="hidden" name="Employee" value="@Model.Employee" />
+                <input type="hidden" name="Employee" value="@Model.Employee" />
 
-            <input type="hidden" name="Escalate_SE" value="@Model.Escalate_SE" />
+                <input type="hidden" name="Escalate_SE" value="@Model.Escalate_SE" />
 
-            <input type="hidden" name="Description" value="@Model.Description" />
+                <input type="hidden" name="Description" value="@Model.Description" />
 
-            <div class="form-group mb-3">
-                <label for="newStatus">New Status:</label>
-                <select class="form-control" id="newStatus" name="newStatus" required>
-                    <option value="">Select status update</option>
-                    <option value="pending">Pending</option>
-                    <option value="logged">Logged</option>
-                    <option value="in progress">In Progess</option>
-                    <option value="waiting for resolution">Waiting for Resolution</option>
-                    <option value="resolved">Resolved</option>
-                    <option value="closed">Closed</option>
-                </select>
-            </div>
+                @if(Model.Type == "not set" && Model.Priority == "not set")
+                {
+                    <div class="form-group mb-3">
+                        <label for="type" class="form-label">Ticket type:</label>
+                        <select id="type" name="type" class="form-control" required>
+                            <option value="">Select a ticket type</option>
+                            <option value="incident">Incident</option>
+                            <option value="request">Request</option>
+                            <option value="problem">Problem</option>
+                            <!-- Add more Options When needed to -->
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="priority" class="form-label">Priority:</label>
+                        <select id="priority" name="priority" class="form-control" required>
+                            <option value="">Select priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group mb-3">
+                        <label for="type" class="form-label" hidden>Ticket type:</label>
+                        <select id="type" name="type" class="form-control" hidden>
+                            <option value="">Select a ticket type</option>
+                            <option value="incident">Incident</option>
+                            <option value="request">Request</option>
+                            <option value="problem">Problem</option>
+                            <!-- Add more Options When needed to -->
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="priority" class="form-label" hidden>Priority:</label>
+                        <select id="priority" name="priority" class="form-control" hidden>
+                            <option value="">Select priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                }
 
-            <div class="form-group mb-3">
-                <label for="Resolution">Resolution:</label>
-                <label for="Resolution">(if above status selection is not solved, kindly input - or leave it blank below)</label>
-                <textarea id="Resolution" class="form-control" name="Resolution"></textarea>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="newStatus" class="form-label">New Status:</label>
+                    <select class="form-control" id="newStatus" name="newStatus" required>
+                        <option value="">Select status update</option>
+                        <option value="logged">Logged</option>
+                        <option value="active">Active</option>
+                        <option value="waiting for resolution">Waiting for Resolution</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
 
-            <div class="mb-3 offset-md-4">
-                <button type="submit" class="btn btn-primary">Update</button>
-                <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
-            </div>
-        </form>
+                @if((User.IsInRole("helpdesk agent") && Model.Status == "in progress") || ((User.IsInRole("support engineer")) && Model.Status == "waiting for resolution"))
+                {
+                    <div class="form-group mb-3">
+                        <label for="Resolution" class="form-label">Resolution:</label>
+                        @*<label for="Resolution">(if above status selection is not solved, kindly input - or leave it blank below)</label>*@
+                        <textarea id="Resolution" class="form-control" name="Resolution"></textarea>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group mb-3">
+                        <label for="Resolution" class="form-label" hidden>Resolution:</label>
+                        @*<label for="Resolution" hidden>(if above status selection is not solved, kindly input - or leave it blank below)</label>*@
+                        <textarea id="Resolution" class="form-control" name="Resolution"hidden></textarea>
+                    </div>
+                }
+
+                <div class="mb-3 offset-md-4">
+                    <button type="submit" class="btn btn-primary" style="margin-left:20px">Update</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 25px" onclick="showMessage()">Cancel</button>
+                </div>
+
+            </form>
+        </div>
     </div>
 </body>
 </html>
-

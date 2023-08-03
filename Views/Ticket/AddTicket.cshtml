@@ -112,34 +112,40 @@
                     </select>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="category" class="form-label">Category:</label>
-                    <select id="category" name="category" class="form-control" required>
-                        <option value="">Select a category</option>
-                        <option value="1">software</option>
-                        <option value="2">hardware</option>
-                        <option value="3">network connectivity</option>
-                        <option value="4">access portal</option>
-                        <!-- Add more Options When needed to -->
-                    </select>
-                </div>
+                @if(User.IsInRole("helpdesk agent"))
+                {
+                    <div class="form-group mb-3">
+                        <label for="category" class="form-label">Category:</label>
+                        <select id="category" name="category" class="form-control" required>
+                            <option value="">Select a category</option>
+                            <option value="1">software</option>
+                            <option value="2">hardware</option>
+                            <option value="3">network connectivity</option>
+                            <option value="4">access portal</option>
+                            <!-- Add more Options When needed to -->
+                        </select>
+                    </div>
+                }
 
                 <div class="form-group mb-3">
                     <label for="description" class="form-label">Description:</label>
                     <textarea id="description" name="description" class="form-control" required></textarea>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label for="priority" class="form-label">Priority:</label>
-                    <select id="priority" name="priority" class="form-control" required>
-                        <option value="">Select priority</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                        <option value="critical">Critical</option>
-                    </select>
-                </div>
-
+                @if (User.IsInRole("helpdesk agent"))
+                {
+                    <div class="form-group mb-3">
+                        <label for="priority" class="form-label">Priority:</label>
+                        <select id="priority" name="priority" class="form-control" required>
+                            <option value="">Select priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                }
+                
                 <div class="form-group mb-3">
                     <label for="devicesInvolved" class="form-label">Devices Involved:</label>
                     <input type="text" name="devicesInvolved" class="form-control" required>
