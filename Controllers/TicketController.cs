@@ -247,7 +247,6 @@ namespace FYP.Controllers
             DateTime created = DateTime.Now;
             string user_email = "";
             string user_name = "";
-            string add = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -297,29 +296,21 @@ namespace FYP.Controllers
                     Additional_Details = ticket.Additional_Details,
                 };
 
-                if(additional != null)
-                {
-                    add = ticket.Additional_Details;
-                }
 
-                else
-                {
-                    add = null;
-                }
 
                 Ticket UnewTicket = new Ticket
                 {
                     TicketId = ticketid + 1,
                     UserId = userid,
-                    Type = "not set",
+                    Type = "-",
                     Description = ticket.Description,
                     Category = ticket.Category,
                     Status = "pending",
                     DateTime = Convert.ToDateTime(created),
-                    Priority = "not set",
+                    Priority = "-",
                     Employee = empid[emp],
                     DevicesInvolved = ticket.DevicesInvolved,
-                    Additional_Details = add,
+                    Additional_Details = ticket.Additional_Details,
                     Resolution = null,
                     Escalate_Reason = null,
                     Escalate_SE = 0,
@@ -337,7 +328,7 @@ namespace FYP.Controllers
                     Priority = ticket.Priority,
                     Employee = empid[emp],
                     DevicesInvolved = ticket.DevicesInvolved,
-                    Additional_Details = add,
+                    Additional_Details = ticket.Additional_Details,
                     Resolution = null,
                     Escalate_Reason = null,
                     Escalate_SE = 0,
@@ -359,10 +350,10 @@ namespace FYP.Controllers
                 string update = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{eid}'"; 
 
                 string getUserinfo = $"SELECT u.username, u.email " +
-                                        $"FROM users u " +
-                                        $"INNER JOIN ticket t ON t.userid = u.userid " +
-                                        $"WHERE u.userid = '{UnewTicket.UserId}'" +
-                                        $"OR u.userid = '{HAnewTicket.UserId}'";
+                                     $"FROM users u " +
+                                     $"INNER JOIN ticket t ON t.userid = u.userid " +
+                                     $"WHERE u.userid = '{UnewTicket.UserId}'" +
+                                     $"OR u.userid = '{HAnewTicket.UserId}'";
 
                 List<Ticket> userinfo = connection.Query<Ticket>(getUserinfo).AsList();
                 foreach (Ticket info in userinfo)
@@ -648,7 +639,7 @@ namespace FYP.Controllers
                                             SET status = @newStatus, resolution = @Resolution 
                                             WHERE ticket_id = @TicketId";
                     }
-                    else if (t != "not set" && p != "not set")
+                    else if (t != "-" && p != "-")
                     {
                         updateticket = @"UPDATE Ticket 
                                             SET status = @newStatus 

@@ -10,7 +10,7 @@
     <title>Tickets</title>
     <style>
         .card {
-            margin-top: 200px;         
+            margin-top: 140px;         
             background: #FFFFFF;
             padding: 20px;
             width: auto;
@@ -211,7 +211,7 @@
                             <td></td>
                         }
 
-                        @if ((User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Status != "resolved" && ticket.Type != "not set" && ticket.Priority != "not set" && ticket.SEname == null)
+                        @if ((User.IsInRole("helpdesk agent")) && ticket.Status != "closed" && ticket.Status != "resolved" && ticket.Type != "-" && ticket.Priority != "-" && ticket.SEname == null)
                         {
                             <td>
                                 <a href=@Url.Action("EscalateTicket", "Ticket", new { TicketId = ticket.TicketId }) 
@@ -237,7 +237,7 @@
     </div>
     <script>
         var currentPage = 1;
-        var pageSize = 50;
+        var pageSize = 4;
         var totalPages = Math.ceil(@Model.Count / pageSize);
 
         function displayPage(page) 

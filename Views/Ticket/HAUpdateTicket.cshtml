@@ -210,7 +210,7 @@
 
                 <input type="hidden" name="Description" value="@Model.Description" />
 
-                @if(Model.Type == "not set" && Model.Priority == "not set")
+                @if(Model.Type == "-" && Model.Priority == "-")
                 {
                     <div class="form-group mb-3">
                         <label for="type" class="form-label">Ticket type:</label>
@@ -221,6 +221,7 @@
                             <option value="problem">Problem</option>
                             <!-- Add more Options When needed to -->
                         </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
                     </div>
                     <div class="form-group mb-3">
                         <label for="priority" class="form-label">Priority:</label>
@@ -231,6 +232,7 @@
                             <option value="high">High</option>
                             <option value="critical">Critical</option>
                         </select>
+                        <span asp-validation-for="Priority" class="text-danger"></span>
                     </div>
                 }
                 else
@@ -267,6 +269,7 @@
                         <option value="resolved">Resolved</option>
                         <option value="closed">Closed</option>
                     </select>
+                    <span asp-validation-for="newStatus" class="text-danger"></span>
                 </div>
 
                 @if((User.IsInRole("helpdesk agent") && Model.Status == "in progress") || ((User.IsInRole("support engineer")) && Model.Status == "waiting for resolution"))
@@ -274,7 +277,8 @@
                     <div class="form-group mb-3">
                         <label for="Resolution" class="form-label">Resolution:</label>
                         @*<label for="Resolution">(if above status selection is not solved, kindly input - or leave it blank below)</label>*@
-                        <textarea id="Resolution" class="form-control" name="Resolution"></textarea>
+                        <textarea id="Resolution" class="form-control" name="Resolution" required></textarea>
+                        <span asp-validation-for="Resolution" class="text-danger"></span>
                     </div>
                 }
                 else

@@ -92,6 +92,7 @@
                     <div class="form-group mb-3">
                         <label for="userid" class="form-label">User ID:</label>
                         <input type="number" name="userid" class="form-control" required>
+                        <span asp-validation-for="UserId" class="text-danger"></span>
                     </div>
                 }
                 else
@@ -112,6 +113,7 @@
                             <option value="problem">Problem</option>
                             <!-- Add more Options When needed to -->
                         </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
                     </div>
                 }
 
@@ -125,11 +127,13 @@
                         <option value="4">access portal</option>
                         <!-- Add more Options When needed to -->
                     </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="description" class="form-label">Description:</label>
                     <textarea id="description" name="description" class="form-control" required></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
                 @if (User.IsInRole("helpdesk agent"))
@@ -143,18 +147,21 @@
                             <option value="high">High</option>
                             <option value="critical">Critical</option>
                         </select>
+                        <span asp-validation-for="Priority" class="text-danger"></span>
                     </div>
                 }
                 
                 <div class="form-group mb-3">
                     <label for="devicesInvolved" class="form-label">Devices Involved:</label>
                     <input type="text" name="devicesInvolved" class="form-control" required>
+                    <span asp-validation-for="DevicesInvolved" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">
                     <label for="additional_details" class="form-label">Additional Details:</label>
                     <label for="additional_details" class="form-label">(if no additional details, kindly input -)</label>
-                    <input type="text" name="additional_details" class="form-control">
+                    <input type="text" name="additional_details" class="form-control" required>
+                    <span asp-validation-for="Additional_Details" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3 offset-md-4">
