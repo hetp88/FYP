@@ -9,11 +9,9 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
-    <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <style>
-        /* Add your custom styles here */
         .card {
             margin-top: 130px;
             width: auto;
@@ -47,9 +45,6 @@
                     border-right: none;
                 }
 
-  
-
-        /* Add custom styles for the cancel icon */
         .search-form .search-box {
             position: relative;
             
@@ -68,7 +63,7 @@
             right: 20px;
             transform: translateY(-50%);
             cursor: pointer;
-            color: #aaa; /* Light grey color for the X icon */
+            color: #aaa; 
         }
 
         .search-form input[type="text"]:not(:placeholder-shown) + .cancel-icon,
@@ -96,8 +91,6 @@
             var endDate = document.getElementById("endDate").value;
             var reason = document.getElementById("reason").value;
             var status = document.getElementById("status").value;
-
-            // Redirect to the SearchLeaveRequests action with the provided search parameters
             window.location.href = "/Employee/SearchLeaveRequests?employeeId=" + employeeId
                 + "&startDate=" + startDate + "&endDate=" + endDate + "&reason=" + reason + "&status=" + status;
         }
@@ -137,8 +130,6 @@
                 <button class="btn btn-primary bi bi-search" onclick="searchLeaveRequests()" style="margin-left: -100px;"></button>
             </div>
         </div>
-
-        <!-- Table shifted to the right -->
         <table class="table">
             <thead>
                 <tr>
