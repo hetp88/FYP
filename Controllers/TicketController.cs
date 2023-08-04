@@ -242,11 +242,18 @@ namespace FYP.Controllers
         {
             int ticketid = 0;
             int? userid = 0;
+            
             Random generate = new Random();
+            
             int assignedticket = 0;
+            
             DateTime created = DateTime.Now;
+            
             string user_email = "";
             string user_name = "";
+
+            string ha_email = "";
+            string ha_name = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -351,9 +358,13 @@ namespace FYP.Controllers
 
                 string getUserinfo = $"SELECT u.username, u.email " +
                                      $"FROM users u " +
-                                     $"INNER JOIN ticket t ON t.userid = u.userid " +
                                      $"WHERE u.userid = '{UnewTicket.UserId}'" +
                                      $"OR u.userid = '{HAnewTicket.UserId}'";
+
+                string getHAinfo = $"SELECT e.email " +
+                                   $"FROM employee e " +
+                                   $"WHERE e.employee_id = '{empid[emp]}'";
+
 
                 List<Ticket> userinfo = connection.Query<Ticket>(getUserinfo).AsList();
                 foreach (Ticket info in userinfo)
@@ -362,14 +373,20 @@ namespace FYP.Controllers
                     user_email = info.Email;
                 }
 
+                List<Ticket> HAinfo = connection.Query<Ticket>(getHAinfo).AsList();
+                foreach (Ticket info in HAinfo)
+                {                    
+                    ha_email = info.Email;
+                }
+
                 if (User.IsInRole("student") || User.IsInRole("staff"))
                 {
                     if (connection.Execute(query, UnewTicket) == 1 && connection.Execute(update) == 1)
                     {
                         string link = "https://localhost:44397/Account/Login";
-                        string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
+                        //string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
 
-                        string template = "Hello {0}, " +
+                        string templateuser = "Hello {0}, " +
                                             "<br>" +
                                             "<br>We have received your ticket. " +
                                             "<br>" +
@@ -382,11 +399,26 @@ namespace FYP.Controllers
                                             "<br>Thank you, " +
                                             "<br>RP IT HelpDesk";
 
-                        string title = "Ticket Submitted Successful";
+                        string titleuser = "Ticket Submitted Successful";
+                        string messageuser = String.Format(templateuser, user_name, UnewTicket.TicketId, UnewTicket.Description);
 
-                        string message = String.Format(template, user_name, UnewTicket.TicketId, UnewTicket.Description);
 
-                        if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                        string templateHA = "Greetings, " +
+                                            "<br>" +
+                                            "<br>We have assigned you a new ticket. " +
+                                            "<br>" +
+                                            "<br>Ticket id: <b>{0}</b>" +
+                                            "<br>Description of ticket is <b>{1}</b>. " +
+                                            "<br>" +
+                                            "<br>Do attend to it within 2 working days. Login <a href =\"" + link + "\">here</a>" +
+                                            "<br>" +
+                                            "<br>Thank you, " +
+                                            "<br>RP IT HelpDesk";
+
+                        string titleHA = "NEW ASSIGNED TICKET";
+                        string messageHA = String.Format(templateHA, UnewTicket.TicketId, UnewTicket.Description);
+
+                        if (EmailUtl.SendEmail(user_email, titleuser, messageuser, out string result) && EmailUtl.SendEmail(ha_email, titleHA, messageHA, out string result1))
                         {
                             ViewData["Message"] = "Ticket submitted successfully";
                             ViewData["MsgType"] = "success";
@@ -409,26 +441,40 @@ namespace FYP.Controllers
                     if (connection.Execute(query, HAnewTicket) == 1 && connection.Execute(update) == 1)
                     {
                         string link = "https://localhost:44397/Account/Login";
-                        string delete = "https://localhost:44397/Ticket/Terminate/" + UnewTicket.TicketId;
 
-                        string template = "Hello {0}, " +
+                        string templateuser = "Hello {0}, " +
+                                              "<br>" +
+                                              "<br>Thank you for reaching us. We have received your ticket. " +
+                                              "<br>" +
+                                              "<br>Ticket id: <b>{1}</b>" +
+                                              "<br>Description of ticket is <b>{2}</b>. " +
+                                              "<br>" +
+                                              "<br>Status of ticket can be checked when you <a href =\"" + link + "\">login</a>" +
+                                              "<br>We will get back you as soon as possible. " +
+                                              "<br>" +
+                                              "<br>Regards, " +
+                                              "<br>RP IT HelpDesk";
+
+                        string titleuser = "Ticket Submitted Successful";
+                        string messageuser = String.Format(templateuser, user_name, UnewTicket.TicketId, UnewTicket.Description);
+
+
+                        string templateHA = "Greetings, " +
                                             "<br>" +
-                                            "<br>We have received your ticket. " +
+                                            "<br>We have assigned you a new ticket. " +
                                             "<br>" +
-                                            "<br>Ticket id: <b>{1}</b>" +
-                                            "<br>Description of ticket is <b>{2}</b>. " +
+                                            "<br>Ticket id: <b>{0}</b>" +
+                                            "<br>Description of ticket is <b>{1}</b>. " +
                                             "<br>" +
-                                            "<br>Status of ticket can be checked when you <a href =\"" + link + "\">login</a>" +
-                                            "<br>We will get back you as soon as possible. " +
+                                            "<br>Do attend to it within 2 working days. Login <a href =\"" + link + "\">here</a>" +
                                             "<br>" +
                                             "<br>Thank you, " +
                                             "<br>RP IT HelpDesk";
 
-                        string title = "Ticket Submitted Successful";
+                        string titleHA = "NEW ASSIGNED TICKET";
+                        string messageHA = String.Format(templateHA, UnewTicket.TicketId, UnewTicket.Description);
 
-                        string message = String.Format(template, user_name, UnewTicket.TicketId, UnewTicket.Description);
-
-                        if (EmailUtl.SendEmail(user_email, title, message, out string result))
+                        if (EmailUtl.SendEmail(user_email, titleuser, messageuser, out string result) && EmailUtl.SendEmail(ha_email, titleHA, messageHA, out string result1))
                         {
                             ViewData["Message"] = "Ticket submitted successfully";
                             ViewData["MsgType"] = "success";
@@ -502,6 +548,9 @@ namespace FYP.Controllers
                 Random generate = new Random();
                 int assignedticket = 0;
 
+                string se_name = "";
+                string se_email = "";
+
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     string equery = @"SELECT DISTINCT e.employee_id
@@ -524,6 +573,7 @@ namespace FYP.Controllers
                     {
                         TicketId = ticket.TicketId,
                         Status = "waiting for resolution",
+                        Description = ticket.Description,
                         Employee = emid[emp],
                         Escalate_Reason = ticket.Escalate_Reason,
                     };
@@ -531,7 +581,7 @@ namespace FYP.Controllers
                     string update = @"UPDATE Ticket SET status = @Status, escalation_SE = @Employee, escalate_reason = @Escalate_Reason WHERE ticket_id = @TicketId";
 
                     string empticket = $"SELECT tickets FROM employee WHERE employee_id = '{emid[emp]}'";
-
+                                    
                     List<int> eticket = connection.Query<int>(empticket).AsList();
 
                     foreach (int id in eticket)
@@ -539,16 +589,53 @@ namespace FYP.Controllers
                         assignedticket = id + 1;
                     }
 
+                    string getSEinfo = $"SELECT e.email " +
+                                       $"FROM employee e " +
+                                       $"WHERE e.employee_id = '{emid[emp]}'";
+
+                    List<Ticket> SEinfo = connection.Query<Ticket>(getSEinfo).AsList();
+                    foreach (Ticket info in SEinfo)
+                    {
+                        se_email = info.Email;
+                    }
+
                     string assign = $"UPDATE employee SET tickets = '{assignedticket}' WHERE employee_id = '{emid[emp]}'"; 
 
                     if (connection.Execute(update, escalation) == 1 && connection.Execute(assign) == 1)
                     {
-                        ViewData["Message"] = "Escalated successfully.";
+                        string link = "https://localhost:44397/Account/Login";
+
+                        string templateSE = "Greetings, " +
+                                            "<br>" +
+                                            "<br>We have assigned you a new ticket from helpdesk agent escalation. " +
+                                            "<br>" +
+                                            "<br>Ticket id: <b>{0}</b>" +
+                                            "<br>Description of ticket is <b>{1}</b>. " +
+                                            "<br>" +
+                                            "<br>Do attend to it within 1 working days. Login <a href =\"" + link + "\">here</a>" +
+                                            "<br>" +
+                                            "<br>Thank you, " +
+                                            "<br>RP IT HelpDesk";
+
+                        string titleSE = "NEW ASSIGNED TICKET";
+                        string messageSE = String.Format(templateSE, escalation.TicketId, escalation.Description);
+
+                        if (EmailUtl.SendEmail(se_email, titleSE, messageSE, out string result))
+                        {
+                            ViewData["Message"] = "Ticket submitted successfully";
+                            ViewData["MsgType"] = "success";
+                        }
+                        else
+                        {
+                            ViewData["Message"] = result;
+                            ViewData["MsgType"] = "warning";
+                        }
                     }
                     else
                     {
-                        ViewData["Message"] = "Unsuccessful escalate. Do try again.";
-                    }
+                        TempData["Message"] = "Unsuccessful escalate. Do try again.";
+                        TempData["MsgType"] = "danger";
+                    }                  
                 }
                 return RedirectToAction("ToDoTicket", "Ticket");
             }
