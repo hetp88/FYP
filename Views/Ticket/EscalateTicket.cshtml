@@ -194,6 +194,8 @@
 
                 <input type="hidden" name="TicketId" value="@Model.TicketId">
 
+                <input type="hidden" name="Description" value="@Model.Description">
+
                 <label for="escalate_reason">Escalate Reason:</label>
                 <textarea id="escalate_reason" class="form-control" name="escalate_reason" required></textarea>
                     <span asp-validation-for="Escalate_Reason" class="text-danger"></span>
