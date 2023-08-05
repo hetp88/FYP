@@ -272,7 +272,7 @@
                     <span asp-validation-for="newStatus" class="text-danger"></span>
                 </div>
 
-                @if((User.IsInRole("helpdesk agent") && Model.Status == "in progress") || ((User.IsInRole("support engineer")) && Model.Status == "waiting for resolution"))
+                @if((User.IsInRole("helpdesk agent") && Model.Status == "active") || ((User.IsInRole("support engineer")) && Model.Status == "waiting for resolution"))
                 {
                     <div class="form-group mb-3">
                         <label for="Resolution" class="form-label">Resolution:</label>

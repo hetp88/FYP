@@ -233,8 +233,8 @@ namespace FYP.Controllers
         }
 
         public IActionResult AddTicket()
-        {
-            return View();
+        {            
+            return View();            
         }
 
         [HttpPost]
@@ -253,7 +253,6 @@ namespace FYP.Controllers
             string user_name = "";
 
             string ha_email = "";
-            string ha_name = "";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -548,7 +547,6 @@ namespace FYP.Controllers
                 Random generate = new Random();
                 int assignedticket = 0;
 
-                string se_name = "";
                 string se_email = "";
 
                 using (SqlConnection connection = new SqlConnection(_connectionString))
