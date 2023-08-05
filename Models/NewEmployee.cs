@@ -19,6 +19,7 @@ namespace FYP.Models
 
         [DataType(DataType.Password)]
         [StringLength(20, MinimumLength = 7, ErrorMessage = "Password must be 7-20 characters")]
+        [Required(ErrorMessage = "New password is required.")]
         public string EmpPw { get; set; }
 
         public int RolesId { get; set; }
